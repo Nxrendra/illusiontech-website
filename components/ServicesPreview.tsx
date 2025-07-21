@@ -1,0 +1,59 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Code, Brush, Bot, PenTool } from 'lucide-react';
+
+const services = [
+  { icon: <PenTool size={40} />, title: 'UI/UX Design', description: 'Crafting intuitive and beautiful user interfaces.' },
+  { icon: <Code size={40} />, title: 'Web Development', description: 'Building robust and scalable web applications.' },
+  { icon: <Brush size={40} />, title: 'Web Design', description: 'Creating visually stunning and modern website designs.' },
+  { icon: <Bot size={40} />, title: 'Automation', description: 'Streamlining your business processes with smart automation.' },
+];
+
+const cardVariants = {
+  offscreen: {
+    y: 50,
+    opacity: 0,
+  },
+  onscreen: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
+};
+
+export default function ServicesPreview() {
+  return (
+    <section id="services-preview" className="py-20 bg-gray-50">
+      <div className="container">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Our Services</h2>
+        <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12">
+          We offer a range of services to bring your digital vision to life.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service, index) => (
+            <motion.div
+              key={service.title}
+              className="bg-white p-8 rounded-lg shadow-md text-center transition-transform duration-300 hover:-translate-y-2"
+              initial="offscreen"
+              whileInView="onscreen"
+              viewport={{ once: true, amount: 0.5 }}
+              variants={cardVariants}
+              custom={index}
+            >
+              <div className="flex justify-center items-center mb-4 text-accent">
+                {service.icon}
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+              <p className="text-gray-500">{service.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
