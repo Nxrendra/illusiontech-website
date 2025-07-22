@@ -26,15 +26,17 @@ export default function ProcessTimeline() {
         <section className="py-20 bg-white">
             <div className="container">
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Process</h2>
-                <motion.div 
-                    className="relative flex flex-col md:flex-row justify-between items-center"
+                <motion.div
+                    className="relative flex flex-col items-center md:flex-row md:justify-between md:items-start"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.5 }}
                 >
-                    {/* Timeline line */}
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 hidden md:block"></div>
+                    {/* Desktop horizontal line */}
+                    <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-200 hidden md:block"></div>
+                    {/* Mobile vertical line */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-gray-200 md:hidden"></div>
                     
                     {processSteps.map((step, index) => (
                         <motion.div key={step.name} variants={itemVariants} className="relative z-10 flex flex-col items-center text-center p-4 md:w-1/4 mb-8 md:mb-0">

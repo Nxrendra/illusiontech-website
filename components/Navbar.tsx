@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,8 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const { scrollY } = useScroll();
 
@@ -31,6 +34,46 @@ export default function Navbar() {
       setHidden(false);
     }
   });
+
+  // Handle accessibility: close on escape, trap focus
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const menuElement = menuRef.current;
+    if (!menuElement) return;
+
+    const focusableElements = Array.from(
+      menuElement.querySelectorAll<HTMLElement>('a[href]')
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      } else if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    firstElement?.focus();
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      menuButtonRef.current?.focus();
+    };
+  }, [isOpen]);
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -82,11 +125,14 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button 
+         <button
+            ref={menuButtonRef}
             onClick={() => setIsOpen(!isOpen)} 
             className="text-gray-700"
             aria-label="Toggle menu"
             aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -100,6 +146,8 @@ export default function Navbar() {
             initial="hidden"
             animate="visible"
             exit="hidden"
+            id="mobile-menu"
+            ref={menuRef}
             variants={menuVariants}
             transition={{ duration: 0.2 }}
             className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-200"

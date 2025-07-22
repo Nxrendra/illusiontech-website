@@ -1,10 +1,35 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+
+const sectionVariants: Variants = {
+  offscreen: {
+    opacity: 0,
+    y: 50,
+  },
+  onscreen: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
+};
 
 export default function ContactTeaser() {
   return (
-    <section className="py-20 bg-gray-800 text-white">
+    <motion.section
+      className="py-20 bg-gray-800 text-white"
+      initial="offscreen"
+      whileInView="onscreen"
+      viewport={{ once: true, amount: 0.3 }}
+      variants={sectionVariants}
+    >
       <div className="container text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
           Let's Work Together
@@ -19,6 +44,6 @@ export default function ContactTeaser() {
           </Link>
         </Button>
       </div>
-    </section>
+    </motion.section>
   );
 }
