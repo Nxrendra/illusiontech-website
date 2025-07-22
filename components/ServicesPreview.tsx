@@ -1,7 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Code, Brush, Bot, PenTool } from 'lucide-react';
+import Link from 'next/link';
+import { Code, Brush, Bot, PenTool, ArrowRight } from 'lucide-react';
+import { Button } from './ui/Button';
+
 
 const services = [
   { icon: <PenTool size={40} />, title: 'UI/UX Design', description: 'Crafting intuitive and beautiful user interfaces.' },
@@ -63,6 +66,13 @@ export default function ServicesPreview() {
             </motion.div>
           ))}
         </motion.div>
+        <div className="text-center mt-16">
+          <Button asChild size="large" variant="secondary">
+            <Link href="/services">
+              View All Services <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );
