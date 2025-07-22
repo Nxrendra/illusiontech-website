@@ -10,12 +10,20 @@ const services = [
   { icon: <Bot size={40} />, title: 'Automation', description: 'Streamlining your business processes with smart automation.' },
 ];
 
-const cardVariants = {
-  offscreen: {
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: {
     y: 50,
     opacity: 0,
   },
-  onscreen: {
+  visible: {
     y: 0,
     opacity: 1,
     transition: {
@@ -34,16 +42,18 @@ export default function ServicesPreview() {
         <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12">
           We offer a range of services to bring your digital vision to life.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {services.map((service, index) => (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          {services.map((service) => (
             <motion.div
               key={service.title}
               className="bg-white p-8 rounded-lg shadow-md text-center transition-transform duration-300 hover:-translate-y-2"
-              initial="offscreen"
-              whileInView="onscreen"
-              viewport={{ once: true, amount: 0.5 }}
-              variants={cardVariants}
-              custom={index}
+              variants={itemVariants}
             >
               <div className="flex justify-center items-center mb-4 text-accent">
                 {service.icon}
@@ -52,7 +62,7 @@ export default function ServicesPreview() {
               <p className="text-gray-500">{service.description}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

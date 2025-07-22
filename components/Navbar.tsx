@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -13,9 +14,23 @@ const navLinks = [
   { name: 'Contact', href: '/contact' },
 ];
 
+/**
+ * A responsive, sticky navigation bar with scroll-based show/hide behavior.
+ */
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const pathname = usePathname();
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > previous && latest > 150) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
 
   const menuVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -23,34 +38,56 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm">
+    <motion.header
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-sm"
+    >
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-gray-900">
-          Illusion<span className="text-accent">Tech</span>
+        <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-gray-900">
+          <Image 
+            src="/logo.svg"
+            alt="IllusionTech Logo"
+            width={28}
+            height={28}
+          />
+          <span>
+            Illusion<span className="text-accent">Tech</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            if (link.name === 'Home' && pathname === '/') return null; // Hide Home on homepage
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  isActive ? 'text-accent' : 'text-gray-600'
-                }`}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
+          {navLinks
+            .filter((link) => !(pathname === '/' && link.href === '/'))
+            .map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors hover:text-accent ${
+                    isActive ? 'text-accent' : 'text-gray-600'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
         </nav>
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700">
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="text-gray-700"
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
+          >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -82,6 +119,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

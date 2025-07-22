@@ -1,14 +1,9 @@
 'use client';
 
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+
 export default function Hero() {
-
-  const scrollToServices = () => {
-    const servicesSection = document.getElementById('services-preview');
-    if (servicesSection) {
-      servicesSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <section className="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
       {/* Background Video */}
@@ -33,11 +28,12 @@ export default function Hero() {
           Welcome to IllusionTech
         </h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 animate-fade-in-up">
-          We build beautiful, functional, and scalable web solutions that drive results.
+          We build beautiful, functional, and scalable web solutions that drive
+          results.
         </p>
-        <button onClick={scrollToServices} className="bg-accent hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300 transform hover:scale-105">
-          Get Started
-        </button>
+        <Button asChild size="large">
+          <Link href="#services-preview">Get Started</Link>
+        </Button>
       </div>
     </section>
   );
