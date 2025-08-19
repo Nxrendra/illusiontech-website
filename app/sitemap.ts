@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { services } from '@/lib/services';
+import { services } from '@/lib/data/services';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
