@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://illusiontech.dev/sitemap.xml

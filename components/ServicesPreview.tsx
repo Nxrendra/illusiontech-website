@@ -2,16 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Code, Brush, Bot, PenTool, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
-
-
-const services = [
-  { icon: <PenTool size={40} />, title: 'UI/UX Design', description: 'Crafting intuitive and beautiful user interfaces.' },
-  { icon: <Code size={40} />, title: 'Web Development', description: 'Building robust and scalable web applications.' },
-  { icon: <Brush size={40} />, title: 'Web Design', description: 'Creating visually stunning and modern website designs.' },
-  { icon: <Bot size={40} />, title: 'Automation', description: 'Streamlining your business processes with smart automation.' },
-];
+import { services } from '@/lib/data/services';
+import React from 'react';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -39,10 +33,10 @@ const itemVariants = {
 
 export default function ServicesPreview() {
   return (
-    <section id="services-preview" className="py-20 bg-gray-50">
+    <section id="services-preview" className="py-20 bg-muted/50 dark:bg-muted/20">
       <div className="container">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Our Services</h2>
-        <p className="text-lg text-gray-600 text-center max-w-2xl mx-auto mb-12">
+        <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto mb-12">
           We offer a range of services to bring your digital vision to life.
         </p>
         <motion.div
@@ -52,17 +46,19 @@ export default function ServicesPreview() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
         >
-          {services.map((service) => (
+          {services.slice(0, 4).map((service) => (
             <motion.div
-              key={service.title}
-              className="bg-white p-8 rounded-lg shadow-md text-center transition-transform duration-300 hover:-translate-y-2"
+              key={service.name}
+              className="bg-card text-card-foreground p-8 rounded-lg shadow-md text-center transition-transform duration-300 hover:-translate-y-2"
               variants={itemVariants}
             >
-              <div className="flex justify-center items-center mb-4 text-accent">
-                {service.icon}
+              <div className="flex justify-center items-center mb-4">
+                {React.cloneElement(service.icon, {
+                  className: `w-10 h-10 ${service.theme.accentClass}`,
+                })}
               </div>
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-500">{service.description}</p>
+              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
+              <p className="text-muted-foreground">{service.description}</p>
             </motion.div>
           ))}
         </motion.div>

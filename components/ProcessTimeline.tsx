@@ -1,53 +1,101 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 
 const processSteps = [
-    { name: 'Plan', description: 'We define goals, scope, and strategy.' },
-    { name: 'Design', description: 'We create wireframes and visual designs.' },
-    { name: 'Build', description: 'Our developers bring the designs to life.' },
-    { name: 'Launch', description: 'We deploy your project for the world to see.' },
+    { name: 'Discover', description: 'In-depth discussion about project goals and audience to craft a winning strategy.' },
+    { name: 'Plan', description: 'Scope definition, project strategy, and information architecture blueprints are created.' },
+    { name: 'Design', description: 'High-fidelity design mockups, prototypes, and brand integration exploration.' },
+    { name: 'Build', description: 'Front-end and back-end development, bringing the designs to life with rigorous testing.' },
+    { name: 'Launch', description: 'Deployment to production servers and final handover.' },
+    { name: 'Refine', description: 'Post-launch monitoring, maintenance, and ongoing improvements.' },
 ];
-const containerVariants = {
-    hidden: { opacity: 0 },
+
+const stepVariants: Variants = {
+    hidden: { opacity: 0, x: -50 },
     visible: {
         opacity: 1,
+        x: 0,
         transition: {
-            staggerChildren: 0.3,
+            type: 'spring',
+            bounce: 0.3,
+            duration: 0.8,
         },
     },
 };
-const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
+
+const stepVariantsRight: Variants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            type: 'spring',
+            bounce: 0.3,
+            duration: 0.8,
+        },
+    },
 };
+
 export default function ProcessTimeline() {
+    const timelineRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: timelineRef,
+        offset: ["start center", "end center"]
+    });
+
+    // The line will draw as the timeline section scrolls into view
+    const lineProgress = useTransform(scrollYProgress, [0, 0.9], [0, 1]); // End drawing a bit early
+
     return (
-        <section className="py-20 bg-white">
+        <section className="py-20 md:py-28 bg-muted" ref={timelineRef}>
             <div className="container">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Our Process</h2>
-                <motion.div
-                    className="relative flex flex-col items-center md:flex-row md:justify-between md:items-start"
-                    variants={containerVariants}
+                <motion.h2
+                    className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground"
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, amount: 0.5 }}
+                    viewport={{ once: false, amount: 0.5 }}
+                    variants={{ hidden: { opacity: 0, y: -40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
                 >
-                    {/* Desktop horizontal line */}
-                    <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-200 hidden md:block"></div>
-                    {/* Mobile vertical line */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-gray-200 md:hidden"></div>
-                    
+                    Our Collaborative Process
+                </motion.h2>
+                
+                <div className="relative">
+                    {/* The central line with drawing animation */}
+                    <motion.div 
+                        className="absolute left-4 md:left-1/2 top-0 h-full w-1 bg-accent origin-top -translate-x-1/2"
+                        style={{ scaleY: lineProgress }}
+                    />
+
                     {processSteps.map((step, index) => (
-                        <motion.div key={step.name} variants={itemVariants} className="relative z-10 flex flex-col items-center text-center p-4 md:w-1/4 mb-8 md:mb-0">
-                            <div className="flex items-center justify-center w-16 h-16 bg-accent text-white rounded-full text-2xl font-bold mb-4">
-                                {index + 1}
+                        <motion.div 
+                            key={step.name} 
+                            className="relative mb-12"
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: false, amount: 0.5 }}
+                            variants={index % 2 === 0 ? stepVariants : stepVariantsRight}
+                        >
+                            {/* The dot on the line */}
+                            <div className="absolute left-4 md:left-1/2 top-1 -translate-x-1/2 z-10">
+                                <div className="flex items-center justify-center w-8 h-8 bg-accent text-white rounded-full text-lg font-bold ring-8 ring-muted">
+                                    {index + 1}
+                                </div>
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">{step.name}</h3>
-                            <p className="text-gray-500">{step.description}</p>
+
+                            {/* The content card */}
+                            <div
+                                className={`w-[calc(100%-4rem)] ml-16 md:w-5/12 ${index % 2 === 0 ? 'md:ml-0' : 'md:ml-[58.333333%]'}`}
+                            >
+                                <div className="bg-card p-6 rounded-xl shadow-lg border border-border transition-all duration-300 hover:shadow-2xl hover:border-accent/50">
+                                    <h3 className="text-xl font-bold text-card-foreground mb-2">{step.name}</h3>
+                                    <p className="text-muted-foreground">{step.description}</p>
+                                </div>
+                            </div>
                         </motion.div>
                     ))}
-                </motion.div>
+                </div>
             </div>
         </section>
     );

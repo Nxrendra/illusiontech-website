@@ -2,18 +2,25 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
-import { type Container, type ISourceOptions } from '@tsparticles/engine';
-import { loadSlim } from '@tsparticles/slim';
+import type { Container, ISourceOptions } from '@tsparticles/engine';
+import { loadFull } from 'tsparticles'; // Changed from 'loadSlim'
+import { cn } from '@/lib/utils';
 
-export default function ParticleBackground() {
+interface ParticleBackgroundProps {
+  id?: string;
+  options?: ISourceOptions;
+  className?: string;
+}
+
+export default function ParticleBackground({ id = "tsparticles", options: propOptions, className }: ParticleBackgroundProps) {
   const [init, setInit] = useState(false);
 
   // this should be run only once per application lifetime
   useEffect(() => {
     initParticlesEngine(async (engine) => {
       // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-      // this loads the tsparticles package bundle, it's a must to load the engine bundle before using it
-      await loadSlim(engine);
+      // this loads the full tsparticles bundle, it's a must to load the engine bundle before using it
+      await loadFull(engine); // Changed from loadSlim
     }).then(() => {
       setInit(true);
     });
@@ -23,7 +30,7 @@ export default function ParticleBackground() {
     // You can add any logic to run after particles are loaded
   };
 
-  const options: ISourceOptions = useMemo(
+  const defaultOptions: ISourceOptions = useMemo(
     () => ({
       background: {
         color: {
@@ -87,13 +94,15 @@ export default function ParticleBackground() {
     [],
   );
 
+  const options = propOptions || defaultOptions;
+
   if (init) {
     return (
       <Particles
-        id="tsparticles"
+        id={id}
         particlesLoaded={particlesLoaded}
         options={options}
-        className="absolute top-0 left-0 w-full h-full -z-10"
+        className={cn("absolute inset-0 z-0", className)}
       />
     );
   }

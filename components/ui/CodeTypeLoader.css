@@ -1,0 +1,26 @@
+.code-loader-text {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  font-size: 1.25rem; /* 20px */
+  color: #a7a7a7; /* A soft gray, less harsh than white */
+  white-space: pre-wrap;
+}
+
+@media (min-width: 640px) {
+  .code-loader-text {
+    font-size: 1.5rem; /* 24px */
+  }
+}
+
+.code-loader-text::after {
+  content: '_';
+  display: inline-block;
+  animation: blink 1s infinite step-start;
+  color: #00ff99; /* A nice techy green/cyan */
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}

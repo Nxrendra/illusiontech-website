@@ -1,54 +1,66 @@
+import type { Metadata } from 'next';
 import ContactForm from '@/components/ContactForm';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { ContactHero } from '@/components/ContactHero';
+import { ContactInformation } from '@/components/ContactInformation';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'IllusionTech Development',
+  image: 'https://illusiontech.dev/og-image.png',
+  '@id': `${siteUrl}/#organization`,
+  url: `${siteUrl}/contact`,
+  telephone: '+1-868-XXX-XXXX', // <-- Replace with your actual phone number
+  email: 'hello@illusiontech.dev',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Port of Spain',
+    addressCountry: 'TT',
+  },
+  areaServed: {
+    '@type': 'Country',
+    name: 'Trinidad and Tobago',
+  },
+  sameAs: [
+    // TODO: Add your social media profile URLs here
+  ],
+};
+
+export const metadata: Metadata = {
+  title: 'Contact Us | IllusionTech Development',
+  description:
+    'Get in touch with IllusionTech for a free consultation or a custom quote on your web development project in Trinidad and Tobago.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    type: 'website',
+    url: '/contact',
+    title: 'Contact Us | IllusionTech Development',
+    description: 'Get in touch for a free consultation or a custom quote on your web development project.',
+    images: [{ url: '/og-image.png' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact Us | IllusionTech Development',
+    description: 'Get in touch for a free consultation or a custom quote on your web development project.',
+    images: ['/og-image.png'],
+  },
+};
 
 export default function ContactPage() {
   return (
-    <main className="bg-gray-50">
-      <div className="container py-16 md:py-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Get in Touch</h1>
-          <p className="mt-4 text-lg text-gray-600">
-            We’re here to help and answer any question you might have. We look forward to hearing from you.
-          </p>
-        </div>
-
-        <div className="mt-16 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-start">
-          {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="flex items-start space-x-4">
-              <div className="bg-accent/10 p-3 rounded-full flex-shrink-0">
-                <Phone className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-800">Phone</h3>
-                <p className="text-gray-500">Our lines are open 9am - 5pm, Mon - Fri.</p>
-                <a href="tel:+1234567890" className="text-accent hover:text-accent-hover transition-colors font-medium">+1 (234) 567-890</a>
-              </div>
-            </div>
-            <div className="flex items-start space-x-4">
-              <div className="bg-accent/10 p-3 rounded-full flex-shrink-0">
-                <Mail className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-800">Email</h3>
-                <p className="text-gray-500">We'll get back to you within one business day.</p>
-                <a href="mailto:hello@illusiontech.dev" className="text-accent hover:text-accent-hover transition-colors font-medium">hello@illusiontech.dev</a>
-              </div>
-            </div>
-            <div className="flex items-start space-x-4">
-              <div className="bg-accent/10 p-3 rounded-full flex-shrink-0">
-                <MapPin className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-lg font-medium text-gray-800">Address</h3>
-                <p className="text-gray-500">123 Innovation Drive, Tech City, 12345</p>
-              </div>
-            </div>
-          </div>
-
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
+      <ContactHero />
+      <section id="contact-content" className="py-16 md:py-24 bg-background">
+        <div className="container grid md:grid-cols-2 gap-16 items-start">
+          <ContactInformation />
           <ContactForm />
         </div>
-      </div>
-    </main>
+      </section>
+    </>
   );
 }

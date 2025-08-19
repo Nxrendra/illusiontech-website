@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Playfair_Display } from "next/font/google";
+import dynamic from 'next/dynamic';
 import "./../styles/globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Footer from "@/components/shared/Footer";
+import { Toaster } from 'react-hot-toast';
+import CookieConsentBanner from "@/components/ui/CookieConsentBanner";
 
 const poppins = Poppins({ 
   subsets: ["latin"],
@@ -10,7 +14,42 @@ const poppins = Poppins({
   variable: '--font-poppins', 
 });
 
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-playfair',
+});
+
+const ChatWidgetContainer = dynamic(() => import('@/components/chat/ChatWidgetContainer'), {
+  ssr: false,
+});
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}/#organization`,
+  name: 'IllusionTech Development',
+  url: siteUrl,
+  logo: `${siteUrl}/og-image.png`,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+1-868-XXX-XXXX', // <-- Replace with your actual phone number
+    contactType: 'Sales & Support',
+    areaServed: 'TT',
+    availableLanguage: ['en'],
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '123 Innovation Drive', // <-- Replace with your actual address
+    addressLocality: 'Port of Spain',
+    addressRegion: 'POS',
+    postalCode: '00000', // Trinidad doesn't use zip codes widely, but it's a required field for some validators
+    addressCountry: 'TT',
+  },
+  sameAs: [], // <-- Add your social media profile URLs here
+};
 
 export const metadata: Metadata = {
    metadataBase: new URL(siteUrl),
@@ -18,10 +57,10 @@ export const metadata: Metadata = {
     default: 'IllusionTech Development — Custom Web Solutions',
     template: '%s | IllusionTech Development',
   },
-  description: "Professional web development and design services for small to medium businesses.",
+  description: "IllusionTech builds high-performance, custom websites and web applications for startups and growing businesses worldwide. Specializing in Next.js, React, and modern web technologies.",
   openGraph: {
     title: 'IllusionTech Development — Custom Web Solutions',
-    description: 'Professional web development and design services for small to medium businesses.',
+    description: 'High-performance, custom websites and web applications for businesses worldwide. Specializing in Next.js, React, and modern web technologies.',
     url: siteUrl,
     siteName: 'IllusionTech Development',
     images: [
@@ -47,11 +86,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} font-sans !scroll-smooth`}>
-      <body>
-        <Navbar />
-                {children}
-        <Footer />
+    <html lang="en" className={`${poppins.variable} ${playfair.variable} font-sans !scroll-smooth`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
+       <body className="relative flex min-h-screen flex-col">
+        <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
+          <Toaster position="bottom-center" toastOptions={{ className: 'font-sans' }} />
+          <Navbar />
+          {children}
+          <Footer />
+          <ChatWidgetContainer />
+          <CookieConsentBanner />
+        </ThemeProvider>
       </body>
     </html>
   );

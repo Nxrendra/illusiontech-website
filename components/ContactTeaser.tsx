@@ -24,17 +24,17 @@ const sectionVariants: Variants = {
 export default function ContactTeaser() {
   return (
     <motion.section
-      className="py-20 bg-gray-800 text-white"
+      className="py-20 bg-primary text-primary-foreground"
       initial="offscreen"
       whileInView="onscreen"
       viewport={{ once: true, amount: 0.3 }}
       variants={sectionVariants}
     >
       <div className="container text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
           Let's Work Together
         </h2>
-        <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
+        <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-8">
           Have a project in mind? We'd love to hear about it.
         </p>
         <Button asChild variant="secondary" size="large">
