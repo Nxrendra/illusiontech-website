@@ -10,9 +10,9 @@ export function middleware(request: NextRequest) {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com;
-    style-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src 'self' 'nonce-${nonce}' 'unsafe-inline';
     img-src 'self' blob: data:;
-    font-src 'self' https://fonts.gstatic.com;
+    font-src 'self';
     worker-src 'self' blob:;
     object-src 'none';
     base-uri 'self';

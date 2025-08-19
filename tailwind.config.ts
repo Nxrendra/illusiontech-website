@@ -1,9 +1,8 @@
-import type { Config } from "tailwindcss";
-import type { PluginAPI } from "tailwindcss/types/config";
+import type { PluginAPI } from 'tailwindcss/types/config';
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
-const config: Config = {
-  darkMode: ["class"],
+/** @type {import('tailwindcss').Config} */
+module.exports = {  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -112,4 +111,3 @@ const config: Config = {
     }
   ],
 };
-export default config;
