@@ -8,6 +8,8 @@ const config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+    // Ensure Tailwind scans the particles library for any classes it uses
+    "./node_modules/@tsparticles/react/**/*.js",
   ],
   theme: {
     container: {
