@@ -1,8 +1,8 @@
-import type { PluginAPI } from 'tailwindcss/types/config';
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {  darkMode: ["class"],
+module.exports = {
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -95,7 +95,7 @@ module.exports = {  darkMode: ["class"],
   },
   plugins: [
     require("tailwindcss-animate"),
-    function ({ addUtilities }: PluginAPI) {
+    function ({ addUtilities }) {
       addUtilities({
         '.scrollbar-hide': {
           /* IE and Edge */
