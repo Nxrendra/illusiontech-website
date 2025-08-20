@@ -1,7 +1,7 @@
-const { fontFamily } = require("tailwindcss/defaultTheme");
+import type { Config } from "tailwindcss"
+import defaultTheme from "tailwindcss/defaultTheme"
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -24,8 +24,8 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-poppins)", ...fontFamily.sans],
-        serif: ["var(--font-playfair)", ...fontFamily.serif],
+        sans: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
+        serif: ["var(--font-playfair)", ...defaultTheme.fontFamily.serif],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -94,8 +94,8 @@ module.exports = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    function ({ addUtilities }) {
+    require("tailwindcss-animate"), // This still uses require, which is fine.
+    function ({ addUtilities }: { addUtilities: any }) { // Add a basic type for the plugin function
       addUtilities({
         '.scrollbar-hide': {
           /* IE and Edge */
@@ -110,4 +110,6 @@ module.exports = {
       })
     }
   ],
-};
+} satisfies Config
+
+export default config
