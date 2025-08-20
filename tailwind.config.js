@@ -1,14 +1,13 @@
-import type { Config } from "tailwindcss"
-import defaultTheme from "tailwindcss/defaultTheme"
+const defaultTheme = require("tailwindcss/defaultTheme");
 
-const config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
-    // Ensure Tailwind scans the particles library for any classes it uses
     "./node_modules/@tsparticles/react/**/*.js",
   ],
   theme: {
@@ -97,7 +96,7 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"), // This still uses require, which is fine.
-    function ({ addUtilities }: { addUtilities: any }) { // Add a basic type for the plugin function
+    function ({ addUtilities }) {
       addUtilities({
         '.scrollbar-hide': {
           /* IE and Edge */
@@ -112,6 +111,4 @@ const config = {
       })
     }
   ],
-} satisfies Config
-
-export default config
+};
