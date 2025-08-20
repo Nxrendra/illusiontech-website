@@ -52,6 +52,7 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+}
 
 .grecaptcha-badge {
   bottom: 90px !important;
@@ -86,4 +87,4 @@
 
 .ContactFormPhoneInput .PhoneInputCountrySelectArrow {
   opacity: 0.6;
-}}
+}
