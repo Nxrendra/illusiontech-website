@@ -1,17 +1,19 @@
-'use client';
+import type { Metadata } from 'next';
+import { poppins, playfair } from '@/lib/fonts';
+import './../styles/globals.css';
+import ClientProviders from '@/components/ClientProviders';
 
-import { poppins, playfair } from "@/lib/fonts";
-import dynamic from 'next/dynamic';
-import "./../styles/globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/shared/Footer";
-import { Toaster } from 'react-hot-toast';
-import CookieConsentBanner from "@/components/ui/CookieConsentBanner";
-
-const ChatWidgetContainer = dynamic(() => import('@/components/chat/ChatWidgetContainer'), {
-  ssr: false,
-});
+export const metadata: Metadata = {
+  title: {
+    default: 'IllusionTech Development — Custom Web Solutions',
+    template: '%s | IllusionTech Development',
+  },
+  description:
+    'IllusionTech builds high-performance, custom websites and web applications for startups and growing businesses worldwide.',
+  icons: {
+    icon: '/favicon.ico',
+  },
+};
 
 export default function RootLayout({
   children,
@@ -19,16 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${playfair.variable} font-sans !scroll-smooth`} suppressHydrationWarning>
-       <body className="relative flex min-h-screen flex-col">
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <Toaster position="bottom-center" toastOptions={{ className: 'font-sans' }} />
-          <Navbar />
-          {children}
-          <Footer />
-          <ChatWidgetContainer />
-          <CookieConsentBanner />
-        </ThemeProvider>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${playfair.variable} font-sans !scroll-smooth`}
+      suppressHydrationWarning
+    >
+      <body className="relative flex min-h-screen flex-col">
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
