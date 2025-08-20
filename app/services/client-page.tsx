@@ -1,5 +1,6 @@
-'use client';
 
+'use client';
+export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { motion, type Variants, useScroll } from 'framer-motion';
 import ContactTeaser from '@/components/ContactTeaser';
@@ -9,8 +10,7 @@ import ParticleBackground from '@/components/ParticleBackground';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
-'use client';
-export const dynamic = 'force-dynamic';
+
 
 const containerVariants: Variants = {
   hidden: {},
