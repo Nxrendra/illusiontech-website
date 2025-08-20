@@ -9,6 +9,8 @@ import ParticleBackground from '@/components/ParticleBackground';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
+export const dynamic = "force-dynamic";
+
 const containerVariants: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.15 } },
