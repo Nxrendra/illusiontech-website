@@ -4,6 +4,7 @@ import type { ZodIssue } from 'zod';
 import { connectToDB } from '@/lib/mongoose';
 import ContactSubmission from '@/lib/models/ContactSubmission';
 import { verifyRecaptcha, verifyEmailDeliverability } from '@/lib/server-utils';
+import { sendEmail } from '@/lib/email';
 
 // Define the schema for the incoming form data using Zod
 // This now includes all fields from your multi-step form.
@@ -58,10 +59,26 @@ export async function POST(request: Request) {
     const newSubmission = new ContactSubmission(submissionData);
     await newSubmission.save();
 
-    // Step 4 (Optional): Send an email notification
-    // You can add your email sending logic here (e.g., using Resend or Nodemailer)
-    // to notify yourself of the new submission.
-    console.log('New submission saved to database:', newSubmission._id);
+    // Step 4: Send an email notification to the admin
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        const subject = `New Contact Submission from ${submissionData.firstName}`;
+        const text = `You have a new submission from ${submissionData.firstName} ${submissionData.lastName} (${submissionData.email}).\n\nMessage:\n${submissionData.message}`;
+        const html = `
+          <div style="font-family: sans-serif; line-height: 1.6;">
+            <h2>New Contact Form Submission</h2>
+            <p><strong>Name:</strong> ${submissionData.firstName} ${submissionData.lastName}</p>
+            <p><strong>Email:</strong> ${submissionData.email}</p>
+            <p><strong>Message:</strong></p>
+            <p>${submissionData.message}</p>
+          </div>`;
+        await sendEmail({ to: adminEmail, subject, text, html });
+      }
+    } catch (emailError) {
+      console.error('Failed to send notification email:', emailError);
+      // Do not block the user response if the email fails. Just log the error.
+    }
 
     return NextResponse.json({
       message: "Thank you! Your message has been sent successfully. We'll be in touch soon.",
