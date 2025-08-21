@@ -18,10 +18,7 @@ if (!cached) {
 }
 
 export async function connectToDB() {
-  // TEMPORARY DEBUGGING: Hardcode the URI to bypass environment variable issues.
-  // REMOVE THIS LINE BEFORE DEPLOYING TO PRODUCTION!
-  const MONGODB_URI = "mongodb+srv://Narendra:Narendraa11%24@illusion-tech.ffagxqj.mongodb.net/?retryWrites=true&w=majority&appName=Illusion-Tech";
-  // const MONGODB_URI = process.env.MONGODB_URI; // Keep this line commented out for now
+  const MONGODB_URI = process.env.MONGODB_URI;
 
   // Log the URI to debug the connection issue. This will show in your Vercel function logs.
   console.log(`Attempting to connect with MONGODB_URI: "${MONGODB_URI}"`);
