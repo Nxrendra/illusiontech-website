@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import UIUXDesignClientPage from './client-page';
+export const dynamic = 'force-dynamic';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
 

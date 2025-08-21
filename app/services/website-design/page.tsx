@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import WebsiteDesignClientPage from './client-page';
+export const dynamic = 'force-dynamic';
 
 const designServiceSchema = {
   '@context': 'https://schema.org',

@@ -3,6 +3,8 @@ import ContactForm from '@/components/ContactForm';
 import { ContactHero } from '@/components/ContactHero';
 import { ContactInformation } from '@/components/ContactInformation';
 
+export const dynamic = 'force-dynamic';
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
 
 const localBusinessSchema = {

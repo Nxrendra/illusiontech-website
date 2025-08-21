@@ -276,6 +276,21 @@ function AnimatedNumber({ value, suffix = '' }: { value: number, suffix?: string
     </span>
   );
 }
+
+const SectionHeader = ({ title, description, isMobile }: { title: string; description: string; isMobile: boolean }) => (
+  <motion.div
+    variants={createItemVariants(isMobile)}
+    className="text-center mb-16 max-w-3xl mx-auto"
+  >
+    <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+      {title}
+    </h2>
+    <p className="mt-4 text-lg text-muted-foreground">
+      {description}
+    </p>
+  </motion.div>
+);
+
 export default function HomeClientPage() {
   const isMobile = useIsMobile();
   const [hoveredKnowledgeIndex, setHoveredKnowledgeIndex] = useState<number | null>(null);
@@ -388,18 +403,11 @@ export default function HomeClientPage() {
         viewport={{ once: false, amount: 0.2 }}
       >
         <div className="container">
-          <motion.div
-            variants={createItemVariants(isMobile)}
-            className="text-center mb-16 max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Our Core Services
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              We offer a range of services to bring your digital ideas to life,
-              from simple landing pages to complex web applications.
-            </p>
-          </motion.div>
+          <SectionHeader
+            title="Our Core Services"
+            description="We offer a range of services to bring your digital ideas to life, from simple landing pages to complex web applications."
+            isMobile={isMobile}
+          />
           <motion.div
             variants={containerVariants}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"

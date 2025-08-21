@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
 import { AlertTriangle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Privacy Policy | IllusionTech',
   description: 'Our Privacy Policy outlines how we collect, use, and protect your information when you use our website and services.',

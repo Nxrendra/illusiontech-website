@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/Alert';
 import { AlertTriangle } from 'lucide-react';
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | IllusionTech',

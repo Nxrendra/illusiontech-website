@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import WebDevelopmentClientPage from './client-page';
 import { services } from '@/lib/data/services';
+export const dynamic = 'force-dynamic';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
 
