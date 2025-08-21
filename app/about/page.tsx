@@ -2,6 +2,8 @@
 import type { Metadata } from 'next';
 import AboutClientPage from './client-page';
 
+export const dynamic = 'force-dynamic';
+
 const aboutPageSchema = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',

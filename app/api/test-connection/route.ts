@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { connectToDB } from '@/lib/mongoose';
 
+// Force this route to be dynamic to prevent static analysis issues during build.
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     console.log('Testing database connection...');

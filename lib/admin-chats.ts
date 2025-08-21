@@ -3,8 +3,6 @@ import { jwtVerify } from 'jose';
 import { connectToDB } from '@/lib/mongoose';
 import Message from '@/lib/models/Message';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 export interface ChatSessionSummary {
   sessionId: string;
   lastMessage: string;
@@ -13,6 +11,7 @@ export interface ChatSessionSummary {
 }
 
 async function verifyAuth() {
+    const JWT_SECRET = process.env.JWT_SECRET;
     const token = cookies().get('auth_token')?.value;
 
     if (!token || !JWT_SECRET) {

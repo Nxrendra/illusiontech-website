@@ -1,6 +1,5 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/about/client-page.tsx
 'use client';
-export const dynamic = 'force-dynamic';
 import ParticleBackground from '@/components/ParticleBackground';
 import type { ISourceOptions } from '@tsparticles/engine';
 import React, { useRef, useEffect, useState } from 'react';

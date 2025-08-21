@@ -1,17 +1,12 @@
 import { z } from 'zod';
 
-const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
-const EMAIL_VALIDATION_API_KEY = process.env.EMAIL_VALIDATION_API_KEY;
-
-if (!RECAPTCHA_SECRET_KEY) {
-  console.error('CRITICAL: RECAPTCHA_SECRET_KEY is not defined. Some forms may not work.');
-}
-
 /**
  * Verifies the reCAPTCHA token from the client.
  */
 export async function verifyRecaptcha(token: string): Promise<{ success: boolean; message: string }> {
+  const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
   if (!RECAPTCHA_SECRET_KEY) {
+    console.error('CRITICAL: RECAPTCHA_SECRET_KEY is not defined. Some forms may not work.');
     return { success: false, message: 'Server reCAPTCHA configuration error.' };
   }
   try {
@@ -37,6 +32,7 @@ export async function verifyRecaptcha(token: string): Promise<{ success: boolean
  * Verifies email deliverability using the Abstract API.
  */
 export async function verifyEmailDeliverability(email: string): Promise<{ success: boolean; message: string; status: number }> {
+  const EMAIL_VALIDATION_API_KEY = process.env.EMAIL_VALIDATION_API_KEY;
   if (!EMAIL_VALIDATION_API_KEY) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('WARN: Email validation API key is missing. Skipping email deliverability check in development.');

@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDB } from '@/lib/mongoose';
 import Message from '@/lib/models/Message';
-import { pusherServer } from '@/lib/pusher';
+import { getPusherServer } from '@/lib/pusher';
 import { type Message as VercelAIMessage } from 'ai';
 
 // Define the expected request body shape
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     // Broadcast the final, saved message to all clients.
     // This ensures data consistency if a client's stream was interrupted.
-    await pusherServer.trigger(
+    await getPusherServer().trigger(
       `chat-${sessionId}`,
       'new-message',
 { ...botMessage.toObject(), _id: botMessage._id.toString() },

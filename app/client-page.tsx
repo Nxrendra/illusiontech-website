@@ -33,8 +33,6 @@ import TechIcon from '@/components/home/TechIcon';
 
 import DOMPurify from 'isomorphic-dompurify';
 
-export const dynamic = "force-dynamic";
-
 const whyChooseUsPoints = [
   {
     icon: <Zap className="w-8 h-8 text-accent" />,

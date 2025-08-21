@@ -3,6 +3,14 @@ import Link from 'next/link';
 import { Home, MessageSquare, Users, BarChart2, Mail } from 'lucide-react';
 import LogoutButton from '@/components/admin/LogoutButton';
 
+const navItems = [
+  { href: '/admin/dashboard', icon: Home, label: 'Dashboard' },
+  { href: '/admin/dashboard/chat-sessions', icon: MessageSquare, label: 'Chat Sessions' },
+  { href: '/admin/dashboard/contact-submissions', icon: Mail, label: 'Contact Forms' },
+  { href: '/admin/dashboard/clients', icon: Users, label: 'Clients' },
+  { href: '/admin/dashboard/analytics', icon: BarChart2, label: 'Analytics' },
+];
+
 export default function AdminLayout({
   children,
 }: {
@@ -17,37 +25,15 @@ export default function AdminLayout({
           </Link>
         </div>
         <nav className="flex-grow">
-          <ul className="space-y-2">
-            <li>
-              <Link href="/admin/dashboard" className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                <Home size={18} />
-                Dashboard
-              </Link>
-            </li>
-            <li>
-                  <Link href="/admin/dashboard/chat-sessions" className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                <MessageSquare size={18} />
-                Chat Sessions
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/dashboard/contact-submissions" className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                <Mail size={18} />
-                Contact Forms
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/dashboard/clients" className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                <Users size={18} />
-                Clients
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/dashboard/analytics" className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
-                <BarChart2 size={18} />
-                Analytics
-              </Link>
-            </li>
+        <ul className="space-y-2">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="flex items-center gap-3 py-2.5 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">
+                  <item.icon size={18} />
+                  {item.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </nav>
         <div className="mt-auto">

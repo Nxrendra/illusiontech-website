@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { connectToDB } from '@/lib/mongoose';
 import Message, { IMessage, IMessageDocument } from '@/lib/models/Message';
-import { pusherServer } from '@/lib/pusher';
+import { getPusherServer } from '@/lib/pusher';
 import { CoreMessage, streamText, Message as VercelAIMessage } from 'ai';
 import { services } from '@/lib/data/services';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
@@ -67,22 +67,25 @@ const generateServicesForPrompt = () => {
  * POST /api/chat
  * Receives a user message and streams back a bot response.
  */
-const apiKey = process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+let google: ReturnType<typeof createGoogleGenerativeAI> | undefined;
 
-    let google: ReturnType<typeof createGoogleGenerativeAI>;
-
-if (apiKey) {
-  // Initialize the Google provider once outside the handler.
-  google = createGoogleGenerativeAI({
+function getGoogleAI() {
+  if (google) return google;
+  const apiKey = process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (apiKey) {
+    return (google = createGoogleGenerativeAI({
       apiKey,
       // This is a crucial fix: Force the SDK to use the stable v1 API endpoint.
       baseURL: 'https://generativelanguage.googleapis.com/v1/models',
-    });
+    }));
+  }
+  return undefined;
 }
 
 export async function POST(request: Request) {
   try {
-    if (!google) {
+    const googleAI = getGoogleAI();
+    if (!googleAI) {
       console.error('Server configuration error: GOOGLE_API_KEY or GOOGLE_GENERATIVE_AI_API_KEY is not found in process.env.');
       return new Response(JSON.stringify({ error: 'Server configuration error: Missing Google API Key.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
@@ -121,7 +124,7 @@ export async function POST(request: Request) {
       }).save();
 
       // Trigger Pusher to update other clients
-      await pusherServer.trigger(
+      await getPusherServer().trigger(
         `chat-${sessionId}`,
         'new-message',
         { ...userMessage.toObject(), _id: userMessage._id.toString() },
@@ -135,7 +138,7 @@ export async function POST(request: Request) {
     const result = await streamText({
           // Reverting to 'gemini-1.5-flash'. It's more cost-effective and has a
       // more generous free-tier rate limit, which helps avoid quota errors.
-      model: google('gemini-1.5-flash', {
+      model: googleAI('gemini-1.5-flash', {
         safetySettings: [
           { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
           { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
