@@ -18,11 +18,17 @@ if (!cached) {
 }
 
 export async function connectToDB() {
-  const MONGODB_URI = process.env.MONGODB_URI;
+  // TEMPORARY DEBUGGING: Hardcode the URI to bypass environment variable issues.
+  // REMOVE THIS LINE BEFORE DEPLOYING TO PRODUCTION!
+  const MONGODB_URI = "mongodb+srv://Narendra:Narendraa11%24@illusion-tech.ffagxqj.mongodb.net/?retryWrites=true&w=majority&appName=Illusion-Tech";
+  // const MONGODB_URI = process.env.MONGODB_URI; // Keep this line commented out for now
 
-  if (!MONGODB_URI) {
+  // Log the URI to debug the connection issue. This will show in your Vercel function logs.
+  console.log(`Attempting to connect with MONGODB_URI: "${MONGODB_URI}"`);
+
+  if (!MONGODB_URI || MONGODB_URI.trim() === '') {
     throw new Error(
-      'The MONGODB_URI environment variable is not defined. Please set it in your hosting provider\'s environment settings.'
+      'The MONGODB_URI environment variable is not defined or is empty. Please set it in your hosting provider\'s environment settings.'
     );
   }
 
