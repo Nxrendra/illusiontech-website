@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-src https://www.google.com;
-    connect-src 'self' ${isProd ? '' : 'ws:'};
+    connect-src 'self' https://www.google.com ${isProd ? '' : 'ws:'};
     ${isProd ? 'upgrade-insecure-requests;' : ''}
   `.replace(/\s{2,}/g, ' ').trim()
 
