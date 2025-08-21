@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-src https://www.google.com;
-    connect-src 'self' https://www.google.com ${isProd ? '' : 'ws:'};
+    connect-src 'self' https://www.google.com ${isProd ? 'wss:' : 'ws:'};
     ${isProd ? 'upgrade-insecure-requests;' : ''}
   `.replace(/\s{2,}/g, ' ').trim()
 
