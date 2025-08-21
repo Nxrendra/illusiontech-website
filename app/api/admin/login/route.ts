@@ -3,7 +3,7 @@ import { SignJWT } from 'jose';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcrypt';
 import { connectToDB } from '@/lib/mongoose';
- import User from '@/lib/models/User';
+import User from '@/lib/models/User';
 import { verifyRecaptcha } from '@/lib/server-utils';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -31,7 +31,6 @@ export async function POST(request: Request) {
     }
 
     // 2. If reCAPTCHA is valid, proceed with user authentication
-
     await connectToDB();
 
     // Find the user by email. Assuming your User model has a 'password' field.
@@ -43,13 +42,12 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
- // Create a JWT token
+    // Create a JWT token
     const token = await new SignJWT({ userId: user._id, email: user.email })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('1h') // Token expires in 1 hour
       .sign(key);
-     
 
     // Set the token in an HTTP-Only cookie for security
     cookies().set('auth_token', token, {
