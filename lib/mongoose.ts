@@ -18,15 +18,22 @@ if (!cached) {
 }
 
 export async function connectToDB() {
-  const MONGODB_URI = process.env.MONGODB_URI;
+  let MONGODB_URI = process.env.MONGODB_URI;
 
   // Log the URI to debug the connection issue. This will show in your Vercel function logs.
-  console.log(`Attempting to connect with MONGODB_URI: "${MONGODB_URI}"`);
+  // Using JSON.stringify makes it very clear if the variable contains extra quotes.
+  console.log(`Attempting to connect with MONGODB_URI: ${JSON.stringify(MONGODB_URI)}`);
 
   if (!MONGODB_URI || MONGODB_URI.trim() === '') {
     throw new Error(
       'The MONGODB_URI environment variable is not defined or is empty. Please set it in your hosting provider\'s environment settings.'
     );
+  }
+
+  // Defensively remove quotes from the start and end of the URI, which some platforms add automatically.
+  if (MONGODB_URI.startsWith('"') && MONGODB_URI.endsWith('"')) {
+    console.log('Detected and removed surrounding quotes from MONGODB_URI.');
+    MONGODB_URI = MONGODB_URI.slice(1, -1);
   }
 
   if (cached.conn) {

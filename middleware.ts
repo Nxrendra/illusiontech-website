@@ -1,7 +1,41 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { jwtVerify } from 'jose';
 
-export function middleware(request: NextRequest) {
+const JWT_SECRET = process.env.JWT_SECRET;
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const tokenCookie = request.cookies.get('auth_token');
+
+  // 1. Check for a valid token on all admin routes except the login page
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+    // If there's no token or no secret key, redirect to login
+    if (!tokenCookie || !JWT_SECRET) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    try {
+      const key = new TextEncoder().encode(JWT_SECRET);
+      await jwtVerify(tokenCookie.value, key);
+      // Token is valid, allow the request to proceed
+    } catch (error) {
+      // Token is invalid, redirect to the login page
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
+
+  // 2. If a logged-in user tries to go to the login page, redirect them to the dashboard
+  if (pathname.startsWith('/admin/login') && tokenCookie && JWT_SECRET) {
+    try {
+      const key = new TextEncoder().encode(JWT_SECRET);
+      await jwtVerify(tokenCookie.value, key);
+      return NextResponse.redirect(new URL('/admin', request.url));
+    } catch (error) {
+      // Token is invalid, so let them stay on the login page.
+    }
+  }
+
   const isProd = process.env.NODE_ENV === 'production'
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
 
@@ -43,5 +77,9 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    // Match all request paths except for the ones starting with:
+    // - api (API routes), _next/static (static files), _next/image, favicon.ico
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
