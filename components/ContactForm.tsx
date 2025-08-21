@@ -87,6 +87,24 @@ const maintenanceContractLengths = [
   { value: 'flexible', label: 'Flexible' },
 ];
 
+// --- Pre-computed maps for budget/package synchronization ---
+const packageToBudgetMap = new Map(
+  projectBudgetRanges
+    .map((b, i) => (webDevServices[i] ? [webDevServices[i].id, b.value] : null))
+    .filter(Boolean) as [string, string][]
+);
+const budgetToPackageMap = new Map(Array.from(packageToBudgetMap.entries()).map(([k, v]) => [v, k]));
+
+const maintenanceToBudgetMap = new Map(
+  maintenanceBudgetRanges
+    .map((b, i) => (supportServices[i] ? [supportServices[i].id, b.value] : null))
+    .filter(Boolean) as [string, string][]
+);
+const budgetToMaintenanceMap = new Map(
+  Array.from(maintenanceToBudgetMap.entries()).map(([k, v]) => [v, k])
+);
+
+
 // Reusable Select component for a consistent look
 const Select = ({
   id,
@@ -228,21 +246,6 @@ function Form() {
     }
 
     const { name, value } = e.target;
-
-    // --- Dynamic mapping for budget/package sync ---
-    const packageToBudgetMap = new Map(
-      projectBudgetRanges
-        .map((b, i) => (webDevServices[i] ? [webDevServices[i].id, b.value] : null))
-        .filter(Boolean) as [string, string][]
-    );
-    const budgetToPackageMap = new Map(Array.from(packageToBudgetMap.entries()).map(([k, v]) => [v, k]));
-
-    const maintenanceToBudgetMap = new Map(
-      maintenanceBudgetRanges
-        .map((b, i) => (supportServices[i] ? [supportServices[i].id, b.value] : null))
-        .filter(Boolean) as [string, string][]
-    );
-    const budgetToMaintenanceMap = new Map(Array.from(maintenanceToBudgetMap.entries()).map(([k, v]) => [v, k]));
 
     if (name === 'newProjectPackage') {
       // User changed the package, so we update the budget

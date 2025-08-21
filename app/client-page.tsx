@@ -24,35 +24,17 @@ import {
 import { AnimatedSection, containerVariants } from '@/components/ui/AnimatedSection';
 import { createItemVariants, createItemVariantsLeft, createItemVariantsRight } from '@/components/ui/animations';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { HeroSection } from '@/components/home/HeroSection';
-import AnimatedStats from '@/components/home/AnimatedStats';
+import { HeroSection } from '@/components/home/HeroSection'; // Keep this
+import { WhyChooseUsSection } from '@/components/home/WhyChooseUsSection'; // Add this
+import { SectionHeader } from '@/components/home/SectionHeader';
+import { ServicesPreviewSection } from '@/components/home/ServicesPreviewSection';
+import { PrinciplesSection } from '@/components/home/PrinciplesSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 // RobotAssistant removed - no longer needed
 import { services } from '@/lib/data/services';
 import TechIcon from '@/components/home/TechIcon';
 
 import DOMPurify from 'isomorphic-dompurify';
-
-const whyChooseUsPoints = [
-  {
-    icon: <Zap className="w-8 h-8 text-accent" />,
-    title: 'Bespoke Solutions',
-    description:
-      "We don't use templates. Every website is uniquely designed and developed in Trinidad & Tobago to meet your specific business goals and brand identity.",
-  },
-  {
-    icon: <Code className="w-8 h-8 text-accent" />,
-    title: 'Cutting-Edge Technology',
-    description:
-      'Leveraging modern technologies like Next.js and TypeScript, we build fast, secure, and scalable websites for clients worldwide.',
-  },
-  {
-    icon: <ShieldCheck className="w-8 h-8 text-accent" />,
-    title: 'Transparent Collaboration',
-    description:
-      'From initial consultation to final delivery, we maintain clear communication, providing regular updates and transparent pricing with no hidden fees.',
-  },
-];
 
 const techStack = [
   {
@@ -99,27 +81,6 @@ const techStack = [
     name: 'Framer',
     icon: 'Framer',
     description: 'A powerful tool for creating stunning animations and interactive prototypes, like myself.',
-  },
-];
-
-const principles = [
-  {
-      icon: <Star className="w-10 h-10 text-accent" />,
-    title: 'Commitment to Quality',
-    description:
-      'We are obsessed with delivering pixel-perfect, high-performance products. Our commitment to quality is unwavering, ensuring every project we handle is a masterpiece of form and function.',
-  },
-  {
-    icon: <Users className="w-10 h-10 text-accent" />,
-    title: 'Client-Centric Approach',
-    description:
-      'Your success is our success. We believe in building strong, collaborative partnerships, listening to your needs, and aligning our strategy with your business objectives to achieve outstanding results.',
-  },
-  {
-     icon: <Zap className="w-10 h-10 text-accent" />,
-    title: 'Innovation at the Core',
-    description:
-      'We stay at the forefront of technology, constantly exploring new tools and techniques to deliver innovative solutions that give you a competitive edge in the digital landscape.',
   },
 ];
 
@@ -277,20 +238,6 @@ function AnimatedNumber({ value, suffix = '' }: { value: number, suffix?: string
   );
 }
 
-const SectionHeader = ({ title, description, isMobile }: { title: string; description: string; isMobile: boolean }) => (
-  <motion.div
-    variants={createItemVariants(isMobile)}
-    className="text-center mb-16 max-w-3xl mx-auto"
-  >
-    <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-      {title}
-    </h2>
-    <p className="mt-4 text-lg text-muted-foreground">
-      {description}
-    </p>
-  </motion.div>
-);
-
 export default function HomeClientPage() {
   const isMobile = useIsMobile();
   const [hoveredKnowledgeIndex, setHoveredKnowledgeIndex] = useState<number | null>(null);
@@ -309,66 +256,7 @@ export default function HomeClientPage() {
     <>
       <HeroSection />
 
-      {/* Why IllusionTech Section */}
-      <AnimatedSection
-        id="why-us"
-        className="min-h-screen flex items-center bg-background py-20"
-        viewport={{ once: false, amount: 0.2 }}
-      >
-        <div className="container grid md:grid-cols-2 gap-16 items-center">
-          <motion.div
-            variants={containerVariants}
-            className="max-w-lg space-y-4"
-          >
-            <motion.div variants={createItemVariantsLeft(isMobile)}>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Why Choose IllusionTech?
-              </h2>
-            </motion.div>
-            <motion.div variants={createItemVariantsLeft(isMobile)}>
-              <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-                We're more than just developers; we're your dedicated partners
-                in building a powerful online presence that drives growth and
-                delivers results.
-              </p>
-            </motion.div>
-            <motion.div variants={createItemVariantsLeft(isMobile)} className="pt-4">
-              <Button asChild size="large">
-                <Link href="/about">
-                  Learn More About Us <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </motion.div>
-          </motion.div>
-          <motion.div
-            variants={containerVariants}
-            className="space-y-6"
-          >
-            {whyChooseUsPoints.map((point) => (
-              <motion.div
-                key={point.title}
-                variants={createItemVariantsRight(isMobile)}
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 10 }}
-                className="group flex items-start gap-4 rounded-lg bg-card text-card-foreground p-4 shadow-sm transition-shadow duration-300 hover:shadow-xl"
-              >
-                <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-accent/10 rounded-full transition-colors duration-300 group-hover:bg-accent">
-                  {React.cloneElement(point.icon, {
-                    className:
-                      'w-8 h-8 text-accent transition-colors duration-300 group-hover:text-white',
-                  })}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-card-foreground mb-2">
-                    {point.title}
-                  </h3>
-                  <p className="text-muted-foreground">{point.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </AnimatedSection>
+      <WhyChooseUsSection />
 
       {/* Parallax Section 1 */}
       <ParallaxSection
@@ -396,75 +284,7 @@ export default function HomeClientPage() {
         </motion.div>
       </ParallaxSection>
 
-      {/* Services Preview Section */}
-      <AnimatedSection
-        id="services"
-        className="min-h-screen flex flex-col items-center justify-center bg-muted py-20"
-        viewport={{ once: false, amount: 0.2 }}
-      >
-        <div className="container">
-          <SectionHeader
-            title="Our Core Services"
-            description="We offer a range of services to bring your digital ideas to life, from simple landing pages to complex web applications."
-            isMobile={isMobile}
-          />
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {services.filter(s => s.isCoreService).map((service) => (
-              <motion.div
-                key={service.name}
-                variants={createItemVariants(isMobile)}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className={`relative bg-gradient-to-br ${service.theme.gradient} p-8 rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden`}
-              >
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                  <div className="absolute top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-25 animate-light-shimmer"></div>
-                </div>
-                <div className="mb-4">
-                  {React.cloneElement(service.icon, {
-                    className: `w-8 h-8 ${service.theme.accentClass}`,
-                  })}
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {service.name}
-                </h3>
-                <p className={`font-semibold mb-4 ${service.theme.accentClass}`}>
-                  {service.price}
-                </p>
-                <ul className="space-y-3 text-gray-300 flex-grow mb-8">
-                  {service.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-3">
-                      <CheckCircle2
-                        className={`w-5 h-5 ${service.theme.accentClass} flex-shrink-0`}
-                      />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  asChild
-                  className={`mt-auto ${service.theme.buttonClass} text-white`}
-                >
-                  <Link href={service.link}>
-                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </motion.div>
-            ))}
-          </motion.div>
-          <motion.div variants={createItemVariants(isMobile)} className="text-center mt-16">
-            <Button
-              asChild
-              size="large"
-            >
-              <Link href="/services">See All Services</Link>
-            </Button>
-          </motion.div>
-        </div>
-      </AnimatedSection>
+      <ServicesPreviewSection />
 
       {/* Animated Stats Section */}
       <ParallaxSection
@@ -499,47 +319,7 @@ export default function HomeClientPage() {
           </motion.div>
       </ParallaxSection>
 
-      {/* Our Principles Section */}
-      <AnimatedSection
-         id="principles"
-        className="py-20 md:py-28 bg-muted"
-        viewport={{ once: false, amount: 0.2 }}
-      >
-        <div className="container">
-          <motion.div
-            variants={createItemVariants(isMobile)}
-            className="text-center mb-16 max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Our Guiding Principles
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Our work is driven by a core set of values that ensure
-              excellence, partnership, and innovation in everything we create.
-            </p>
-          </motion.div>
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto"
-          >
-            {principles.map((principle) => (
-              <motion.div
-                key={principle.title}
-                variants={createItemVariants(isMobile)}
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-                className="bg-card text-card-foreground p-8 rounded-xl shadow-md text-center transition-shadow hover:shadow-lg"
-              >
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 bg-accent/10 rounded-full">
-                  {principle.icon}
-                </div>
-                <h3 className="text-xl font-bold text-card-foreground mb-2">{principle.title}</h3>
-                <p className="text-muted-foreground">{principle.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </AnimatedSection>
+      <PrinciplesSection />
 
       {/* Newsletter Section */}
       <NewsletterSection />
