@@ -1,10 +1,7 @@
-import { cookies } from 'next/headers';
 import { connectToDB } from '@/lib/mongoose';
-import { jwtVerify } from 'jose';
 import NewsletterSubscriber, { INewsletterSubscriber } from '@/lib/models/NewsletterSubscriber';
 import NewsletterManager from '@/components/admin/NewsletterManager';
-
-const JWT_SECRET = process.env.JWT_SECRET;
+import { verifyAdminSession } from '@/lib/auth-utils';
 
 // Type for serialized subscriber data, where ObjectId and Date are strings.
 type SerializedSubscriber = Omit<INewsletterSubscriber, 'subscribed_at' | '_id'> & {
@@ -13,22 +10,17 @@ type SerializedSubscriber = Omit<INewsletterSubscriber, 'subscribed_at' | '_id'>
 };
 
 async function getSubscribers(): Promise<{ subscribers?: SerializedSubscriber[]; error?: string }> {
-  const token = cookies().get('auth_token')?.value;
-  if (!token || !JWT_SECRET) {
-    return { error: 'Authentication required.' };
-  }
-
   try {
-    const secretKey = new TextEncoder().encode(JWT_SECRET);
-    await jwtVerify(token, secretKey);
+    await verifyAdminSession();
 
     await connectToDB();
     const subscribersData = await NewsletterSubscriber.find({}).sort({ subscribed_at: -1 }).lean();
     
     return { subscribers: JSON.parse(JSON.stringify(subscribersData)) };
   } catch (error) {
-    console.error("Failed to fetch subscribers:", error);
-    return { error: 'Session invalid. Please log in again.' };
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+    console.error("Failed to fetch subscribers:", errorMessage);
+    return { error: errorMessage };
   }
 }
 

@@ -1,12 +1,13 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/admin/layout.tsx
 import Link from 'next/link';
-import { Home, MessageSquare, Users, BarChart2, Mail } from 'lucide-react';
+import { Home, MessageSquare, Users, BarChart2, Mail, Newspaper } from 'lucide-react';
 import LogoutButton from '@/components/admin/LogoutButton';
 
 const navItems = [
   { href: '/admin/dashboard', icon: Home, label: 'Dashboard' },
   { href: '/admin/dashboard/chat-sessions', icon: MessageSquare, label: 'Chat Sessions' },
   { href: '/admin/dashboard/contact-submissions', icon: Mail, label: 'Contact Forms' },
+  { href: '/admin/dashboard/newsletter', icon: Newspaper, label: 'Newsletter' },
   { href: '/admin/dashboard/clients', icon: Users, label: 'Clients' },
   { href: '/admin/dashboard/analytics', icon: BarChart2, label: 'Analytics' },
 ];
