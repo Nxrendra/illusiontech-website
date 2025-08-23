@@ -1,11 +1,11 @@
 import { formatDistanceToNow } from 'date-fns';
 import { FileText, UserPlus, MessageSquare } from 'lucide-react';
-import { IContactSubmission } from '@/lib/models/ContactSubmission';
+import { IContactSubmissionData } from '@/lib/models/ContactSubmission';
 import { IClient } from '@/lib/models/Client';
 
 // A type to unify different kinds of activities
 type ActivityItem =
-  | { type: 'submission'; data: IContactSubmission & { _id: string; createdAt: string } }
+  | { type: 'submission'; data: IContactSubmissionData & { _id: string; createdAt: string } }
   | { type: 'client'; data: IClient & { _id: string; createdAt: string } }
   | { type: 'chat'; data: { sessionId: string; name: string; createdAt: string; lastMessage: string; } };
 
@@ -23,7 +23,7 @@ export function RecentActivity({
   clients,
   chats,
 }: {
-  submissions: (IContactSubmission & { _id: string; createdAt: string })[],
+  submissions: (IContactSubmissionData & { _id: string; createdAt: string })[],
   clients: (IClient & { _id: string; createdAt: string })[],
   chats: { sessionId: string; name: string; createdAt: string; lastMessage: string; }[],
 }) {

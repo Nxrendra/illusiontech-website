@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { IClient } from '@/lib/models/Client';
+import { services as allServicesData } from '@/lib/data/services';
 
 type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
   _id: string;
@@ -21,14 +22,14 @@ interface ClientFormProps {
   client: SerializedClient | null;
 }
 
-const servicePlans = ['Basic', 'Standard', 'Premium', 'E-commerce', 'Custom', 'Maintenance'];
+const servicePlans = allServicesData.map((s) => s.name);
 const statuses = ['Active', 'Inactive', 'On-Hold', 'Completed'];
 
 export default function ClientForm({ isOpen, onClose, onSave, client }: ClientFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    servicePlan: 'Basic',
+    servicePlan: servicePlans[0] || '',
     status: 'Active',
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -38,11 +39,11 @@ export default function ClientForm({ isOpen, onClose, onSave, client }: ClientFo
       setFormData({
         name: client.name,
         email: client.email,
-        servicePlan: client.servicePlan || 'Basic',
+        servicePlan: client.servicePlan || servicePlans[0] || '',
         status: client.status || 'Active',
       });
     } else {
-      setFormData({ name: '', email: '', servicePlan: 'Basic', status: 'Active' });
+      setFormData({ name: '', email: '', servicePlan: servicePlans[0] || '', status: 'Active' });
     }
   }, [client, isOpen]);
 

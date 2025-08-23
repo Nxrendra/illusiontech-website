@@ -1,58 +1,64 @@
-import { BarChart3, FileText, Wrench } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Users, Briefcase, FileText, MessageSquare, Rocket, ShieldCheck } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
-  value: string | number;
+  value: number;
   icon: React.ReactNode;
-  description: string;
 }
 
-const StatCard = ({ title, value, icon, description }: StatCardProps) => (
-  <div className="bg-card border border-border rounded-lg p-6 flex flex-col justify-between shadow-sm">
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <div className="text-accent">{icon}</div>
-      </div>
-      <p className="text-3xl font-bold text-foreground">{value}</p>
-    </div>
-    <p className="text-xs text-muted-foreground mt-2">{description}</p>
-  </div>
-);
+function StatCard({ title, value, icon }: StatCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
+  );
+}
 
 interface DashboardStatsProps {
-  totalSubmissions: number;
-  newProjectsCount: number;
-  maintenanceCount: number;
+  // Main dashboard props
+  clientCount?: number;
+  serviceCount?: number;
+  submissionCount?: number;
+  // Submission page props
+  totalSubmissions?: number;
+  newProjectsCount?: number;
+  maintenanceCount?: number;
 }
 
-export function DashboardStats({ totalSubmissions, newProjectsCount, maintenanceCount }: DashboardStatsProps) {
-  const stats: StatCardProps[] = [
-    {
-      title: 'Total Submissions',
-      value: totalSubmissions,
-      icon: <FileText className="h-5 w-5" />,
-      description: 'All inquiries received through the contact form.',
-    },
-    {
-      title: 'New Project Inquiries',
-      value: newProjectsCount,
-      icon: <BarChart3 className="h-5 w-5" />,
-      description: 'Potential new website or application builds.',
-    },
-    {
-      title: 'Support & Maintenance',
-      value: maintenanceCount,
-      icon: <Wrench className="h-5 w-5" />,
-      description: 'Requests for ongoing website support.',
-    },
-  ];
-
+export function DashboardStats({
+  clientCount,
+  serviceCount,
+  submissionCount,
+  totalSubmissions,
+  newProjectsCount,
+  maintenanceCount,
+}: DashboardStatsProps) {
   return (
-    <div className="grid gap-6 md:grid-cols-3">
-      {stats.map((stat) => (
-        <StatCard key={stat.title} {...stat} />
-      ))}
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Render main dashboard stats if clientCount is provided */}
+      {typeof clientCount === 'number' && (
+        <>
+          <StatCard title="Total Clients" value={clientCount} icon={<Users className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="Total Services" value={serviceCount ?? 0} icon={<Briefcase className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="Submissions" value={submissionCount ?? 0} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="Active Chats" value={0} icon={<MessageSquare className="h-4 w-4 text-muted-foreground" />} />
+        </>
+      )}
+      {/* Render submission-specific stats if totalSubmissions is provided */}
+      {typeof totalSubmissions === 'number' && (
+        <>
+          <StatCard title="Total Submissions" value={totalSubmissions} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="New Project Inquiries" value={newProjectsCount ?? 0} icon={<Rocket className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="Maintenance Inquiries" value={maintenanceCount ?? 0} icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />} />
+        </>
+      )}
     </div>
   );
 }

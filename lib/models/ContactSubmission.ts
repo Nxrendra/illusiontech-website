@@ -1,7 +1,7 @@
 // /Users/macbookair/Documents/IllusionTech-Development/lib/models/ContactSubmission.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IContactSubmission extends Document {
+export interface IContactSubmissionData {
   firstName: string;
   lastName: string;
   email: string;
@@ -13,9 +13,11 @@ export interface IContactSubmission extends Document {
   websiteURL?: string;
   budget?: string;
   timeline?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: string; // Will be a string after serialization
+  updatedAt?: string; // Will be a string after serialization
 }
+
+export interface IContactSubmission extends IContactSubmissionData, Document {}
 
 const ContactSubmissionSchema = new Schema<IContactSubmission>({
   firstName: { type: String, required: true },

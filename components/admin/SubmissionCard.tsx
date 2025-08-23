@@ -11,7 +11,13 @@ import {
   User,
   Wrench,
 } from 'lucide-react';
-import { IContactSubmission } from '@/lib/models/ContactSubmission';
+import { IContactSubmissionData } from '@/lib/models/ContactSubmission';
+
+type SerializedSubmission = IContactSubmissionData & {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 const serviceTypeLabels: { [key: string]: string } = {
   'new-project': 'New Project',
@@ -73,7 +79,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode; label: stri
   );
 };
 
-export function SubmissionCard({ submission }: { submission: IContactSubmission }) {
+export function SubmissionCard({ submission }: { submission: SerializedSubmission }) {
   const {
     firstName, lastName, email, phoneNumber, message, serviceType, newProjectPackage, maintenancePlan,
     websiteURL, budget, timeline, createdAt

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { connectToDB } from '@/lib/mongoose';
 import { jwtVerify } from 'jose';
-import ContactSubmission, { IContactSubmission } from '@/lib/models/ContactSubmission';
+import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactSubmission';
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { SubmissionsChart } from '@/components/admin/SubmissionsChart';
 import { SubmissionCard } from '@/components/admin/SubmissionCard';
@@ -36,7 +36,7 @@ async function getSubmissions() {
 
 // Create a more specific type for submissions after they've been serialized.
 // This tells TypeScript that `_id` from MongoDB's ObjectId is now a string.
-type SerializedContactSubmission = IContactSubmission & { _id: string };
+type SerializedContactSubmission = IContactSubmissionData & { _id: string; createdAt: string; updatedAt: string; };
 
 export default async function ContactSubmissionsPage() {
   const { submissions, error } = (await getSubmissions()) as { submissions?: SerializedContactSubmission[], error?: string };
