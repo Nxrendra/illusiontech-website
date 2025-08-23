@@ -4,36 +4,37 @@ import { jwtVerify } from 'jose';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Helper function to verify the token, separating the logic for clarity.
+async function isTokenValid(token: string | undefined): Promise<boolean> {
+  if (!token || !JWT_SECRET) {
+    return false;
+  }
+  try {
+    const key = new TextEncoder().encode(JWT_SECRET);
+    await jwtVerify(token, key);
+    return true;
+  } catch (err) {
+    // It's common for tokens to be invalid, so logging can be noisy.
+    // Only log if you need to debug token issues.
+    return false;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const tokenCookie = request.cookies.get('auth_token');
+  const token = request.cookies.get('auth_token')?.value;
+  const tokenIsValid = await isTokenValid(token);
 
-  // 1. Check for a valid token on all admin routes except the login page
+  // 1. Protect admin routes: if not on login page and token is invalid, redirect to login.
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    // If there's no token or no secret key, redirect to login
-    if (!tokenCookie || !JWT_SECRET) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-
-    try {
-      const key = new TextEncoder().encode(JWT_SECRET);
-      await jwtVerify(tokenCookie.value, key);
-      // Token is valid, allow the request to proceed
-    } catch (error) {
-      // Token is invalid, redirect to the login page
+    if (!tokenIsValid) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
-  // 2. If a logged-in user tries to go to the login page, redirect them to the dashboard
-  if (pathname.startsWith('/admin/login') && tokenCookie && JWT_SECRET) {
-    try {
-      const key = new TextEncoder().encode(JWT_SECRET);
-      await jwtVerify(tokenCookie.value, key);
+  // 2. Redirect logged-in users from login page: if on login page and token is valid, redirect to dashboard.
+  if (pathname.startsWith('/admin/login') && tokenIsValid) {
       return NextResponse.redirect(new URL('/admin', request.url));
-    } catch (error) {
-      // Token is invalid, so let them stay on the login page.
-    }
   }
 
   const isProd = process.env.NODE_ENV === 'production'

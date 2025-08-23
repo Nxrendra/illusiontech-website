@@ -68,6 +68,39 @@ export async function sendEmail({ to, subject, html, text }: MailOptions) {
   }
 }
 
+interface BroadcastMailOptions {
+  recipientEmails: string[];
+  subject: string;
+  html: string;
+  text: string;
+}
+
+/**
+ * Sends a broadcast email to multiple recipients using BCC for privacy.
+ * @param {BroadcastMailOptions} mailOptions - The options for the broadcast email.
+ */
+export async function sendBroadcastEmail({ recipientEmails, subject, html, text }: BroadcastMailOptions) {
+  const mailer = getTransporter();
+  const fromEmail = process.env.EMAIL_FROM;
+
+  if (!mailer || !fromEmail) {
+    console.error('Email not sent: Email service is not configured.');
+    throw new Error('Email service is not configured on the server.');
+  }
+
+  const options = {
+    from: `"Illusion Tech" <${fromEmail}>`,
+    to: fromEmail, // Send to self
+    bcc: recipientEmails, // And BCC all subscribers for privacy
+    subject,
+    html,
+    text,
+  };
+
+  await mailer.sendMail(options);
+  console.log(`Broadcast email with subject "${subject}" sent to ${recipientEmails.length} recipients.`);
+}
+
 /**
  * Sends a welcome email to a new newsletter subscriber.
  * @param {string} toEmail - The email address of the new subscriber.

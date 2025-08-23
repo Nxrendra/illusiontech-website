@@ -39,6 +39,21 @@ export async function connectToDB() {
   // Using JSON.stringify makes it very clear if the variable contains extra quotes.
   console.log(`Attempting to connect with MONGODB_URI: ${JSON.stringify(MONGODB_URI)}`);
 
+  // Explicitly log the database name being connected to for easier debugging.
+  if (MONGODB_URI) {
+    try {
+      const url = new URL(MONGODB_URI);
+      const dbName = url.pathname.substring(1);
+      if (dbName) {
+        console.log(`Connecting to database: "${dbName}"`);
+      } else {
+        console.warn('MONGODB_URI is missing a database name. The driver will default to the "test" database.');
+      }
+    } catch (e) {
+      console.warn('Could not parse MONGODB_URI to determine database name.');
+    }
+  }
+
   if (!MONGODB_URI || MONGODB_URI.trim() === '') {
     throw new Error(
       'The MONGODB_URI environment variable is not defined or is empty. Please set it in your hosting provider\'s environment settings.'
