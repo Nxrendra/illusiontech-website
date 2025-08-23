@@ -32,21 +32,45 @@ export async function POST(request: Request) {
 
     // 2. Connect to DB and check for existing subscriber
     await connectToDB();
+    console.log('Database connection established.');
 
-    const existingSubscriber = await NewsletterSubscriber.findOne({ email: lowercasedEmail });
+    // Ensure the unique index on the email field is enforced before querying.
+    // This is a robust way to prevent duplicates in serverless environments.
+    await NewsletterSubscriber.syncIndexes();
+    console.log('Indexes are synced.');
+
+    const existingSubscriber = await NewsletterSubscriber.findOne({ email: lowercasedEmail }).lean();
     if (existingSubscriber) {
+      console.log(`Email already exists in DB: ${lowercasedEmail}`);
       return NextResponse.json({ message: 'This email is already subscribed.' }, { status: 409 });
     }
 
     // 3. Create new subscriber
-    await NewsletterSubscriber.create({ email: lowercasedEmail });
+    console.log('Attempting to create subscriber...');
+    const subscriber = new NewsletterSubscriber({ email: lowercasedEmail });
+    const newSubscriber = await subscriber.save();
+
+    if (!newSubscriber) {
+      // This is a critical check. If creation fails without an error, this will catch it.
+      console.error('Database write failed: newSubscriber is null or undefined.');
+      throw new Error('Failed to save subscriber to the database.');
+    }
+    console.log(`Subscriber created successfully with ID: ${newSubscriber._id}`);
 
     // 4. Send welcome email (fire-and-forget)
-    sendWelcomeEmail(email);
+    sendWelcomeEmail(email).catch(err => {
+      console.error(`Failed to send welcome email to ${lowercasedEmail}:`, err);
+    });
 
     return NextResponse.json({ message: "You're subscribed! Thank you for joining our newsletter." }, { status: 201 });
 
   } catch (error) {
+    // This specifically catches the database error for a unique constraint violation.
+    // The 'code' property is a non-standard but common way to check for specific DB errors.
+    if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+      return NextResponse.json({ message: 'This email is already subscribed.' }, { status: 409 });
+    }
+
     console.error('Newsletter API Error:', error);
     return NextResponse.json(
       { message: 'An unexpected error occurred. Please try again later.' },
