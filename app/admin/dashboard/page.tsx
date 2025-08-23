@@ -3,7 +3,7 @@ import { getAnalyticsData } from '@/lib/admin-analytics';
 import { StatCard } from '@/components/admin/StatCard';
 import { DashboardCharts } from '@/components/admin/DashboardCharts';
 import { RecentActivity } from '@/components/admin/RecentActivity';
-import { Users, FileText, CheckCircle, BarChart2, MessageSquare } from 'lucide-react';
+import { Users, FileText, BarChart2, MessageSquare, Newspaper } from 'lucide-react';
 
 export default async function AdminDashboardPage() {
   const data = await getAnalyticsData();
@@ -27,9 +27,10 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <StatCard title="Total Submissions" value={data.totalSubmissions} icon={<FileText className="h-5 w-5" />} description="From contact form" />
         <StatCard title="Total Clients" value={data.totalClients} icon={<Users className="h-5 w-5" />} description={`${data.activeClients} active`} />
+        <StatCard title="Newsletter Subscribers" value={data.totalSubscribers} icon={<Newspaper className="h-5 w-5" />} description="Total subscribers" />
         <StatCard title="Chat Sessions" value={data.totalChatSessions} icon={<MessageSquare className="h-5 w-5" />} description="Total conversations" />
         <StatCard title="New This Month" value={data.newThisMonth} icon={<BarChart2 className="h-5 w-5" />} description="New clients added" />
       </div>

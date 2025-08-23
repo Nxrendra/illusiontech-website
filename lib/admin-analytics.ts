@@ -2,6 +2,7 @@ import { connectToDB } from '@/lib/mongoose';
 import ContactSubmission, { IContactSubmission } from '@/lib/models/ContactSubmission';
 import Client, { IClient } from '@/lib/models/Client';
 import Message from '@/lib/models/Message';
+import NewsletterSubscriber from '@/lib/models/NewsletterSubscriber';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
@@ -11,6 +12,7 @@ export type SerializedAnalyticsData = {
   totalClients: number;
   activeClients: number;
   totalChatSessions: number;
+  totalSubscribers: number;
   newThisMonth: number;
   submissionsOverTime: { date: string; count: number }[];
   clientsByPlan: { name: string; value: number }[];
@@ -24,7 +26,7 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
   const JWT_SECRET = process.env.JWT_SECRET;
   const token = cookies().get('auth_token')?.value;
   if (!token || !JWT_SECRET) {
-    return { error: 'Authentication required.' } as SerializedAnalyticsData;
+    return { error: 'Authentication required.', totalSubscribers: 0 } as SerializedAnalyticsData;
   }
 
   try {
@@ -37,7 +39,7 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     // Fetch all data in parallel
-    const [totalSubmissions, recentSubmissions, submissionsOverTime, clientStats, totalChatSessions, recentChatSessions] =
+    const [totalSubmissions, recentSubmissions, submissionsOverTime, clientStats, totalChatSessions, recentChatSessions, totalSubscribers] =
       await Promise.all([
         // 1. Get total submission count
         ContactSubmission.countDocuments(),
@@ -96,6 +98,9 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
           },
         },
       ]),
+
+      // 7. Get total newsletter subscribers
+      NewsletterSubscriber.countDocuments(),
     ]);
 
     // Process the aggregated client data
@@ -115,6 +120,7 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
       totalClients,
       activeClients,
       totalChatSessions,
+      totalSubscribers,
       newThisMonth,
       submissionsOverTime, clientsByPlan: clientsByPlanData,
       recentSubmissions, recentClients,
@@ -123,6 +129,6 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
 
   } catch (error) {
     console.error('Admin analytics error:', error);
-    return { error: 'Session invalid or an error occurred.' } as SerializedAnalyticsData;
+    return { error: 'Session invalid or an error occurred.', totalSubscribers: 0 } as SerializedAnalyticsData;
   }
 }
