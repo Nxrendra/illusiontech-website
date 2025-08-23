@@ -17,6 +17,21 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+// We only want to attach these listeners once to avoid memory leaks.
+if (!mongoose.connection.listeners('connected').length) {
+  mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to DB.');
+  });
+
+  mongoose.connection.on('error', (err) => {
+    console.error('Mongoose connection error:', err);
+  });
+
+  mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose has been disconnected.');
+  });
+}
+
 export async function connectToDB() {
   let MONGODB_URI = process.env.MONGODB_URI;
 
@@ -37,14 +52,28 @@ export async function connectToDB() {
   }
 
   if (cached.conn) {
+    console.log('Using cached database connection.');
     return cached.conn;
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false }).then((mongoose) => {
-      return mongoose;
+    console.log('Creating new database connection promise.');
+    cached.promise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    }).then((mongooseInstance) => {
+      console.log('Database connection promise resolved.');
+      return mongooseInstance;
     });
   }
-  cached.conn = await cached.promise;
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null; // Reset promise on error
+    console.error('Database connection failed:', e);
+    throw e;
+  }
+
   return cached.conn;
 }
