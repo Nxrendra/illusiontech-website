@@ -4,14 +4,18 @@ import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MousePointerClick } from 'lucide-react';
 import { ServiceCard } from '@/components/ServiceCard';
-import { carouselServices as services } from '@/lib/data/services';
 import { Button } from '@/components/ui/Button';
+import { IServiceData } from '@/lib/models/Service';
 
 const DESKTOP_CARD_WIDTH = 280;
 const DESKTOP_CARD_HEIGHT = 380;
 const MOBILE_BREAKPOINT = 768;
 
-export const ServiceCarousel: React.FC = () => {
+interface ServiceCarouselProps {
+  services: (IServiceData & { icon: React.ReactElement })[];
+}
+
+export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {
   const [rotation, setRotation] = useState(0); // This represents the number of steps rotated
   // Default to a non-mobile value on the server. The actual value will be set on the client.
   const [winW, setWinW] = useState<number>(1024);

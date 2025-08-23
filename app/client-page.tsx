@@ -33,8 +33,8 @@ import { TechStackSection } from '@/components/home/TechStackSection';
 import { ProcessSection } from '@/components/home/ProcessSection';
 import { DigitalKnowledgeSection } from '@/components/home/DigitalKnowledgeSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
-// RobotAssistant removed - no longer needed
-import { services } from '@/lib/data/services';
+import { ServiceWithIcon } from './page';
+
 import TechIcon from '@/components/home/TechIcon';
 
 import DOMPurify from 'isomorphic-dompurify';
@@ -139,7 +139,11 @@ function AnimatedNumber({ value, suffix = '' }: { value: number, suffix?: string
   );
 }
 
-export default function HomeClientPage() {
+interface HomeClientPageProps {
+  services: ServiceWithIcon[];
+}
+
+export default function HomeClientPage({ services }: HomeClientPageProps) {
   const isMobile = useIsMobile();
   const [hoveredKnowledgeIndex, setHoveredKnowledgeIndex] = useState<number | null>(null);
   // RobotAssistant removed - no longer needed
@@ -185,7 +189,7 @@ export default function HomeClientPage() {
         </motion.div>
       </ParallaxSection>
 
-      <ServicesPreviewSection />
+      <ServicesPreviewSection services={services} />
 
       {/* Animated Stats Section */}
       <ParallaxSection

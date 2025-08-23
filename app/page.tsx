@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
 import HomeClientPage from './client-page';
+import ServiceModel, { IServiceData } from '@/lib/models/Service';
+import { getIcon } from '@/lib/get-icon';
+import React from 'react';
+import { connectToDB } from '@/lib/mongoose';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,11 +47,39 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export type ServiceWithIcon = Omit<IServiceData, 'icon'> & {
+  _id: string;
+  icon: React.ReactElement;
+};
+
+async function getServices(): Promise<ServiceWithIcon[]> {
+  try {
+    await connectToDB();
+    // Fetch core services, limit to 4 for the preview, and sort for consistency.
+    const servicesFromDB = await ServiceModel.find({ isCoreService: true }).sort({ name: 1 }).limit(4).lean();
+
+    // Properly serialize the data to convert complex types (like ObjectId) to simple strings.
+    const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
+
+    // Map the icon string from the DB to the actual icon component.
+    const servicesWithIcons = serializedServices.map(service => ({
+      ...service,
+      icon: getIcon(service.icon) as React.ReactElement,
+    }));
+
+    return servicesWithIcons;
+  } catch (error) {
+    console.error("Failed to fetch services for homepage:", error);
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const services = await getServices();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
-      <HomeClientPage />
+      <HomeClientPage services={services} />
     </>
   );
 }

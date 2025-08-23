@@ -7,32 +7,31 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
-import { Service } from '@/lib/data/services';
+import { CheckCircle2, ArrowRight, Users, LucideIcon } from 'lucide-react';
+import { IServiceData } from '@/lib/models/Service';
 import { cn } from '@/lib/utils';
 
-// Extract the ID from the link hash
-const getServiceId = (link: string) => {
-  const parts = link.split('#');
-  return parts.length > 1 ? parts[1] : '';
-};
+interface ServiceDetailCardProps {
+  service: IServiceData & { _id: string; icon: React.ReactElement };
+  isOdd: boolean;
+}
 
-const ServiceDetailCard = ({ service, isOdd }: { service: Service; isOdd: boolean }) => {
+const ServiceDetailCard = ({ service, isOdd }: ServiceDetailCardProps) => {
   const { theme, systemTheme } = useTheme();
+  const serviceTheme = service.theme || {};
   const effectiveTheme = theme === 'system' ? systemTheme : theme;
   const isLightMode = effectiveTheme === 'light';
 
   // In light mode, use a consistent blue for accents. In dark mode, use the service's theme color.
-  const accentColorClass = isLightMode ? 'text-primary' : service.theme.accentClass;
+  const accentColorClass = isLightMode ? 'text-primary' : (serviceTheme.accentClass || 'text-primary');
 
-  const serviceId = getServiceId(service.link);
-  const isPriceRange = service.price.includes(' - ');
+  const isPriceRange = service.price?.includes(' - ');
   const priceLabel = isPriceRange ? 'Estimated Price' : 'Starting From';
   const itemVariants = createItemVariants(false); // Create variants for desktop
 
   return (
     <AnimatedSection
-      id={serviceId}
+      id={service.name.toLowerCase().replace(/\s+/g, '-')}
       className={`min-h-screen flex flex-col justify-center py-20 md:py-28 ${isOdd ? 'bg-muted' : 'bg-background'}`}
     >
       <div className="container flex flex-col justify-center h-full">
@@ -53,7 +52,7 @@ const ServiceDetailCard = ({ service, isOdd }: { service: Service; isOdd: boolea
           >
             <h3 className="text-2xl font-semibold text-foreground mb-4">Key Features</h3>
             <ul className={cn('space-y-3 text-muted-foreground inline-block', isOdd ? 'text-right' : 'text-left')}>
-              {service.features.map((feature) => (
+              {(service.features || []).map((feature) => (
                 <li key={feature} className={cn('flex items-center gap-3', isOdd ? 'flex-row-reverse' : '')}>
                   <CheckCircle2 className={cn('w-5 h-5 flex-shrink-0', accentColorClass)} />
                   <span>{feature}</span>
@@ -78,7 +77,7 @@ const ServiceDetailCard = ({ service, isOdd }: { service: Service; isOdd: boolea
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className={cn(
               'md:order-2 flex items-center justify-center p-8 rounded-3xl h-80 md:h-96 shadow-2xl',
-              isLightMode ? 'bg-primary' : service.theme.gradient
+              isLightMode ? 'bg-primary' : (serviceTheme.gradient || 'bg-primary')
             )}
           >
             {React.cloneElement(service.icon, {
@@ -106,12 +105,12 @@ const ServiceDetailCard = ({ service, isOdd }: { service: Service; isOdd: boolea
               )}
             >
               <p className="text-sm text-muted-foreground">{priceLabel}</p>
-              <p className={cn('text-4xl font-bold', accentColorClass)}>{service.price}</p>
+              <p className={cn('text-4xl font-bold', accentColorClass)}>{service.price || 'Contact for Quote'}</p>
               <Button
                 asChild
                 className={cn(
                   'w-full mt-4 text-white font-semibold transition-all',
-                  service.theme.buttonClass
+                  serviceTheme.buttonClass || 'bg-primary hover:bg-primary/90'
                 )}>
                 <Link href="/contact">
                   Request a Quote <ArrowRight className="ml-2 h-4 w-4" />
