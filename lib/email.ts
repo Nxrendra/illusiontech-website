@@ -75,10 +75,6 @@ interface BroadcastMailOptions {
   text: string;
 }
 
-/**
- * Sends a broadcast email to multiple recipients using BCC for privacy.
- * @param {BroadcastMailOptions} mailOptions - The options for the broadcast email.
- */
 export async function sendBroadcastEmail({ recipientEmails, subject, html, text }: BroadcastMailOptions) {
   const mailer = getTransporter();
   const fromEmail = process.env.EMAIL_FROM;
@@ -88,17 +84,36 @@ export async function sendBroadcastEmail({ recipientEmails, subject, html, text 
     throw new Error('Email service is not configured on the server.');
   }
 
-  const options = {
-    from: `"Illusion Tech" <${fromEmail}>`,
-    to: fromEmail, // Send to self
-    bcc: recipientEmails, // And BCC all subscribers for privacy
-    subject,
-    html,
-    text,
-  };
+  // A safe batch size for many email providers is around 50.
+  const BATCH_SIZE = 50;
 
-  await mailer.sendMail(options);
-  console.log(`Broadcast email with subject "${subject}" sent to ${recipientEmails.length} recipients.`);
+  for (let i = 0; i < recipientEmails.length; i += BATCH_SIZE) {
+    const batch = recipientEmails.slice(i, i + BATCH_SIZE);
+
+    const options = {
+      from: `"Illusion Tech" <${fromEmail}>`,
+      // Sending to yourself and BCC'ing the list is a good practice.
+      to: fromEmail,
+      bcc: batch,
+      subject,
+      html,
+      text,
+    };
+
+    try {
+      await mailer.sendMail(options);
+      console.log(`Broadcast email batch sent to ${batch.length} recipients.`);
+      // Optional: add a small delay between batches to avoid being rate-limited by your email provider.
+      if (recipientEmails.length > BATCH_SIZE) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+      }
+    } catch (error) {
+      console.error(`Failed to send broadcast batch starting at index ${i}:`, error);
+      // We log the error but continue to the next batch.
+    }
+  }
+
+  console.log(`Broadcast email with subject "${subject}" has finished sending to all recipients.`);
 }
 
 /**

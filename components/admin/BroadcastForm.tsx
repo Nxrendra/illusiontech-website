@@ -3,9 +3,16 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
 import { toast } from 'sonner';
 import { Loader2, Send } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the RichTextEditor to ensure it only loads on the client-side.
+// We also provide a loading component for a better user experience.
+const RichTextEditor = dynamic(() => import('./RichTextEditor'), {
+  ssr: false,
+  loading: () => <div className="h-[405px] w-full bg-muted rounded-md animate-pulse" />,
+});
 
 interface BroadcastFormProps {
   subscriberCount: number;
@@ -18,7 +25,8 @@ export default function BroadcastForm({ subscriberCount }: BroadcastFormProps) {
 
   const handleBroadcast = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject || !htmlBody) {
+    // Check for empty editor state, as Quill might return an empty paragraph tag.
+    if (!subject || !htmlBody || htmlBody === '<p><br></p>') {
       toast.error('Please fill out both the subject and email body.');
       return;
     }
@@ -33,6 +41,7 @@ export default function BroadcastForm({ subscriberCount }: BroadcastFormProps) {
         body: JSON.stringify({
           subject,
           htmlBody,
+          // The textBody generation remains the same and is still a good idea for email clients that don't render HTML.
           textBody: htmlBody.replace(/<[^>]*>?/gm, ''),
         }),
       });
@@ -61,9 +70,14 @@ export default function BroadcastForm({ subscriberCount }: BroadcastFormProps) {
         <Input id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Your amazing newsletter subject" required disabled={isSending} />
       </div>
       <div>
-        <label htmlFor="htmlBody" className="block text-sm font-medium text-foreground mb-2">Email Body (HTML)</label>
-        <Textarea id="htmlBody" value={htmlBody} onChange={(e) => setHtmlBody(e.target.value)} placeholder="<h1>Hello Subscribers!</h1><p>Here's your weekly update...</p>" required rows={15} disabled={isSending} className="font-mono" />
-        <p className="text-xs text-muted-foreground mt-2">You can use HTML tags for formatting.</p>
+        <label className="block text-sm font-medium text-foreground mb-2">Email Body</label>
+        <RichTextEditor
+          value={htmlBody}
+          onChange={setHtmlBody}
+          placeholder="<h1>Hello Subscribers!</h1><p>Here's your weekly update...</p>"
+          disabled={isSending}
+        />
+        <p className="text-xs text-muted-foreground mt-2">A rich text editor with HTML support.</p>
       </div>
       <Button type="submit" disabled={isSending || subscriberCount === 0} className="w-full sm:w-auto">
         {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
