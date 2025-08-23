@@ -12,7 +12,9 @@ const NewsletterSubscriberSchema = new Schema<INewsletterSubscriber>({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please fill a valid email address'],
+    // Using a more common and slightly more specific regex for email validation, aligned with other models.
+    // Also corrected the typo in the error message.
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email address.'],
   },
   subscribed_at: {
     type: Date,
