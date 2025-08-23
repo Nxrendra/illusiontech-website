@@ -25,7 +25,7 @@ interface ServiceFormProps {
 
 const serviceTypes: IService['type'][] = ['web-development', 'design', 'automation', 'support', 'support-main'];
 
-const initialFormData: Omit<IServiceData, 'id' | 'icon'> = {
+const initialFormData: Omit<IServiceData, 'icon'> = {
   name: '',
   description: '',
   longDescription: '',
@@ -80,31 +80,31 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
   };
 
   const handleFeatureChange = (index: number, value: string) => {
-    const newFeatures = [...formData.features];
+    const newFeatures = [...(formData.features || [])];
     newFeatures[index] = value;
     setFormData(prev => ({ ...prev, features: newFeatures }));
   };
 
   const addFeature = () => {
-    setFormData(prev => ({ ...prev, features: [...prev.features, ''] }));
+    setFormData(prev => ({ ...prev, features: [...(prev.features || []), ''] }));
   };
 
   const removeFeature = (index: number) => {
-    setFormData(prev => ({ ...prev, features: prev.features.filter((_, i) => i !== index) }));
+    setFormData(prev => ({ ...prev, features: (prev.features || []).filter((_, i) => i !== index) }));
   };
 
   const handleKeyFeatureChange = (index: number, field: 'title' | 'description', value: string) => {
-    const newKeyFeatures = [...formData.keyFeatures];
+    const newKeyFeatures = [...(formData.keyFeatures || [])];
     newKeyFeatures[index] = { ...newKeyFeatures[index], [field]: value };
     setFormData(prev => ({ ...prev, keyFeatures: newKeyFeatures }));
   };
 
   const addKeyFeature = () => {
-    setFormData(prev => ({ ...prev, keyFeatures: [...prev.keyFeatures, { title: '', description: '' }] }));
+    setFormData(prev => ({ ...prev, keyFeatures: [...(prev.keyFeatures || []), { title: '', description: '' }] }));
   };
 
   const removeKeyFeature = (index: number) => {
-    setFormData(prev => ({ ...prev, keyFeatures: prev.keyFeatures.filter((_, i) => i !== index) }));
+    setFormData(prev => ({ ...prev, keyFeatures: (prev.keyFeatures || []).filter((_, i) => i !== index) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,7 +167,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
               <Button type="button" variant="ghost" size="sm" onClick={addFeature}><PlusCircle className="mr-2 h-4 w-4" /> Add Feature</Button>
             </div>
             <div className="space-y-2">
-              {formData.features.map((feature, index) => (
+              {(formData.features || []).map((feature, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <Input value={feature} onChange={(e) => handleFeatureChange(index, e.target.value)} placeholder={`Feature #${index + 1}`} />
                   <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(index)}><XCircle className="h-4 w-4 text-destructive" /></Button>
@@ -182,7 +182,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
               <Label className="text-base font-semibold">Key Features</Label>
               <Button type="button" variant="ghost" size="sm" onClick={addKeyFeature}><PlusCircle className="mr-2 h-4 w-4" /> Add Key Feature</Button>
             </div>
-            {formData.keyFeatures.map((kf, index) => (
+            {(formData.keyFeatures || []).map((kf, index) => (
               <div key={index} className="space-y-2 rounded-md border p-3 relative bg-background">
                 <Button type="button" variant="ghost" size="icon" className="absolute top-1 right-1 h-7 w-7" onClick={() => removeKeyFeature(index)}><XCircle className="h-4 w-4 text-destructive" /></Button>
                 <div className="space-y-1"><Label htmlFor={`kf-title-${index}`}>Title</Label><Input id={`kf-title-${index}`} value={kf.title} onChange={(e) => handleKeyFeatureChange(index, 'title', e.target.value)} /></div>

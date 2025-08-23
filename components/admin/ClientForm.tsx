@@ -7,8 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import { IClient } from '@/lib/models/Client';
-import { services as allServicesData } from '@/lib/data/services';
+import type { IClient } from '@/lib/models/Client';
 
 type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
   _id: string;
@@ -20,12 +19,12 @@ interface ClientFormProps {
   onClose: () => void;
   onSave: (client: SerializedClient) => void;
   client: SerializedClient | null;
+  servicePlans: string[];
 }
 
-const servicePlans = allServicesData.map((s) => s.name);
 const statuses = ['Active', 'Inactive', 'On-Hold', 'Completed'];
 
-export default function ClientForm({ isOpen, onClose, onSave, client }: ClientFormProps) {
+export default function ClientForm({ isOpen, onClose, onSave, client, servicePlans }: ClientFormProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,7 +44,7 @@ export default function ClientForm({ isOpen, onClose, onSave, client }: ClientFo
     } else {
       setFormData({ name: '', email: '', servicePlan: servicePlans[0] || '', status: 'Active' });
     }
-  }, [client, isOpen]);
+  }, [client, isOpen, servicePlans]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

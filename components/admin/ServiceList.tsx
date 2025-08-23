@@ -15,11 +15,12 @@ type SerializedService = IServiceData & {
 
 interface ServiceListProps {
   services: SerializedService[];
-  onEdit: (service: SerializedService) => void;
-  onRemove: (id: string) => Promise<void>;
+  onEdit?: (service: SerializedService) => void;
+  onRemove?: (id: string) => Promise<void>;
+  isReadOnly?: boolean;
 }
 
-export default function ServiceList({ services, onEdit, onRemove }: ServiceListProps) {
+export default function ServiceList({ services, onEdit, onRemove, isReadOnly }: ServiceListProps) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [serviceToRemove, setServiceToRemove] = useState<SerializedService | null>(null);
@@ -30,7 +31,7 @@ export default function ServiceList({ services, onEdit, onRemove }: ServiceListP
   };
 
   const confirmRemove = async () => {
-    if (!serviceToRemove) return;
+    if (!serviceToRemove || !onRemove) return;
     setIsDeleting(serviceToRemove._id);
     await onRemove(serviceToRemove._id);
     setIsDeleting(null);
@@ -42,7 +43,7 @@ export default function ServiceList({ services, onEdit, onRemove }: ServiceListP
     return (
       <div className="text-center py-16 border-2 border-dashed border-border rounded-lg">
         <h3 className="text-lg font-semibold text-foreground">No Services Found</h3>
-        <p className="text-muted-foreground mt-2 text-sm">Add a new service to get started. You may need to run a seeding script to populate initial data.</p>
+        <p className="text-muted-foreground mt-2 text-sm">{isReadOnly ? 'Services will appear here once added.' : 'Add a new service to get started.'}</p>
       </div>
     );
   }
@@ -57,7 +58,7 @@ export default function ServiceList({ services, onEdit, onRemove }: ServiceListP
               <TableHead>Type</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Flags</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {!isReadOnly && <TableHead className="text-right">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -65,31 +66,33 @@ export default function ServiceList({ services, onEdit, onRemove }: ServiceListP
               <TableRow key={service._id}>
                 <TableCell className="font-medium">{service.name}</TableCell>
                 <TableCell><Badge variant="secondary">{service.type}</Badge></TableCell>
-                <TableCell>{service.price}</TableCell>
+                <TableCell>{service.price || <span className="text-muted-foreground/60">Not set</span>}</TableCell>
                 <TableCell className="flex items-center gap-2">
                   {service.featured && <Badge><Star className="mr-1 h-3 w-3" /> Featured</Badge>}
                   {service.isCoreService && <Badge variant="outline"><CheckCircle className="mr-1 h-3 w-3" /> Core</Badge>}
                 </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(service)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        <span>Edit</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleRemoveClick(service)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                {!isReadOnly && onEdit && onRemove && (
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onEdit(service)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Edit</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleRemoveClick(service)} className="text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

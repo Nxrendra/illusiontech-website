@@ -4,19 +4,19 @@ import mongoose, { Schema, Document, models } from 'mongoose';
 export interface IServiceData {
   type: 'web-development' | 'design' | 'automation' | 'support' | 'support-main';
   name: string;
-  icon: string; // Storing icon name as a string
-  price: string;
-  audience: string;
-  description: string;
-  longDescription: string;
-  timeline: string;
-  features: string[];
-  keyFeatures: { title: string; description: string }[];
-  link: string;
-  theme: {
-    gradient: string;
-    accentClass: string;
-    buttonClass: string;
+  icon?: string; // Storing icon name as a string
+  price?: string;
+  audience?: string;
+  description?: string;
+  longDescription?: string;
+  timeline?: string;
+  features?: string[];
+  keyFeatures?: { title: string; description: string }[];
+  link?: string;
+  theme?: {
+    gradient?: string;
+    accentClass?: string;
+    buttonClass?: string;
   };
   featured?: boolean;
   isCoreService?: boolean;
@@ -28,22 +28,21 @@ export interface IServiceData {
 export interface IService extends IServiceData, Document {}
 
 const ServiceSchema: Schema = new Schema({
-  id: { type: String, required: true, unique: true },
   type: { type: String, required: true },
   name: { type: String, required: true },
-  icon: { type: String, required: true },
-  price: { type: String, required: true },
-  audience: { type: String, required: true },
-  description: { type: String, required: true },
-  longDescription: { type: String, required: true },
-  timeline: { type: String, required: true },
-  features: [{ type: String }],
-  keyFeatures: [{ title: { type: String }, description: { type: String } }],
-  link: { type: String, required: true },
+  icon: { type: String },
+  price: { type: String },
+  audience: { type: String },
+  description: { type: String },
+  longDescription: { type: String },
+  timeline: { type: String },
+  features: { type: [String], default: [] },
+  keyFeatures: { type: [{ title: String, description: String }], default: [] },
+  link: { type: String },
   theme: {
-    gradient: { type: String, required: true },
-    accentClass: { type: String, required: true },
-    buttonClass: { type: String, required: true },
+    gradient: { type: String },
+    accentClass: { type: String },
+    buttonClass: { type: String },
   },
   featured: { type: Boolean, default: false },
   isCoreService: { type: Boolean, default: false },

@@ -15,9 +15,10 @@ type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
 
 interface ClientManagerProps {
   initialClients: SerializedClient[];
+  serviceNames: string[];
 }
 
-export default function ClientManager({ initialClients }: ClientManagerProps) {
+export default function ClientManager({ initialClients, serviceNames }: ClientManagerProps) {
   const [clients, setClients] = useState(initialClients);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<SerializedClient | null>(null);
@@ -79,7 +80,7 @@ export default function ClientManager({ initialClients }: ClientManagerProps) {
 
       <ClientList clients={clients} onEdit={handleEditClick} onRemove={handleRemove} />
 
-      <ClientForm isOpen={isFormOpen} onClose={handleFormClose} onSave={handleSave} client={editingClient} />
+      <ClientForm isOpen={isFormOpen} onClose={handleFormClose} onSave={handleSave} client={editingClient} servicePlans={serviceNames} />
     </div>
   );
 }

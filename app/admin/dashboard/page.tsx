@@ -6,7 +6,9 @@ import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactS
 
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { RecentActivity } from '@/components/admin/RecentActivity';
-import ServiceManager from '@/components/admin/ServiceManager';
+import ServiceList from '@/components/admin/ServiceList';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 
 type SerializedService = IServiceData & { _id: string; createdAt: string; };
 type SerializedClient = IClient & { _id: string; createdAt: string; };
@@ -65,7 +67,15 @@ export default async function DashboardPage() {
         submissionCount={submissions?.length || 0}
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="lg:col-span-4"><ServiceManager initialServices={services || []} /></div>
+        <div className="lg:col-span-4 bg-muted/50 p-6 rounded-lg border">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-foreground">Service Offerings</h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/admin/dashboard/services">Manage Services</Link>
+            </Button>
+          </div>
+          <ServiceList services={services || []} isReadOnly={true} />
+        </div>
         <div className="lg:col-span-3"><RecentActivity submissions={submissions || []} clients={clients || []} chats={[]} /></div>
       </div>
     </div>
