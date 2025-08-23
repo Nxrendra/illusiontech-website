@@ -6,11 +6,23 @@ import type { default as ReactQuillType, ReactQuillProps } from 'react-quill';
 import { toast } from 'sonner';
 import 'react-quill/dist/quill.snow.css'; // Import Quill's snow theme styles
 
+// Whitelist of fonts to display in the toolbar.
+const FONT_WHITELIST = [
+  'sans-serif', 'serif', 'monospace',
+  'arial', 'comic-sans-ms', 'courier-new', 'georgia', 'helvetica',
+  'lucida-sans-unicode', 'tahoma', 'times-new-roman', 'trebuchet-ms', 'verdana'
+];
+
 // Dynamically import ReactQuill to prevent SSR issues, as it needs the `window` object.
 // The `ref` prop is not forwarded by `next/dynamic`, so we need to create a wrapper
 // that accepts a `forwardedRef` prop and passes it to the underlying `ReactQuill` instance.
 const ReactQuill = dynamic(async () => {
   const { default: RQ } = await import('react-quill');
+
+  // Add our desired fonts to Quill's whitelist.
+  const Font = RQ.Quill.import('formats/font');
+  Font.whitelist = FONT_WHITELIST;
+  RQ.Quill.register(Font, true);
 
   // eslint-disable-next-line react/display-name
   return ({ forwardedRef, ...props }: { forwardedRef: Ref<ReactQuillType> } & ReactQuillProps) => (
@@ -86,7 +98,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
   const modules = useMemo(() => ({
     toolbar: {
       container: [
-        [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
+        [{ 'header': [1, 2, 3, false] }, { 'font': FONT_WHITELIST }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
         [{ 'color': [] }, { 'background': [] }],
         [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
