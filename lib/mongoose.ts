@@ -89,16 +89,28 @@ export async function connectToDB() {
     }
   }
 
+  // Ensure we have a connection before proceeding.
+  if (!cached.conn) {
+    // This should ideally not be reached if the logic above is sound,
+    // but it acts as a type guard and a runtime safeguard.
+    throw new Error('Mongoose connection failed and is not available.');
+  }
+
   // --- One-time Index Cleanup ---
   // This block will run for both new and cached connections, but the logic inside
   // ensures the index check and drop operation only happens once per server instance.
   try {
     if (!(global as any)._legacyIndexDropped) {
-      const servicesCollection = mongoose.connection.db.collection('services');
-      if (await servicesCollection.indexExists('id_1')) {
-        console.log('Found legacy unique index "id_1" on services collection. Attempting to drop it.');
-        await servicesCollection.dropIndex('id_1');
-        console.log('Successfully dropped legacy index "id_1".');
+      // The `db` object should be available after a successful connection.
+      // This check satisfies TypeScript's strict null checks.
+      const db = cached.conn.connection.db;
+      if (db) {
+        const servicesCollection = db.collection('services');
+        if (await servicesCollection.indexExists('id_1')) {
+          console.log('Found legacy unique index "id_1" on services collection. Attempting to drop it.');
+          await servicesCollection.dropIndex('id_1');
+          console.log('Successfully dropped legacy index "id_1".');
+        }
       }
       (global as any)._legacyIndexDropped = true;
     }
