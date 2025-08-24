@@ -15,7 +15,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 
-const iconMap: { [key: string]: LucideIcon } = {
+export const iconMap: { [key: string]: LucideIcon } = {
   Code,
   Brush,
   Bot,
@@ -28,6 +28,8 @@ const iconMap: { [key: string]: LucideIcon } = {
   BarChart2,
   PenTool,
 };
+
+export const iconNames = Object.keys(iconMap);
 
 export const getIcon = (name?: string): React.ReactElement | null => {
   if (!name || !iconMap[name]) {

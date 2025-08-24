@@ -84,6 +84,10 @@ module.exports = {
           '0%': { opacity: '1', transform: 'translateY(0)' },
           '100%': { opacity: '0', transform: 'translateY(10px)' },
         },
+        'light-shimmer': {
+          'from': { transform: 'translateX(-100%)' },
+          'to': { transform: 'translateX(100%)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -91,6 +95,7 @@ module.exports = {
         'fade-in-down': 'fade-in-down 0.5s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards 0.3s',
         'leave': 'leave 0.3s ease-in forwards',
+        'light-shimmer': 'light-shimmer 2s infinite',
       }
     },
   },

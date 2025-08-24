@@ -14,6 +14,7 @@ export interface IServiceData {
   features?: string[];
   keyFeatures?: { title: string; description: string }[];
   link?: string;
+  themeName?: string; // The name of the selected theme preset
   theme?: {
     gradient?: string;
     accentClass?: string;
@@ -41,6 +42,7 @@ const ServiceSchema: Schema = new Schema({
   features: { type: [String], default: [] },
   keyFeatures: { type: [{ title: String, description: String }], default: [] },
   link: { type: String },
+  themeName: { type: String, default: 'Default' },
   theme: {
     gradient: { type: String },
     accentClass: { type: String },
