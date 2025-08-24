@@ -55,8 +55,8 @@ const ServiceSchema: Schema = new Schema({
 // Pre-save hook to generate a unique, URL-friendly slug from the service name.
 // This ensures that every service has a consistent identifier for URLs and anchors.
 ServiceSchema.pre<IService>('save', async function(next) {
-  // Generate or update the slug if the name changes or it's a new document.
-  if (this.isNew || this.isModified('name')) {
+  // Generate the slug ONLY when the document is new. This makes the slug immutable.
+  if (this.isNew) {
     const generateBaseSlug = (name: string): string => {
       return name
         .toLowerCase()
@@ -72,13 +72,23 @@ ServiceSchema.pre<IService>('save', async function(next) {
     let counter = 1;
 
     // If a service with this slug already exists, append a number until we find a unique slug
-    while (await ServiceModel.findOne({ slug, _id: { $ne: this._id } })) {
+    // For new documents, we just need to check if the slug exists.
+    while (await ServiceModel.findOne({ slug })) {
       counter++;
       slug = `${baseSlug}-${counter}`;
     }
 
     this.slug = slug;
   }
+
+  // Always update the link if the slug or type has been modified.
+  // This ensures the link is always in sync with the slug and type.
+  if (this.isNew || this.isModified('type')) {
+    // The `web-development` services have their own page. Other services are sections on the main /services page.
+    const basePath = this.type === 'web-development' ? '/services/web-development' : '/services';
+    this.link = `${basePath}#${this.slug}`;
+  }
+
   next();
 });
 
