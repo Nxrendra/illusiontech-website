@@ -41,10 +41,6 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         isCarouselCard ? 'w-full h-full' : 'w-full sm:max-w-md', // Standalone card size
         className,
       )}
-      style={{
-        // ensure inner layout never shrinks smaller than parent
-        contain: 'layout paint',
-      }}
     >
       {/* Content */}
       <motion.div

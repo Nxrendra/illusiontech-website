@@ -21,6 +21,11 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
   const [winW, setWinW] = useState<number>(1024);
   const [showTapPrompt, setShowTapPrompt] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  if (services.length === 0) {
+    return null; // Don't render anything if there are no services
+  }
+
   const isMobile = winW < MOBILE_BREAKPOINT;
 
   const numServices = services.length;
@@ -67,19 +72,21 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
   }, [isMobile, winW]);
 
   // 3D math (desktop only)
+  const useSimplifiedLayout = isMobile || numServices < 3;
+
   const { anglePerItem, radius } = useMemo(() => {
-    if (isMobile) return { anglePerItem: 0, radius: 0 };
+    if (useSimplifiedLayout) return { anglePerItem: 0, radius: 0 };
     const n = numServices;
     const angle = 360 / n;
     const r = ((card.width / 2) / Math.tan(Math.PI / n)) * 1.15; // slight extra so edges aren’t clipped
     return { anglePerItem: angle, radius: r };
-  }, [isMobile, card.width, numServices]);
+  }, [useSimplifiedLayout, card.width, numServices]);
 
   // Rotation spring (desktop)
   const rotateY = useSpring(0, { stiffness: 120, damping: 28 });
   useEffect(() => {
-    if (!isMobile) rotateY.set(-rotation * anglePerItem);
-  }, [rotation, anglePerItem, isMobile, rotateY]);
+    if (!useSimplifiedLayout) rotateY.set(-rotation * anglePerItem);
+  }, [rotation, anglePerItem, useSimplifiedLayout, rotateY]);
 
   const next = useCallback(() => setRotation((r) => r + 1), []);
   const prev = useCallback(() => setRotation((r) => r - 1), []); // Prevent clipping: give enough vertical space and let 3D overflow be visible.
@@ -98,8 +105,8 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
       className="relative w-full flex items-center justify-center"
       style={{ height: containerHeight }}
     >
-      {/* Desktop arrows */}
-      {!isMobile && (
+      {/* Arrows for non-mobile layouts with more than one card */}
+      {!isMobile && numServices > 1 && (
         <>
           <Button
             variant="outline"
@@ -122,8 +129,8 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
         </>
       )}
 
-      {/* --- MOBILE LAYOUT (single card, tap to change) --- */}
-      {isMobile && (
+      {/* --- SIMPLIFIED LAYOUT (Mobile, or Desktop with < 3 items) --- */}
+      {useSimplifiedLayout && (
         <div className="w-full h-full flex flex-col items-center justify-center">
           <div
             className="relative flex items-center justify-center"
@@ -145,21 +152,22 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                onTap={(event, info) => {
-                  // On mobile, event.currentTarget can sometimes be null in a race condition
-                  // when the component is unmounting. Using a ref and the gesture info
-                  // object is a more robust way to handle this.
-                  if (!cardRef.current) return;
+                onTap={isMobile ? (event, info) => {
+                  if (numServices > 1) {
+                    // On mobile, event.currentTarget can be null in a race condition.
+                    // Using a ref and the gesture info object is more robust.
+                    if (!cardRef.current) return;
 
-                  const cardRect = cardRef.current.getBoundingClientRect();
-                  const tapX = info.point.x;
+                    const cardRect = cardRef.current.getBoundingClientRect();
+                    const tapX = info.point.x;
 
-                  if (tapX > cardRect.left + cardRect.width / 2) {
-                    next();
-                  } else {
-                    prev();
+                    if (tapX > cardRect.left + cardRect.width / 2) {
+                      next();
+                    } else {
+                      prev();
+                    }
                   }
-                }}
+                } : undefined}
               >
                 <ServiceCard service={services[activeIndex]} isCarouselCard isActive={true} />
               </motion.div>
@@ -167,7 +175,7 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
 
             {/* Tap to navigate prompt */}
             <AnimatePresence>
-              {showTapPrompt && activeIndex === 0 && (
+              {showTapPrompt && isMobile && activeIndex === 0 && numServices > 1 && (
                 <motion.div
                   className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-20"
                   initial={{ opacity: 0, y: 10 }}
@@ -185,21 +193,23 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
           </div>
 
           {/* Dot indicators */}
-          <div className="mt-6 flex items-center justify-center gap-2">
-            {services.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setRotation(rotation + (index - activeIndex))}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeIndex ? 'bg-accent scale-125' : 'bg-muted-foreground/40 hover:bg-muted-foreground/70'}`}
-                aria-label={`Go to service ${index + 1}`}
-              />
-            ))}
-          </div>
+          {numServices > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-2">
+              {services.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setRotation(rotation + (index - activeIndex))}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeIndex ? 'bg-accent scale-125' : 'bg-muted-foreground/40 hover:bg-muted-foreground/70'}`}
+                  aria-label={`Go to service ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
       {/* --- DESKTOP LAYOUT (true 3D cylinder) --- */}
-      {!isMobile && (
+      {!useSimplifiedLayout && (
         <div
           className="w-full h-full relative"
           // apply perspective on the direct parent of the rotating element

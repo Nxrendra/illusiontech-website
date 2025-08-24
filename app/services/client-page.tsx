@@ -211,13 +211,6 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
         </div>
       </section>
 
-      {/* Service Details Section */}
-      <section>
-        {services.map((service, index) => (
-          <ServiceDetailCard key={service._id} service={service} isOdd={index % 2 !== 0} />
-        ))}
-      </section>
-
       <ContactTeaser />
     </>
   );
