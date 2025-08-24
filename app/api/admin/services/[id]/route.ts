@@ -17,6 +17,12 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const { id } = params;
     const body = await request.json();
 
+    // The slug should be immutable. Prevent it from being updated.
+    if (body.slug) {
+      console.warn(`Attempted to update immutable field 'slug' for service ${id}. Ignoring.`);
+      delete body.slug;
+    }
+
     if (!id) {
       return NextResponse.json({ error: 'Service ID is required.' }, { status: 400 });
     }

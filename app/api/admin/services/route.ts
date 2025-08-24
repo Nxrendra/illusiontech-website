@@ -29,16 +29,24 @@ export async function POST(request: Request) {
         const savedService = await newService.save();
         return NextResponse.json(savedService, { status: 201 }); // Success!
       } catch (error: any) {
-        // Check for MongoDB duplicate key error on the 'slug' field.
-        // This is the robust way to handle race conditions.
-        if (error.code === 11000 && error.keyPattern && error.keyPattern.slug) {
-          attempts++;
-          console.log(`Slug collision for "${slug}". Retrying... (Attempt ${attempts})`);
-          // Append a random suffix and try again.
-          const randomSuffix = Math.random().toString(36).substring(2, 7);
-          slug = `${baseSlug}-${randomSuffix}`;
+        // Check for MongoDB duplicate key error (code 11000).
+        if (error.code === 11000 && error.keyPattern) {
+          if (error.keyPattern.slug) {
+            // This is the expected race condition on the 'slug'. We can retry.
+            attempts++;
+            console.log(`Slug collision for "${slug}". Retrying... (Attempt ${attempts})`);
+            const randomSuffix = Math.random().toString(36).substring(2, 7);
+            slug = `${baseSlug}-${randomSuffix}`;
+          } else if (error.keyPattern.id && error.keyValue.id === null) {
+            // This is a specific error indicating a lingering, old unique index on a field named 'id'.
+            // This is a schema mismatch and cannot be retried.
+            throw new Error('Database schema conflict: A unique index on "id" exists but is no longer used. Please drop this index from the "services" collection in MongoDB.');
+          } else {
+            // It's a different duplicate key error we didn't anticipate.
+            throw error;
+          }
         } else {
-          // It's a different error, so we shouldn't retry.
+          // It's not a duplicate key error, so we shouldn't retry.
           throw error;
         }
       }
@@ -54,8 +62,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 401 });
     }
 
+    if (errorMessage.includes('Database schema conflict')) {
+      // This is a server configuration issue, so 500 is appropriate.
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
+    }
+
     // If the error is our specific duplicate name error, return a 409 Conflict status.
-    if (errorMessage.includes('similar name') || errorMessage.includes('unique service name')) {
+    if (errorMessage.includes('unique service name')) {
       return NextResponse.json({ error: errorMessage }, { status: 409 });
     }
 
