@@ -21,14 +21,28 @@ export async function PUT(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: 'Service ID is required.' }, { status: 400 });
     }
 
-    const updatedService = await ServiceModel.findByIdAndUpdate(id, body, { new: true, runValidators: true }).lean();
+    const service = await ServiceModel.findById(id);
 
-    if (!updatedService) {
+    if (!service) {
       return NextResponse.json({ error: 'Service not found.' }, { status: 404 });
     }
 
+    // Update fields from the request body
+    Object.assign(service, body);
+
+    // The pre-save hook in the model will handle regenerating the link if the type changes.
+    // The 'id' (slug) remains immutable.
+    const updatedService = await service.save().catch((error: unknown) => {
+      // This is a safeguard, though the immutable slug should prevent this on updates.
+      // Check if the error is a MongoDB duplicate key error.
+      if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+        throw new Error('A service with a similar name already exists.');
+      }
+      throw error;
+    });
+
     return NextResponse.json(updatedService);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`[API_SERVICES_PUT] (ID: ${params.id})`, error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
 
@@ -54,7 +68,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     }
 
     return NextResponse.json({ message: 'Service deleted successfully.' });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`[API_SERVICES_DELETE] (ID: ${params.id})`, error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
 

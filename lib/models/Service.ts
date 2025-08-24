@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, models } from 'mongoose';
 
 // This interface represents the plain data structure of a service, without Mongoose's methods.
 export interface IServiceData {
+  slug?: string; // A unique, URL-friendly slug for the service
   type: 'web-development' | 'design' | 'automation' | 'support' | 'support-main';
   name: string;
   icon?: string; // Storing icon name as a string
@@ -28,6 +29,7 @@ export interface IServiceData {
 export interface IService extends IServiceData, Document {}
 
 const ServiceSchema: Schema = new Schema({
+  slug: { type: String, unique: true, index: true },
   type: { type: String, required: true },
   name: { type: String, required: true },
   icon: { type: String },
@@ -48,6 +50,22 @@ const ServiceSchema: Schema = new Schema({
   isCoreService: { type: Boolean, default: false },
 }, {
   timestamps: true
+});
+
+// Pre-save hook to generate a unique, URL-friendly slug from the service name.
+// This ensures that every service has a consistent identifier for URLs and anchors.
+ServiceSchema.pre<IService>('save', function(next) {
+  // Generate or update the slug if the name changes or it's a new document.
+  if (this.isNew || this.isModified('name')) {
+    const newSlug = this.name
+      .toLowerCase()
+      .replace(/&/g, 'and') // Replace ampersands
+      .replace(/[^\w\s-]/g, '') // Remove all non-word, non-space, non-hyphen chars
+      .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a single hyphen
+      .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
+    this.slug = newSlug;
+  }
+  next();
 });
 
 const Service = models.Service || mongoose.model<IService>('Service', ServiceSchema);

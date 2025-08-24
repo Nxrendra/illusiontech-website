@@ -31,7 +31,7 @@ const ServiceDetailCard = ({ service, isOdd }: ServiceDetailCardProps) => {
 
   return (
     <AnimatedSection
-      id={service.name.toLowerCase().replace(/\s+/g, '-')}
+      id={service.slug}
       className={`min-h-screen flex flex-col justify-center py-20 md:py-28 ${isOdd ? 'bg-muted' : 'bg-background'}`}
     >
       <div className="container flex flex-col justify-center h-full">
