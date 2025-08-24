@@ -30,16 +30,8 @@ export async function PUT(request: Request, { params }: RouteParams) {
     // Update fields from the request body
     Object.assign(service, body);
 
-    // The pre-save hook in the model will handle regenerating the link if the type changes.
-    // The 'id' (slug) remains immutable.
-    const updatedService = await service.save().catch((error: unknown) => {
-      // This is a safeguard, though the immutable slug should prevent this on updates.
-      // Check if the error is a MongoDB duplicate key error.
-      if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
-        throw new Error('A service with a similar name already exists.');
-      }
-      throw error;
-    });
+    // The pre-save hook in the model will handle regenerating the link if the type changes. The slug is immutable.
+    const updatedService = await service.save();
 
     return NextResponse.json(updatedService);
   } catch (error: unknown) {

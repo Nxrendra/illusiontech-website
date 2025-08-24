@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectToDB } from '@/lib/mongoose';
 import { verifyAdminSession } from '@/lib/auth-utils';
 import ServiceModel from '@/lib/models/Service';
+import { generateSlug } from '@/lib/slug-utils';
 
 export async function POST(request: Request) {
   try {
@@ -15,25 +16,47 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name and type are required.' }, { status: 400 });
     }
 
-    const newService = new ServiceModel(body);
-    // The pre-save hook in the model will generate the unique 'id' (slug) and the 'link'.
-    const savedService = await newService.save().catch((error: unknown) => {
-      // Handle the duplicate key error specifically for a better user experience.
-      // This is triggered by the unique index on the `id` field (slug).
-      if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
-        throw new Error('A service with a similar name already exists. Please choose a different name.');
-      }
-      // Re-throw other errors
-      throw error;
-    });
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
+    const baseSlug = generateSlug(body.name);
+    let slug = baseSlug;
 
-    return NextResponse.json(savedService, { status: 201 });
+    while (attempts < MAX_ATTEMPTS) {
+      try {
+        const serviceData = { ...body, slug };
+        const newService = new ServiceModel(serviceData);
+        // The pre-save hook will now only generate the link.
+        const savedService = await newService.save();
+        return NextResponse.json(savedService, { status: 201 }); // Success!
+      } catch (error: any) {
+        // Check for MongoDB duplicate key error on the 'slug' field.
+        // This is the robust way to handle race conditions.
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.slug) {
+          attempts++;
+          console.log(`Slug collision for "${slug}". Retrying... (Attempt ${attempts})`);
+          // Append a random suffix and try again.
+          const randomSuffix = Math.random().toString(36).substring(2, 7);
+          slug = `${baseSlug}-${randomSuffix}`;
+        } else {
+          // It's a different error, so we shouldn't retry.
+          throw error;
+        }
+      }
+    }
+
+    // If the loop completes, it means we failed to find a unique slug after multiple attempts.
+    throw new Error(`Failed to create a unique service name after ${MAX_ATTEMPTS} attempts. Please try a different name.`);
   } catch (error: unknown) {
     console.error('[API_SERVICES_POST]', error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
 
     if (errorMessage.includes('Authentication') || errorMessage.includes('session')) {
       return NextResponse.json({ error: errorMessage }, { status: 401 });
+    }
+
+    // If the error is our specific duplicate name error, return a 409 Conflict status.
+    if (errorMessage.includes('similar name') || errorMessage.includes('unique service name')) {
+      return NextResponse.json({ error: errorMessage }, { status: 409 });
     }
 
     return NextResponse.json({ error: 'Failed to create service.' }, { status: 500 });
