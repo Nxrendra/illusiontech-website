@@ -57,6 +57,11 @@ const ServiceSchema: Schema = new Schema({
 ServiceSchema.pre<IService>('save', async function(next) {
   // Generate the slug ONLY when the document is new. This makes the slug immutable.
   if (this.isNew) {
+    if (!this.name || this.name.trim() === '') {
+      // Prevent saving if the name is empty, which would result in an empty slug.
+      return next(new Error('Service name is required to generate a slug.'));
+    }
+
     const generateBaseSlug = (name: string): string => {
       return name
         .toLowerCase()
@@ -65,17 +70,25 @@ ServiceSchema.pre<IService>('save', async function(next) {
         .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a single hyphen
         .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
     };
-
+    
     const ServiceModel = this.constructor as mongoose.Model<IService>;
     const baseSlug = generateBaseSlug(this.name);
     let slug = baseSlug;
-    let counter = 1;
 
-    // If a service with this slug already exists, append a number until we find a unique slug
-    // For new documents, we just need to check if the slug exists.
+    // This loop handles the rare case of a slug collision. In a concurrent environment,
+    // two services with the same name could be created at the same time. This loop
+    // ensures that if the generated slug already exists, we append a short random
+    // string until we find a unique one. This is more robust than a simple counter.
+    let attempts = 0;
     while (await ServiceModel.findOne({ slug })) {
-      counter++;
-      slug = `${baseSlug}-${counter}`;
+      attempts++;
+      // After 5 attempts, something is likely wrong, so we throw an error
+      // to prevent an infinite loop.
+      if (attempts > 5) {
+        return next(new Error(`Failed to generate a unique slug for "${this.name}" after ${attempts} attempts.`));
+      }
+      const randomSuffix = Math.random().toString(36).substring(2, 7); // e.g., "a1b2c"
+      slug = `${baseSlug}-${randomSuffix}`;
     }
 
     this.slug = slug;
