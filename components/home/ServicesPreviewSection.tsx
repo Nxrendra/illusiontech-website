@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import React from 'react';
 import { ServiceWithIcon } from '@/app/page';
+import { ServiceCard } from '@/components/ServiceCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,20 +44,14 @@ export function ServicesPreviewSection({ services }: ServicesPreviewSectionProps
           We offer a range of services to bring your digital vision to life.
         </p>
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.25 }}
         >
           {services.map((service) => (
-            <motion.div key={service._id} className="bg-card text-card-foreground p-8 rounded-lg shadow-md text-center transition-transform duration-300 hover:-translate-y-2" variants={itemVariants}>
-              <div className="flex justify-center items-center mb-4">
-                {React.cloneElement(service.icon, { className: `w-10 h-10 ${service.theme?.accentClass || 'text-accent'}` })}
-              </div>
-              <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
-              <p className="text-muted-foreground">{service.description}</p>
-            </motion.div>
+            <motion.div key={service._id} variants={itemVariants}><ServiceCard service={service} /></motion.div>
           ))}
         </motion.div>
         <div className="text-center mt-16">

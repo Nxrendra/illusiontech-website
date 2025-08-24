@@ -154,6 +154,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label htmlFor="price">Price (TTD)</Label><Input id="price" value={formData.price} onChange={handleInputChange} placeholder="$500 - $700 TTD or $250/month" /></div>
             <div className="space-y-2"><Label htmlFor="timeline">Timeline</Label><Input id="timeline" value={formData.timeline} onChange={handleInputChange} placeholder="e.g., 1-2 Weeks" /></div>
+            <div className="space-y-2 md:col-span-2"><Label htmlFor="audience">Target Audience</Label><Input id="audience" value={formData.audience || ''} onChange={handleInputChange} placeholder="e.g., Small Businesses, Startups" /></div>
           </div>
           <div className="flex items-center space-x-4 pt-4">
             <div className="flex items-center space-x-2"><Switch id="featured" checked={formData.featured} onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })} /><Label htmlFor="featured">Featured Service</Label></div>
