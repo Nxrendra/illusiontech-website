@@ -6,11 +6,14 @@ import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
 import ContactTeaser from '@/components/ContactTeaser';
 import { useIsMobile } from '@/hooks/useIsMobile';
-import { services } from '@/lib/data/services';
 import ServiceDetailCard from '@/components/ServiceDetailCard';
-import { getIcon } from '@/lib/get-icon';
+import { ServiceWithIcon } from './page';
 
-export default function WebDevelopmentClientPage() {
+interface WebDevelopmentClientPageProps {
+  services: ServiceWithIcon[];
+}
+
+export default function WebDevelopmentClientPage({ services }: WebDevelopmentClientPageProps) {
   const isMobile = useIsMobile();
 
   return (
@@ -39,21 +42,9 @@ export default function WebDevelopmentClientPage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center">
             Our Web Development Packages
           </h2>
-          {services
-            .filter((s) => s.type === 'web-development')
-            .map((service, index) => (
-              <ServiceDetailCard
-                key={service.id}
-                service={{
-                  ...service,
-                  _id: service.id,
-                  // The static service data's `icon` is already a ReactElement,
-                  // so we pass it directly instead of calling getIcon().
-                  icon: service.icon,
-                }}
-                isOdd={index % 2 !== 0}
-              />
-            ))}
+          {services.map((service, index) => (
+            <ServiceDetailCard key={service._id} service={service} isOdd={index % 2 !== 0} />
+          ))}
         </div>
       </section>
 

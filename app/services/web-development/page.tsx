@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
 import WebDevelopmentClientPage from './client-page';
+import ServiceModel, { IServiceData } from '@/lib/models/Service';
+import { connectToDB } from '@/lib/mongoose';
+import { getIcon } from '@/lib/get-icon';
+import React from 'react';
 export const dynamic = 'force-dynamic';
 
 const webDevServiceSchema = {
@@ -30,11 +34,32 @@ export const metadata: Metadata = {
     'Build powerful, custom web applications with IllusionTech. We specialize in Next.js, React, and full-stack development for businesses in Trinidad and Tobago.',
 };
 
-export default function WebDevelopmentPage() {
+export type ServiceWithIcon = Omit<IServiceData, 'icon'> & {
+  _id: string;
+  icon: React.ReactElement;
+};
+
+async function getWebDevServices(): Promise<ServiceWithIcon[]> {
+  try {
+    await connectToDB();
+    const servicesFromDB = await ServiceModel.find({ type: 'web-development' }).sort({ name: 1 }).lean();
+    const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
+    return serializedServices.map(service => ({
+      ...service,
+      icon: getIcon(service.icon) as React.ReactElement,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch web development services:", error);
+    return [];
+  }
+}
+
+export default async function WebDevelopmentPage() {
+  const services = await getWebDevServices();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webDevServiceSchema) }} />
-      <WebDevelopmentClientPage />
+      <WebDevelopmentClientPage services={services} />
     </>
   );
 }
