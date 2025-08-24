@@ -34,6 +34,7 @@ export default function NewsletterManager({ initialSubscribers }: NewsletterMana
       const response = await fetch('/api/admin/newsletter/subscribers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email: newEmail }),
       });
 
@@ -58,6 +59,7 @@ export default function NewsletterManager({ initialSubscribers }: NewsletterMana
     try {
       const response = await fetch(`/api/admin/newsletter/subscribers/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {

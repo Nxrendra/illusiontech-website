@@ -38,6 +38,7 @@ export default function BroadcastForm({ subscriberCount }: BroadcastFormProps) {
       const response = await fetch('/api/admin/newsletter/broadcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           subject,
           htmlBody,

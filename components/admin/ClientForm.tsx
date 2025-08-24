@@ -57,6 +57,7 @@ export default function ClientForm({ isOpen, onClose, onSave, client, servicePla
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 

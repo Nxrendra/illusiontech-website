@@ -53,6 +53,7 @@ export default function ClientManager({ initialClients, serviceNames }: ClientMa
     try {
       const response = await fetch(`/api/admin/clients/${clientId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {

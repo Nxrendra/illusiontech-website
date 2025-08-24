@@ -143,6 +143,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Explicitly include cookies with the request
         body: JSON.stringify(formData),
       });
 

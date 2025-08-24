@@ -73,6 +73,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
         // You need to create this API endpoint to handle file uploads
         const response = await fetch('/api/admin/newsletter/upload', {
           method: 'POST',
+          credentials: 'include',
           body: formData,
         });
 

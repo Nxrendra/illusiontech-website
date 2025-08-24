@@ -51,6 +51,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
     try {
       const response = await fetch(`/api/admin/services/${serviceId}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
       if (!response.ok) {
