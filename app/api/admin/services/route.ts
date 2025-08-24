@@ -37,10 +37,6 @@ export async function POST(request: Request) {
             console.log(`Slug collision for "${slug}". Retrying... (Attempt ${attempts})`);
             const randomSuffix = Math.random().toString(36).substring(2, 7);
             slug = `${baseSlug}-${randomSuffix}`;
-          } else if (error.keyPattern.id && error.keyValue.id === null) {
-            // This is a specific error indicating a lingering, old unique index on a field named 'id'.
-            // This is a schema mismatch and cannot be retried.
-            throw new Error('Database schema conflict: A unique index on "id" exists but is no longer used. Please drop this index from the "services" collection in MongoDB.');
           } else {
             // It's a different duplicate key error we didn't anticipate.
             throw error;
@@ -60,11 +56,6 @@ export async function POST(request: Request) {
 
     if (errorMessage.includes('Authentication') || errorMessage.includes('session')) {
       return NextResponse.json({ error: errorMessage }, { status: 401 });
-    }
-
-    if (errorMessage.includes('Database schema conflict')) {
-      // This is a server configuration issue, so 500 is appropriate.
-      return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 
     // If the error is our specific duplicate name error, return a 409 Conflict status.

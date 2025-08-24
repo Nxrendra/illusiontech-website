@@ -66,28 +66,45 @@ export async function connectToDB() {
     MONGODB_URI = MONGODB_URI.slice(1, -1);
   }
 
-  if (cached.conn) {
-    console.log('Using cached database connection.');
-    return cached.conn;
+  // If we have a cached connection, we're good to go.
+  // The index cleanup will be handled below.
+  if (!cached.conn) {
+    if (!cached.promise) {
+      console.log('Creating new database connection promise.');
+      cached.promise = mongoose.connect(MONGODB_URI, {
+        bufferCommands: false,
+        serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      }).then((mongooseInstance) => {
+        console.log('Database connection promise resolved.');
+        return mongooseInstance;
+      });
+    }
+
+    try {
+      cached.conn = await cached.promise;
+    } catch (e) {
+      cached.promise = null; // Reset promise on error
+      console.error('Database connection failed:', e);
+      throw e;
+    }
   }
 
-  if (!cached.promise) {
-    console.log('Creating new database connection promise.');
-    cached.promise = mongoose.connect(MONGODB_URI, {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-    }).then((mongooseInstance) => {
-      console.log('Database connection promise resolved.');
-      return mongooseInstance;
-    });
-  }
-
+  // --- One-time Index Cleanup ---
+  // This block will run for both new and cached connections, but the logic inside
+  // ensures the index check and drop operation only happens once per server instance.
   try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null; // Reset promise on error
-    console.error('Database connection failed:', e);
-    throw e;
+    if (!(global as any)._legacyIndexDropped) {
+      const servicesCollection = mongoose.connection.db.collection('services');
+      if (await servicesCollection.indexExists('id_1')) {
+        console.log('Found legacy unique index "id_1" on services collection. Attempting to drop it.');
+        await servicesCollection.dropIndex('id_1');
+        console.log('Successfully dropped legacy index "id_1".');
+      }
+      (global as any)._legacyIndexDropped = true;
+    }
+  } catch (indexError) {
+    // Log the error but don't block the application.
+    console.error('Could not drop legacy index "id_1":', indexError);
   }
 
   return cached.conn;
