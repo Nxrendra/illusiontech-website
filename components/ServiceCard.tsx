@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export interface ServiceCardProps {
-  service: IServiceData & { icon: React.ReactElement };
+  service: Omit<IServiceData, 'icon'> & { icon: React.ReactElement };
   /** When true, the card will strictly fill its parent (carousel controls size). */
   isCarouselCard?: boolean;
   /** When true, the card is fully visible and interactive. Controlled by carousel. */

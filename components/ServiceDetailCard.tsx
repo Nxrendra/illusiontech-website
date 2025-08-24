@@ -12,7 +12,7 @@ import { IServiceData } from '@/lib/models/Service';
 import { cn } from '@/lib/utils';
 
 interface ServiceDetailCardProps {
-  service: IServiceData & { _id: string; icon: React.ReactElement };
+  service: Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement };
   isOdd: boolean;
 }
 

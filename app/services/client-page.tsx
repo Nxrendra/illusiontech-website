@@ -6,9 +6,11 @@ import { motion, type Variants, useScroll } from 'framer-motion';
 import ContactTeaser from '@/components/ContactTeaser';
 import { ChevronDown } from 'lucide-react';
 import { ServiceCarousel } from '@/components/ServiceCarousel';
+import ServiceDetailCard from '@/components/ServiceDetailCard';
 import ParticleBackground from '@/components/ParticleBackground';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { ServiceWithIcon } from './page';
 
 
 
@@ -26,7 +28,11 @@ const itemVariants: Variants = {
   },
 };
 
-export default function ServicesClientPage() {
+interface ServicesClientPageProps {
+  services: ServiceWithIcon[];
+}
+
+export default function ServicesClientPage({ services }: ServicesClientPageProps) {
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
   const isMobile = useIsMobile();
@@ -181,10 +187,10 @@ export default function ServicesClientPage() {
         </motion.button>
       </motion.section>
 
-      {/* Service Cards Grid Section */}
+      {/* Service Carousel Section */}
       <section
         id="our-offerings"
-        className="min-h-screen flex flex-col items-center justify-center py-16 md:py-24 bg-background">
+        className="py-16 md:py-24 bg-background">
         <div className="container flex flex-col items-center justify-center text-center">
           <motion.div
             className="max-w-3xl mb-12 md:mb-16"
@@ -201,8 +207,15 @@ export default function ServicesClientPage() {
               elevate your brand and drive growth. Explore our packages below.
             </p>
           </motion.div>
-          <ServiceCarousel />
+          <ServiceCarousel services={services} />
         </div>
+      </section>
+
+      {/* Service Details Section */}
+      <section>
+        {services.map((service, index) => (
+          <ServiceDetailCard key={service._id} service={service} isOdd={index % 2 !== 0} />
+        ))}
       </section>
 
       <ContactTeaser />

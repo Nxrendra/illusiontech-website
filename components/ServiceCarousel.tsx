@@ -12,7 +12,7 @@ const DESKTOP_CARD_HEIGHT = 380;
 const MOBILE_BREAKPOINT = 768;
 
 interface ServiceCarouselProps {
-  services: (IServiceData & { icon: React.ReactElement })[];
+  services: (Omit<IServiceData, 'icon'> & { icon: React.ReactElement })[];
 }
 
 export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {

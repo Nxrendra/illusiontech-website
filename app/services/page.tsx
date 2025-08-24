@@ -1,31 +1,84 @@
 import type { Metadata } from 'next';
 import ServicesClientPage from './client-page';
-import { services } from '@/lib/data/services';
+import ServiceModel, { IServiceData } from '@/lib/models/Service';
+import { getIcon } from '@/lib/get-icon';
+import React from 'react';
+import { connectToDB } from '@/lib/mongoose';
+
 export const dynamic = 'force-dynamic';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
 
+// Define types for the structured data schema to prevent type inference issues.
+type SchemaListItem = {
+  '@type': 'ListItem';
+  position: number;
+  item: {
+    '@type': 'Service';
+    name: string;
+    description?: string;
+    url: string;
+    provider: {
+      '@type': 'LocalBusiness';
+      name: string;
+    };
+  };
+};
+
 // Create an ItemList schema for all the services offered
-const servicesItemListSchema = {
+const servicesItemListSchema: {
+  '@context': string;
+  '@type': string;
+  name: string;
+  description: string;
+  itemListElement: SchemaListItem[];
+} = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: 'IllusionTech Development Services',
   description: 'A comprehensive list of web development, design, and automation services offered by IllusionTech Development.',
-  itemListElement: services.map((service, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    item: {
-      '@type': 'Service',
-      name: service.name,
-      description: service.description,
-      url: `${siteUrl}${service.link}`,
-      provider: {
-        '@type': 'LocalBusiness',
-        name: 'IllusionTech Development',
-      },
-    },
-  })),
+  // This will be populated dynamically below
+  itemListElement: [],
 };
+
+export type ServiceWithIcon = Omit<IServiceData, 'icon'> & {
+  _id: string;
+  icon: React.ReactElement;
+};
+
+async function getAllServices(): Promise<ServiceWithIcon[]> {
+  try {
+    await connectToDB();
+    // Fetch all services, sorted by name for consistency
+    const servicesFromDB = await ServiceModel.find({}).sort({ name: 1 }).lean();
+
+    const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
+
+    // Update the schema for SEO
+    servicesItemListSchema.itemListElement = serializedServices.map((service, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Service',
+        name: service.name,
+        description: service.description,
+        url: `${siteUrl}${service.link}`,
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'IllusionTech Development',
+        },
+      },
+    }));
+
+    return serializedServices.map(service => ({
+      ...service,
+      icon: getIcon(service.icon) as React.ReactElement,
+    }));
+  } catch (error) {
+    console.error("Failed to fetch services for services page:", error);
+    return [];
+  }
+}
 
 export const metadata: Metadata = {
   title: 'Our Services | Web Development, Design & Automation',
@@ -49,14 +102,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await getAllServices();
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesItemListSchema) }}
       />
-      <ServicesClientPage />
+      <ServicesClientPage services={services} />
     </>
   );
 }
