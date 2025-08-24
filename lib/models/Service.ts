@@ -54,16 +54,30 @@ const ServiceSchema: Schema = new Schema({
 
 // Pre-save hook to generate a unique, URL-friendly slug from the service name.
 // This ensures that every service has a consistent identifier for URLs and anchors.
-ServiceSchema.pre<IService>('save', function(next) {
+ServiceSchema.pre<IService>('save', async function(next) {
   // Generate or update the slug if the name changes or it's a new document.
   if (this.isNew || this.isModified('name')) {
-    const newSlug = this.name
-      .toLowerCase()
-      .replace(/&/g, 'and') // Replace ampersands
-      .replace(/[^\w\s-]/g, '') // Remove all non-word, non-space, non-hyphen chars
-      .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a single hyphen
-      .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
-    this.slug = newSlug;
+    const generateBaseSlug = (name: string): string => {
+      return name
+        .toLowerCase()
+        .replace(/&/g, 'and') // Replace ampersands
+        .replace(/[^\w\s-]/g, '') // Remove all non-word, non-space, non-hyphen chars
+        .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with a single hyphen
+        .replace(/^-+|-+$/g, ''); // Trim leading/trailing hyphens
+    };
+
+    const ServiceModel = this.constructor as mongoose.Model<IService>;
+    const baseSlug = generateBaseSlug(this.name);
+    let slug = baseSlug;
+    let counter = 1;
+
+    // If a service with this slug already exists, append a number until we find a unique slug
+    while (await ServiceModel.findOne({ slug, _id: { $ne: this._id } })) {
+      counter++;
+      slug = `${baseSlug}-${counter}`;
+    }
+
+    this.slug = slug;
   }
   next();
 });
