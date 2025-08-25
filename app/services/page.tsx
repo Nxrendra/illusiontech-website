@@ -50,7 +50,7 @@ async function getAllServices(): Promise<ServiceWithIcon[]> {
   try {
     await connectToDB();
     // Fetch all services, sorted by name for consistency
-    const servicesFromDB = await ServiceModel.find({}).sort({ name: 1 }).lean();
+    const servicesFromDB = await ServiceModel.find({}).sort({ position: 1, name: 1 }).lean();
 
     const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
 

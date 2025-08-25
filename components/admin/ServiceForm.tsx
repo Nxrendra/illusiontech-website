@@ -44,6 +44,7 @@ const initialFormData: Omit<IServiceData, 'slug' | 'link'> = {
   audience: '',
   features: [],
   keyFeatures: [],
+  position: 0,
   themeName: defaultTheme.name,
   theme: {
     gradient: defaultTheme.gradient,
@@ -73,6 +74,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           audience: service.audience || '',
           features: service.features || [],
           keyFeatures: service.keyFeatures || [],
+          position: service.position || 0,
           themeName: service.themeName || 'Default',
           theme: service.theme || { gradient: '', accentClass: '', buttonClass: '' },
         });
@@ -172,7 +174,8 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
         </DialogHeader>
         <form onSubmit={handleSubmit} id="service-form" className="grid gap-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2"><Label htmlFor="name">Service Name</Label><Input id="name" name="name" value={formData.name} onChange={handleInputChange} required /></div>
+            <div className="space-y-2"><Label htmlFor="name">Service Name</Label><Input id="name" name="name" value={formData.name} onChange={handleInputChange} required /></div>            
+            <div className="space-y-2"><Label htmlFor="position">Position</Label><Input id="position" name="position" type="number" value={formData.position} onChange={handleInputChange} /></div>
             <div className="space-y-2"><Label htmlFor="type">Service Type</Label><Select name="type" value={formData.type} onValueChange={(value: IService['type']) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger><SelectContent>{serviceTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent></Select></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
