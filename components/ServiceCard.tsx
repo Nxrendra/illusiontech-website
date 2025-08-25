@@ -42,6 +42,12 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         className,
       )}
     >
+      {/* Shimmer effect for active cards */}
+      {isActive && (
+        <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-[-150%] w-[250%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 animate-light-shimmer"></div>
+        </div>
+      )}
       {/* Content */}
       <motion.div
         className="relative flex flex-col h-full p-4 flex-grow"
