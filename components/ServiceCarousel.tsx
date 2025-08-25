@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, MousePointerClick } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ServiceCard } from '@/components/ServiceCard';
 import { Button } from '@/components/ui/Button';
 import { IServiceData } from '@/lib/models/Service';
@@ -19,8 +19,6 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
   const [rotation, setRotation] = useState(0); // This represents the number of steps rotated
   // Default to a non-mobile value on the server. The actual value will be set on the client.
   const [winW, setWinW] = useState<number>(1024);
-  const [showTapPrompt, setShowTapPrompt] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   if (services.length === 0) {
     return null; // Don't render anything if there are no services
@@ -42,27 +40,13 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  useEffect(() => {
-    // Show the tap-to-navigate prompt on mobile for a few seconds
-    if (isMobile && mounted) {
-      const timer = setTimeout(() => {
-        setShowTapPrompt(true);
-      }, 500); // Show after a brief delay to let the card animate in
-      const hideTimer = setTimeout(() => setShowTapPrompt(false), 10500); // Hide after 10s
-
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(hideTimer);
-      };
-    }
-  }, [isMobile, mounted]); // Dependency on mounted ensures this runs only on the client
-
   // Card size is controlled by the carousel. Card fills parent (see ServiceCard).
   const card = useMemo(() => {
     if (isMobile) {
       // Make card wider, but ensure it fits with the side buttons.
-      // We can make the card wider now that we're removing the side buttons.
-      const width = Math.round(Math.min(winW - 32, 380)); // 1rem padding on each side
+      // The card takes up the space between the buttons, which are pushed to the edges.
+      // Button width is ~40px, padding is 8px on each side. Total horizontal space for controls is ~96px.
+      const width = Math.round(Math.min(winW - 96, 360));
       const height = Math.round(
         (DESKTOP_CARD_HEIGHT / DESKTOP_CARD_WIDTH) * width,
       );
@@ -132,64 +116,52 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
       {/* --- SIMPLIFIED LAYOUT (Mobile, or Desktop with < 3 items) --- */}
       {useSimplifiedLayout && (
         <div className="w-full h-full flex flex-col items-center justify-center">
-          <div
-            className="relative flex items-center justify-center"
-            style={{ width: card.width, height: card.height }}
-          >
+          <div className="w-full flex items-center justify-between px-2">
+            {/* Prev Button */}
+            {numServices > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full shrink-0 z-10"
+                onClick={prev}
+                aria-label="Previous service"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </Button>
+            )}
+
             {/* Card */}
             <AnimatePresence mode="wait">
               <motion.div
-                ref={cardRef}
                 key={activeIndex}
-                className="cursor-pointer"
+                className={numServices > 1 ? 'cursor-pointer' : ''}
                 style={{
                   width: card.width,
                   height: card.height,
-                  willChange: 'transform, opacity', // Hint for smoother animations
                 }}
                 variants={{ enter: { opacity: 0, scale: 0.9 }, center: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.9 } }}
                 initial="enter"
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                onTap={isMobile ? (event, info) => {
-                  if (numServices > 1) {
-                    // On mobile, event.currentTarget can be null in a race condition.
-                    // Using a ref and the gesture info object is more robust.
-                    if (!cardRef.current) return;
-
-                    const cardRect = cardRef.current.getBoundingClientRect();
-                    const tapX = info.point.x;
-
-                    if (tapX > cardRect.left + cardRect.width / 2) {
-                      next();
-                    } else {
-                      prev();
-                    }
-                  }
-                } : undefined}
+                onTap={numServices > 1 ? next : undefined}
               >
                 <ServiceCard service={services[activeIndex]} isCarouselCard isActive={true} />
               </motion.div>
             </AnimatePresence>
 
-            {/* Tap to navigate prompt */}
-            <AnimatePresence>
-              {showTapPrompt && isMobile && activeIndex === 0 && numServices > 1 && (
-                <motion.div
-                  className="absolute bottom-4 inset-x-0 flex justify-center pointer-events-none z-20"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0, transition: { delay: 0.5, duration: 0.3 } }}
-                  exit={{ opacity: 0, y: 10, transition: { duration: 0.3 } }}
-                  aria-hidden="true"
-                >
-                  <div className="flex items-center gap-2 text-white bg-black/60 py-2 px-3 rounded-full backdrop-blur-sm shadow-lg">
-                    <MousePointerClick className="w-4 h-4" />
-                    <span className="text-xs font-semibold">Tap sides to navigate</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Next Button */}
+            {numServices > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full shrink-0 z-10"
+                onClick={next}
+                aria-label="Next service"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </Button>
+            )}
           </div>
 
           {/* Dot indicators */}
