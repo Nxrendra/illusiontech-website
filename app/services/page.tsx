@@ -7,7 +7,7 @@ import { connectToDB } from '@/lib/mongoose';
 
 export const dynamic = 'force-dynamic';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
 
 // Define types for the structured data schema to prevent type inference issues.
 type SchemaListItem = {
