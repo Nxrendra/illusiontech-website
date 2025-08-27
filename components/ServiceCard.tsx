@@ -14,6 +14,8 @@ export interface ServiceCardProps {
   isCarouselCard?: boolean;
   /** When true, the card is fully visible and interactive. Controlled by carousel. */
   isActive?: boolean;
+  /** When true, indicates the carousel is in a mobile layout. */
+  isMobile?: boolean;
   className?: string;
 }
 
@@ -21,6 +23,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   service,
   isCarouselCard = false,
   isActive = true, // Default to true for standalone usage
+  isMobile = false,
   className = '',
 }) => {
   // Provide default theme values to prevent errors if `service.theme` is undefined.
@@ -71,7 +74,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           </div>
 
           {/* Description */}
-          <p className={cn("text-[11px] leading-snug mb-4 line-clamp-2 transition-colors", isActive ? 'text-gray-300' : 'text-muted-foreground')}>
+          <p className={cn("text-[11px] leading-snug mb-4 transition-colors", isMobile ? 'line-clamp-3' : 'line-clamp-4', isActive ? 'text-gray-300' : 'text-muted-foreground')}>
             {service.description}
           </p>
 

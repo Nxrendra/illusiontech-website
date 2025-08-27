@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button';
 import { IServiceData } from '@/lib/models/Service';
 
 const DESKTOP_CARD_WIDTH = 280;
-const DESKTOP_CARD_HEIGHT = 380;
+const DESKTOP_CARD_HEIGHT = 410;
+const MOBILE_ASPECT_RATIO = 380 / 280; // Use a less tall aspect ratio for mobile to improve viewing on smaller screens.
 const MOBILE_BREAKPOINT = 768;
 
 interface ServiceCarouselProps {
@@ -63,9 +64,7 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
       // Make card wider, but ensure it fits with the side buttons.
       // We can make the card wider now that we're removing the side buttons.
       const width = Math.round(Math.min(winW - 32, 380)); // 1rem padding on each side
-      const height = Math.round(
-        (DESKTOP_CARD_HEIGHT / DESKTOP_CARD_WIDTH) * width,
-      );
+      const height = Math.round(width * MOBILE_ASPECT_RATIO);
       return { width, height };
     }
     return { width: DESKTOP_CARD_WIDTH, height: DESKTOP_CARD_HEIGHT };
@@ -169,7 +168,7 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
                   }
                 } : undefined}
               >
-                <ServiceCard service={services[activeIndex]} isCarouselCard isActive={true} />
+                <ServiceCard service={services[activeIndex]} isCarouselCard isActive={true} isMobile={isMobile} />
               </motion.div>
             </AnimatePresence>
 
@@ -258,7 +257,7 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
                     transition: { type: 'tween', ease: 'easeInOut', duration: 0.5 },
                   }}
                 >
-                  <ServiceCard service={s} isCarouselCard isActive={isActive} />
+                  <ServiceCard service={s} isCarouselCard isActive={isActive} isMobile={isMobile} />
                 </motion.li>
               );
             })}
