@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 export interface ServiceCardProps {
-  service: Omit<IServiceData, 'icon'> & { icon: React.ReactElement };
+  service: Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement };
   /** When true, the card will strictly fill its parent (carousel controls size). */
   isCarouselCard?: boolean;
   /** When true, the card is fully visible and interactive. Controlled by carousel. */
@@ -116,7 +116,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           // Make button non-interactive when card is inactive
           tabIndex={isActive ? 0 : -1}
         >
-          <Link href={service.link || '#'} className="group">
+          <Link
+            href={service.link || '#'}
+            className="group"
+            onClick={(e) => e.stopPropagation()}
+          >
             <span className="truncate">View Details</span>
             <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>

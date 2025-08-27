@@ -12,7 +12,7 @@ const DESKTOP_CARD_HEIGHT = 380;
 const MOBILE_BREAKPOINT = 768;
 
 interface ServiceCarouselProps {
-  services: (Omit<IServiceData, 'icon'> & { icon: React.ReactElement })[];
+  services: (Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement })[];
 }
 
 export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {
@@ -229,7 +229,7 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
               const isActive = index === activeIndex;
               return (
                 <motion.li
-                  key={s.name}
+                  key={s._id}
                   initial={false}
                   className="absolute top-1/2 left-1/2 cursor-pointer"
                   onTap={() => { // Rotate to the closest instance of the clicked card
