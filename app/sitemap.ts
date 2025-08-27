@@ -21,11 +21,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic service pages from the database
-  const servicesFromDB = await ServiceModel.find({}).select('link updatedAt').lean();
+  // Only fetch services that have a 'link' field to prevent errors with services that might not have one.
+  const servicesFromDB = await ServiceModel.find({ link: { $exists: true, $ne: null } }).select('link updatedAt').lean();
 
   const serviceRoutes = servicesFromDB.map((service) => ({
     // Ensure the link is a full URL and remove any potential hash fragments
-    url: `${siteUrl}${service.link?.split('#')[0]}`,
+    url: `${siteUrl}${service.link!.split('#')[0]}`,
     // Use the service's updatedAt field for more accurate lastModified, or fallback to now
     lastModified: service.updatedAt ? new Date(service.updatedAt).toISOString() : new Date().toISOString(),
     changeFrequency: 'weekly' as const,

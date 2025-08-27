@@ -55,20 +55,22 @@ async function getAllServices(): Promise<ServiceWithIcon[]> {
     const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
 
     // Update the schema for SEO
-    servicesItemListSchema.itemListElement = serializedServices.map((service, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      item: {
-        '@type': 'Service',
-        name: service.name,
-        description: service.description,
-        url: `${siteUrl}${service.link}`,
-        provider: {
-          '@type': 'LocalBusiness',
-          name: 'IllusionTech Development',
+    servicesItemListSchema.itemListElement = serializedServices
+      .filter(service => service.link) // Filter out services without a link
+      .map((service, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Service',
+          name: service.name,
+          description: service.description,
+          url: `${siteUrl}${service.link}`, // Now service.link is guaranteed to exist
+          provider: {
+            '@type': 'LocalBusiness',
+            name: 'IllusionTech Development',
+          },
         },
-      },
-    }));
+      }));
 
     return serializedServices.map(service => ({
       ...service,
