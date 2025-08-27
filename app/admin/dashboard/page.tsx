@@ -27,7 +27,7 @@ async function getDashboardData(): Promise<DashboardPageData> {
     await connectToDB();
 
     const [servicesData, clientsData, submissionsData] = await Promise.all([
-      ServiceModel.find({}).sort({ name: 1 }).lean(),
+      ServiceModel.find({}).sort({ position: 1, name: 1 }).lean(),
       ClientModel.find({}).sort({ createdAt: -1 }).lean(),
       ContactSubmission.find({}).sort({ createdAt: -1 }).lean()
     ]);

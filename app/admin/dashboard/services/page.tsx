@@ -19,7 +19,7 @@ async function getServices(): Promise<ServicesPageData> {
     await verifyAdminSession();
     await connectToDB();
 
-    const servicesData = await ServiceModel.find({}).sort({ name: 1 }).lean();
+    const servicesData = await ServiceModel.find({}).sort({ position: 1, name: 1 }).lean();
 
     return { services: JSON.parse(JSON.stringify(servicesData)) };
   } catch (error) {

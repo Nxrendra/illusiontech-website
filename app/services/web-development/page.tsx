@@ -42,7 +42,7 @@ export type ServiceWithIcon = Omit<IServiceData, 'icon'> & {
 async function getWebDevServices(): Promise<ServiceWithIcon[]> {
   try {
     await connectToDB();
-    const servicesFromDB = await ServiceModel.find({ type: 'web-development' }).sort({ name: 1 }).lean();
+    const servicesFromDB = await ServiceModel.find({ type: 'web-development' }).sort({ position: 1, name: 1 }).lean();
     const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
     return serializedServices.map(service => ({
       ...service,

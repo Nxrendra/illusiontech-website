@@ -54,6 +54,8 @@ export default function ServiceList({ services, onEdit, onRemove, isReadOnly }: 
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[80px] text-center">Gen Pos</TableHead>
+              <TableHead className="w-[80px] text-center">HP Pos</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Price</TableHead>
@@ -64,12 +66,14 @@ export default function ServiceList({ services, onEdit, onRemove, isReadOnly }: 
           <TableBody>
             {services.map((service) => (
               <TableRow key={service._id}>
+                <TableCell className="text-center">{service.position}</TableCell>
+                <TableCell className="text-center">{service.homepagePosition}</TableCell>
                 <TableCell className="font-medium">{service.name}</TableCell>
                 <TableCell><Badge variant="secondary">{service.type}</Badge></TableCell>
                 <TableCell>{service.price || <span className="text-muted-foreground/60">Not set</span>}</TableCell>
-                <TableCell className="flex items-center gap-2">
+                <TableCell>
                   {service.featured && <Badge><Star className="mr-1 h-3 w-3" /> Featured</Badge>}
-                  {service.isCoreService && <Badge variant="outline"><CheckCircle className="mr-1 h-3 w-3" /> Core</Badge>}
+                  {service.isCoreService && <Badge variant="outline" className={service.featured ? 'ml-2' : ''}><CheckCircle className="mr-1 h-3 w-3" /> Core</Badge>}
                 </TableCell>
                 {!isReadOnly && onEdit && onRemove && (
                   <TableCell className="text-right">

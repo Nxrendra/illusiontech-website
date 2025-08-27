@@ -44,7 +44,8 @@ const initialFormData: Omit<IServiceData, 'slug' | 'link'> = {
   audience: '',
   features: [],
   keyFeatures: [],
-  position: 0,
+  position: 99,
+  homepagePosition: 99,
   themeName: defaultTheme.name,
   theme: {
     gradient: defaultTheme.gradient,
@@ -74,7 +75,8 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           audience: service.audience || '',
           features: service.features || [],
           keyFeatures: service.keyFeatures || [],
-          position: service.position || 0,
+          position: service.position ?? 99,
+          homepagePosition: service.homepagePosition ?? 99,
           themeName: service.themeName || 'Default',
           theme: service.theme || { gradient: '', accentClass: '', buttonClass: '' },
         });
@@ -173,14 +175,15 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           <DialogDescription>{service ? 'Update the details for this service.' : 'Fill in the details for the new service.'}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} id="service-form" className="grid gap-6 py-4">
+          <div className="space-y-2"><Label htmlFor="name">Service Name</Label><Input id="name" name="name" value={formData.name} onChange={handleInputChange} required /></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2"><Label htmlFor="name">Service Name</Label><Input id="name" name="name" value={formData.name} onChange={handleInputChange} required /></div>            
-            <div className="space-y-2"><Label htmlFor="position">Position</Label><Input id="position" name="position" type="number" value={formData.position} onChange={handleInputChange} /></div>
-            <div className="space-y-2"><Label htmlFor="type">Service Type</Label><Select name="type" value={formData.type} onValueChange={(value: IService['type']) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger><SelectContent>{serviceTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-2"><Label htmlFor="position">General Position</Label><Input id="position" name="position" type="number" value={formData.position} onChange={handleInputChange} /><p className="text-xs text-muted-foreground">Order on /services page.</p></div>
+            <div className="space-y-2"><Label htmlFor="homepagePosition">Homepage Position</Label><Input id="homepagePosition" name="homepagePosition" type="number" value={formData.homepagePosition} onChange={handleInputChange} /><p className="text-xs text-muted-foreground">Order on homepage carousel.</p></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label htmlFor="icon">Icon</Label><Select name="icon" value={formData.icon} onValueChange={(value: string) => setFormData({ ...formData, icon: value })}><SelectTrigger><SelectValue placeholder="Select an icon" /></SelectTrigger><SelectContent>{iconNames.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-2"><Label htmlFor="themeName">Card Theme</Label><Select name="themeName" value={formData.themeName} onValueChange={handleThemeChange}><SelectTrigger><SelectValue placeholder="Select a theme" /></SelectTrigger><SelectContent>{themeOptions.map(theme => <SelectItem key={theme.name} value={theme.name}>{theme.name}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-2"><Label htmlFor="type">Service Type</Label><Select name="type" value={formData.type} onValueChange={(value: IService['type']) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger><SelectContent>{serviceTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent></Select></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label htmlFor="price">Price (TTD)</Label><Input id="price" name="price" value={formData.price} onChange={handleInputChange} placeholder="$500 - $700 TTD or $250/month" /></div>

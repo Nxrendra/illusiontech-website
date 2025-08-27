@@ -37,13 +37,22 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
   };
 
   const handleSave = (savedService: SerializedService) => {
+    let updatedServices;
     if (editingService) {
       // Update existing service
-      setServices(services.map((s) => (s._id === savedService._id ? savedService : s)));
+      updatedServices = services.map((s) => (s._id === savedService._id ? savedService : s));
     } else {
-      // Add new service to the top of the list
-      setServices([savedService, ...services]);
+      // Add new service
+      updatedServices = [savedService, ...services];
     }
+    // Re-sort the services array to match the server-side sorting
+    updatedServices.sort((a, b) => {
+      const posA = a.position ?? 99;
+      const posB = b.position ?? 99;
+      if (posA !== posB) return posA - posB;
+      return a.name.localeCompare(b.name);
+    });
+    setServices(updatedServices);
     handleFormClose();
   };
 

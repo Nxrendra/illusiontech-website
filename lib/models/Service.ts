@@ -22,6 +22,7 @@ export interface IServiceData {
   };
   featured?: boolean;
   isCoreService?: boolean;
+  homepagePosition?: number;
   position?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -51,7 +52,8 @@ const ServiceSchema: Schema = new Schema({
   },
   featured: { type: Boolean, default: false },
   isCoreService: { type: Boolean, default: false },
-  position: { type: Number, default: 0, index: true },
+  homepagePosition: { type: Number, default: 99, index: true },
+  position: { type: Number, default: 99, index: true },
 }, {
   timestamps: true
 });
