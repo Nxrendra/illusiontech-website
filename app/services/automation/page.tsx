@@ -50,7 +50,7 @@ const automationServiceSchema = {
 
 async function getAutomationService(): Promise<(IServiceData & { _id: string }) | null> {
   await connectToDB();
-  const service = await ServiceModel.findOne({ slug: 'automation-and-integration' }).lean();
+  const service = await ServiceModel.findOne({ slug: 'automation-integration' }).lean();
   return service ? JSON.parse(JSON.stringify(service)) : null;
 }
 

@@ -120,7 +120,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           tabIndex={isActive ? 0 : -1}
         >
           <Link
-            href={service.link || '#'}
+            href={service.link || '/services'} // Fallback to main services page if link is undefined/null
             className="group"
             onClick={(e) => e.stopPropagation()}
           >
