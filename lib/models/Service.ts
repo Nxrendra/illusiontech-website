@@ -58,6 +58,20 @@ const ServiceSchema: Schema = new Schema({
   timestamps: true
 });
 
+// Pre-save hook to automatically generate the service slug from its name.
+// This ensures the slug is always up-to-date and valid for link generation.
+ServiceSchema.pre<IService>('save', async function(next) {
+  if (this.isNew || this.isModified('name')) {
+    if (this.name) {
+      this.slug = this.name.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric chars
+        .replace(/\s+/g, '-')       // Replace spaces with -
+        .replace(/-+/g, '-');       // Replace multiple - with single -
+    }
+  }
+  next();
+});
+
 // Pre-save hook to automatically generate the service link from its slug and type.
 ServiceSchema.pre<IService>('save', async function(next) {
   if (this.isModified('slug') || this.isModified('type')) {
