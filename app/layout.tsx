@@ -3,7 +3,7 @@ import { poppins, playfair } from "@/lib/fonts";
 import "./../styles/globals.css";
 import ClientProviders from "@/components/ClientProviders";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
 
 const organizationSchema = {
   '@context': 'https://schema.org',

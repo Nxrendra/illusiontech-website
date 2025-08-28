@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
             <p>
               IllusionTech Development ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website{' '}
               <Link href="/" className="text-accent hover:underline">
-                illusiontech.dev
+                www.illusiontechdevelopment.com
               </Link>{' '}
               (the "Site"). Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
             </p>
@@ -124,4 +124,3 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
-

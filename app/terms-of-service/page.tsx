@@ -42,7 +42,7 @@ export default function TermsOfServicePage() {
             <p>
               By accessing or using our website located at{' '}
               <Link href="/" className="text-accent hover:underline">
-                illusiontech.dev
+                www.illusiontechdevelopment.com
               </Link>{' '}
               (the "Site") and any services offered by IllusionTech Development ("we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not access or use the Site or our services.
             </p>
@@ -123,4 +123,3 @@ export default function TermsOfServicePage() {
     </div>
   );
 }
-
