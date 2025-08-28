@@ -22,7 +22,9 @@ import {
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
 import { ServiceWithIcon } from './page';
-import { IServiceData } from '@/lib/models/Service';import { useIsMobile } from '@/hooks/useIsMobile';
+import { IServiceData } from '@/lib/models/Service';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import ServiceDetailCard from '@/components/ServiceDetailCard';
 
 
 const faqs = [
@@ -202,69 +204,8 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
             variants={plansStaggerContainer}
             className="space-y-12"
           >
-            {plans.map((plan) => (
-              <motion.div
-                key={plan.name}
-                variants={createItemVariants(isMobile)}
-                whileHover={{ y: -8, scale: 1.01 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                className={`bg-white dark:bg-card p-8 rounded-lg shadow-lg border border-gray-200 dark:border-border ${
-                  plan.featured
-                    ? 'border-t-4 border-accent'
-                    : 'hover:border-accent/50'
-                }`}
-              >
-                <div className="grid md:grid-cols-3 gap-x-8 gap-y-6">
-                  {/* Left Column: Details */}
-                  <div className="md:col-span-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-card-foreground">
-                        {plan.name}
-                      </h3>
-                      {plan.featured && (
-                        <motion.span
-                          whileHover={{ scale: 1.1, rotate: 2 }}
-                          className="hidden md:inline-block bg-accent/10 text-accent text-xs font-bold px-3 py-1 rounded-full"
-                        >
-                          Most Popular
-                        </motion.span>
-                      )}
-                    </div>
-                    <p className="text-3xl font-bold text-gray-800 dark:text-card-foreground mt-2">
-                      {plan.price}
-                    </p>
-                    <p className="mt-4 text-gray-600 dark:text-muted-foreground">
-                      {plan.description}
-                    </p>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="mt-6 w-full md:w-auto"
-                    >
-                      <Button asChild className="w-full">
-                        <Link href="/contact">Select {plan.name}</Link>
-                      </Button>
-                    </motion.div>
-                  </div>
-
-                  {/* Right Column: Features */}
-                  <div className="md:col-span-2 md:border-l md:pl-8 border-gray-200 dark:border-border">
-                    <h4 className="text-lg font-semibold text-gray-800 dark:text-card-foreground mb-4">
-                      What's Included:
-                    </h4>
-                    <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
-                      {(plan.features || []).map((feature) => (
-                        <li key={feature} className="flex items-center gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                          <span className="text-gray-700 dark:text-muted-foreground">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </motion.div>
+            {plans.map((plan, index) => (
+              <ServiceDetailCard key={plan._id} service={plan} isOdd={index % 2 !== 0} />
             ))}
           </motion.div>
         </div>

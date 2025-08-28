@@ -27,11 +27,12 @@ interface ServiceFormProps {
   service: SerializedService | null;
 }
 
-const serviceTypes: IService['type'][] = ['web-development', 'design', 'automation', 'support', 'support-main'];
+const serviceTypes: IService['type'][] = ['web-development', 'design', 'website-design', 'automation', 'support', 'support-main'];
 
 const serviceTypeLabels: Record<IService['type'], string> = {
   'web-development': 'Web Development Package',
-  'design': 'Design Service Page',
+  'design': 'UI/UX Design Page',
+  'website-design': 'Website Design Page',
   'automation': 'Automation Service Page',
   'support': 'Support Plan Item',
   'support-main': 'Support Page (Main)',
