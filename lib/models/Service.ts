@@ -72,8 +72,11 @@ ServiceSchema.pre<IService>('save', async function(next) {
         // Services of type 'support' are sections on the /services/support-maintenance page
         generatedLink = `/services/support-maintenance#${this.slug}`;
         break;
+      case 'design':
+      case 'automation':
         // e.g., a service with slug "ui-ux-design" links to page "/services/ui-ux-design"
         generatedLink = `/services/${this.slug}`;
+        break;
       case 'support-main':
         // This is a special case for the summary card.
         generatedLink = `/services/support-maintenance`;
