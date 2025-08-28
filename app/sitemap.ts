@@ -11,8 +11,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '', // Homepage
     '/about',
     '/services',
-    // Assuming a /contact page exists or will exist. If not, this can be removed.
     '/contact',
+    '/services/web-development',
+    '/services/ui-ux-design',
+    '/services/website-design',
+    '/services/automation',
+    '/services/support-maintenance',
   ].map((route) => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date().toISOString(),
