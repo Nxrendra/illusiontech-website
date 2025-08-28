@@ -22,7 +22,8 @@ export default function LogoutButton() {
   return (
     <Button
       onClick={handleLogout}
-      className="w-full justify-start text-left bg-gray-700 hover:bg-gray-600 text-white"
+      variant="ghost"
+      className="w-full justify-start text-left"
     >
       <LogOut size={18} className="mr-3" />
       Logout

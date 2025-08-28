@@ -20,8 +20,13 @@ export default function KeyFeatureManagement({
   onRemoveKeyFeature,
 }: KeyFeatureManagementProps) {
   return (
-    <div className="space-y-4 rounded-lg border bg-background p-4">
-      <h3 className="text-lg font-semibold">Key Features (for Service Pages)</h3>
+    <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Key Features (for Service Pages)</h3>
+        <Button type="button" variant="ghost" size="sm" onClick={onAddKeyFeature}>
+          <PlusCircle className="mr-2 h-4 w-4" /> Add Key Feature
+        </Button>
+      </div>
       <p className="text-sm text-muted-foreground">
         Manage the detailed feature sections for dedicated service pages. Use the 'Section' field to group features. The order of features within the same section will be preserved on the page.
         <br />
@@ -73,11 +78,12 @@ export default function KeyFeatureManagement({
             </Button>
           </div>
         ))}
+        {keyFeatures.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <p className="text-sm text-muted-foreground">No key features added yet. Click "Add Key Feature" to start.</p>
+          </div>
+        )}
       </div>
-      <Button type="button" variant="outline" onClick={onAddKeyFeature}>
-        <PlusCircle className="mr-2 h-4 w-4" />
-        Add Key Feature
-      </Button>
     </div>
   );
 }

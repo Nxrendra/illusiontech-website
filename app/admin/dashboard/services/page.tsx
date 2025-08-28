@@ -1,36 +1,36 @@
-import { connectToDB } from '@/lib/mongoose';
 import { verifyAdminSession } from '@/lib/auth-utils';
+import { connectToDB } from '@/lib/mongoose';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import ServiceManager from '@/components/admin/ServiceManager';
+import React from 'react';
 
+// This type is necessary for data passed from Server Components to Client Components
 type SerializedService = IServiceData & {
   _id: string;
-  createdAt?: string;
-  updatedAt?: string;
 };
 
-interface ServicesPageData {
-  services?: SerializedService[];
-  error?: string;
-}
-
-async function getServices(): Promise<ServicesPageData> {
+async function getServicesData(): Promise<{ services?: SerializedService[]; error?: string }> {
   try {
     await verifyAdminSession();
     await connectToDB();
 
-    const servicesData = await ServiceModel.find({}).sort({ position: 1, name: 1 }).lean();
+    const servicesData = await ServiceModel.find({})
+      .sort({ position: 1, name: 1 })
+      .lean();
 
-    return { services: JSON.parse(JSON.stringify(servicesData)) };
+    // A robust way to serialize the data and remove Mongoose-specific properties
+    const services = JSON.parse(JSON.stringify(servicesData));
+
+    return { services };
   } catch (error) {
-    console.error("Failed to fetch services:", error);
+    console.error("Failed to fetch services data:", error);
     const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
     return { error: errorMessage };
   }
 }
 
 export default async function ServicesPage() {
-  const { services, error } = await getServices();
+  const { services, error } = await getServicesData();
 
   if (error) {
     return (
@@ -42,7 +42,8 @@ export default async function ServicesPage() {
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 sm:p-6 md:p-8">
+    <div className="p-4 sm:p-6 md:p-8">
+      <h1 className="text-3xl font-bold tracking-tight mb-6">Manage Services & Features</h1>
       <ServiceManager initialServices={services || []} />
     </div>
   );
