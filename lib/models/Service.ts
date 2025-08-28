@@ -60,14 +60,14 @@ const ServiceSchema: Schema = new Schema({
 
 // Pre-save hook to automatically generate the service slug from its name.
 // This ensures the slug is always up-to-date and valid for link generation.
+// It runs on every save to correct any stale data.
 ServiceSchema.pre<IService>('save', async function(next) {
-  if (this.isNew || this.isModified('name')) {
-    if (this.name) {
-      this.slug = this.name.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric chars
-        .replace(/\s+/g, '-')       // Replace spaces with -
-        .replace(/-+/g, '-');       // Replace multiple - with single -
-    }
+  if (this.name) {
+    this.slug = this.name.toLowerCase()
+      .replace(/\//g, '-')          // Replace slashes with hyphens
+      .replace(/[^a-z0-9\s-]/g, '') // Remove other non-alphanumeric chars
+      .replace(/\s+/g, '-')       // Replace spaces with hyphens
+      .replace(/-+/g, '-');       // Replace multiple hyphens with a single one
   }
   next();
 });
