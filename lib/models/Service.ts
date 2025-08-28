@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, models } from 'mongoose';
 // This interface represents the plain data structure of a service, without Mongoose's methods.
 export interface IServiceData {
   slug?: string; // A unique, URL-friendly slug for the service
-  type: 'web-development' | 'design' | 'website-design' | 'automation' | 'support' | 'support-main';
+  type: 'web-development' | 'design' | 'automation' | 'support' | 'support-main';
   name: string;
   icon?: string; // Storing icon name as a string
   price?: string;
@@ -72,13 +72,8 @@ ServiceSchema.pre<IService>('save', async function(next) {
         // Services of type 'support' are sections on the /services/support-maintenance page
         generatedLink = `/services/support-maintenance#${this.slug}`;
         break;
-      case 'website-design':
-      case 'design':
-      case 'automation':
-        // For these types, the slug itself defines the page route.
-        // e.g., a service named "UI/UX Design" has slug "ui-ux-design" and page "/services/ui-ux-design"
+        // e.g., a service with slug "ui-ux-design" links to page "/services/ui-ux-design"
         generatedLink = `/services/${this.slug}`;
-        break;
       case 'support-main':
         // This is a special case for the summary card.
         generatedLink = `/services/support-maintenance`;
