@@ -29,6 +29,14 @@ interface ServiceFormProps {
 
 const serviceTypes: IService['type'][] = ['web-development', 'design', 'automation', 'support', 'support-main'];
 
+const serviceTypeLabels: Record<IService['type'], string> = {
+  'web-development': 'Web Development Package',
+  'design': 'Design Service Page',
+  'automation': 'Automation Service Page',
+  'support': 'Support Plan Item',
+  'support-main': 'Support Page (Main)',
+};
+
 const defaultTheme = themeOptions[0];
 
 const initialFormData: Omit<IServiceData, 'slug' | 'link'> = {
@@ -183,7 +191,7 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2"><Label htmlFor="icon">Icon</Label><Select name="icon" value={formData.icon} onValueChange={(value: string) => setFormData({ ...formData, icon: value })}><SelectTrigger><SelectValue placeholder="Select an icon" /></SelectTrigger><SelectContent>{iconNames.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent></Select></div>
             <div className="space-y-2"><Label htmlFor="themeName">Card Theme</Label><Select name="themeName" value={formData.themeName} onValueChange={handleThemeChange}><SelectTrigger><SelectValue placeholder="Select a theme" /></SelectTrigger><SelectContent>{themeOptions.map(theme => <SelectItem key={theme.name} value={theme.name}>{theme.name}</SelectItem>)}</SelectContent></Select></div>
-            <div className="space-y-2"><Label htmlFor="type">Service Type</Label><Select name="type" value={formData.type} onValueChange={(value: IService['type']) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger><SelectContent>{serviceTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}</SelectContent></Select></div>
+            <div className="space-y-2"><Label htmlFor="type">Service Type</Label><Select name="type" value={formData.type} onValueChange={(value: IService['type']) => setFormData({ ...formData, type: value })}><SelectTrigger><SelectValue placeholder="Select a type" /></SelectTrigger><SelectContent>{serviceTypes.map(type => <SelectItem key={type} value={type}>{serviceTypeLabels[type]}</SelectItem>)}</SelectContent></Select></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label htmlFor="price">Price (TTD)</Label><Input id="price" name="price" value={formData.price} onChange={handleInputChange} placeholder="$500 - $700 TTD or $250/month" /></div>

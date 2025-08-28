@@ -1,17 +1,21 @@
 import type { Metadata } from 'next';
 import AutomationClientPage from './client-page';
+import ServiceModel, { IServiceData } from '@/lib/models/Service';
+import { connectToDB } from '@/lib/mongoose';
+import React from 'react';
 export const dynamic = 'force-dynamic';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
 
 const automationServiceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  serviceType: 'Business Process Automation',
-  name: 'Custom Automation & API Integration Services',
-  url: `${siteUrl}/services/automation`,
+  serviceType: 'Automation & Integration',
+  name: 'Automation & Integration Services',
   description:
-    'Streamline your business with custom workflow automation and API integration solutions. We connect your systems to boost efficiency and reduce manual work.',
+    'Streamline your business workflows with custom API integrations and bot development from IllusionTech. We connect your systems and automate repetitive tasks to improve efficiency.',
+  url: `${siteUrl}/services/automation`,
+  
   provider: {
     '@type': 'LocalBusiness',
     name: 'IllusionTech Development',
@@ -19,55 +23,42 @@ const automationServiceSchema = {
   areaServed: {
     '@type': 'Country',
     name: 'Trinidad and Tobago',
-  },
-  hasOfferCatalog: {
-    '@type': 'OfferCatalog',
-    name: 'Automation & Integration Services',
-    itemListElement: [
-      {
-        '@type': 'Offer',
-        itemOffered: { '@type': 'Service', name: 'Custom Automation & Integration' },
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          price: '0',
-          priceCurrency: 'TTD',
-          description: 'Custom Quote Required',
-        },
-      },
-    ],
-  },
+   },
 };
 
-export const metadata: Metadata = {
-  title: 'Custom Automation & API Integration Services | IllusionTech',
+  export const metadata: Metadata = {
+  title: 'Automation & Integration Services in Trinidad | IllusionTech',
   description:
-    'Streamline your business with custom workflow automation and API integration solutions. We connect your systems to boost efficiency and reduce manual work.',
+    'Streamline your business with custom API integrations and workflow automation. We help businesses in Trinidad and Tobago connect systems and eliminate manual tasks.',
   alternates: {
     canonical: '/services/automation',
   },
   openGraph: {
     type: 'website',
     url: '/services/automation',
-    title: 'Custom Automation & API Integration Services | IllusionTech',
-    description: 'Streamline your business with custom workflow automation and API integration solutions.',
+    title: 'Automation & Integration Services in Trinidad | IllusionTech',
+    description: 'Streamline your business with custom API integrations and workflow automation.',
     images: [{ url: '/og-image.png' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Custom Automation & API Integration Services | IllusionTech',
-    description: 'Streamline your business with custom workflow automation and API integration solutions.',
+    title: 'Automation & Integration Services in Trinidad | IllusionTech',
+    description: 'Streamline your business with custom API integrations and workflow automation.',
     images: ['/og-image.png'],
   },
 };
 
-export default function AutomationPage() {
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(automationServiceSchema) }}
-      />
-      <AutomationClientPage />
+async function getAutomationService(): Promise<(IServiceData & { _id: string }) | null> {
+  await connectToDB();
+  const service = await ServiceModel.findOne({ slug: 'automation-and-integration' }).lean();
+  return service ? JSON.parse(JSON.stringify(service)) : null;
+}
+
+export default async function AutomationPage() {
+const service = await getAutomationService();
+  return (    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(automationServiceSchema) }} />
+      <AutomationClientPage service={service} />
     </>
   );
 }

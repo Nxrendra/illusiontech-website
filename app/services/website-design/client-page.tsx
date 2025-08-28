@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { AnimatedSection, containerVariants } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
+import { IServiceData } from '@/lib/models/Service';
 import ContactTeaser from '@/components/ContactTeaser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
@@ -43,7 +44,7 @@ type DesignFocusPoint = {
   description: string;
 };
 
-const designFocusPoints: DesignFocusPoint[] = [
+const staticDesignFocusPoints: DesignFocusPoint[] = [
   {
     icon: LayoutDashboard,
     name: 'Custom Layouts',
@@ -145,8 +146,18 @@ const designProcess: FeaturePoint[] = [
   },
 ];
 
-export default function WebsiteDesignClientPage() {
-  const isMobile = useIsMobile();
+interface WebsiteDesignClientPageProps {
+  service: (IServiceData & { _id: string }) | null;
+}
+
+export default function WebsiteDesignClientPage({ service }: WebsiteDesignClientPageProps) {
+  const designFocusPoints =
+    service?.keyFeatures?.map((kf, i) => ({
+      // Use the icon from the static data as a fallback
+      icon: staticDesignFocusPoints[i]?.icon || LayoutDashboard,
+      name: kf.title,
+      description: kf.description,
+    })) || staticDesignFocusPoints;  const isMobile = useIsMobile();
   const iconHover = { scale: 1.1, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 400, damping: 15 };
 
@@ -221,16 +232,14 @@ export default function WebsiteDesignClientPage() {
           <motion.h1
             variants={createItemVariants(isMobile)}
             className="text-4xl md:text-5xl font-bold text-white font-playfair"
-          >
-            Designs That Speak Your Brand's Language
+                    >{service?.name || "Designs That Speak Your Brand's Language"}
+
           </motion.h1>
           <motion.p
             variants={createItemVariants(isMobile)}
             className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
-          >
-            First impressions matter. We specialize in creating visually
-            stunning and intuitive website designs that engage users and reflect
-            the unique identity of your brand.
+                    >{service?.description || "First impressions matter. We specialize in creating visually stunning and intuitive website designs that engage users and reflect the unique identity of your brand."}
+
           </motion.p>
         </div>
         <motion.button

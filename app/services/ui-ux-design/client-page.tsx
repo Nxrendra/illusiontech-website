@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
+import { IServiceData } from '@/lib/models/Service';
+import ContactTeaser from '@/components/ContactTeaser';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 // Define IconComponent type
@@ -53,7 +55,7 @@ type DesignPhilosophyPoint = {
 };
 
 // Refactor data arrays
-const designServices: DesignService[] = [
+const staticDesignServices: DesignService[] = [
   {
     icon: Palette,
     name: 'Visual & UI Design',
@@ -128,8 +130,18 @@ const designPhilosophy: DesignPhilosophyPoint[] = [
   },
 ];
 
-export default function UIUXDesignClientPage() {
-  const isMobile = useIsMobile();
+interface UIUXDesignClientPageProps {
+  service: (IServiceData & { _id: string }) | null;
+}
+
+export default function UIUXDesignClientPage({ service }: UIUXDesignClientPageProps) {
+  const designServices =
+    service?.keyFeatures?.map((kf, i) => ({
+      // Use the icon from the static data as a fallback
+      icon: staticDesignServices[i]?.icon || Palette,
+      name: kf.title,
+      description: kf.description,
+    })) || staticDesignServices;  const isMobile = useIsMobile();
   const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
 
@@ -204,15 +216,14 @@ export default function UIUXDesignClientPage() {
           <motion.h1
             variants={createItemVariants(isMobile)}
             className="text-4xl md:text-5xl font-bold text-white"
-          >
-            Designing Experiences that Delight
+                    >{service?.name || 'Designing Experiences that Delight'}
+
           </motion.h1>
           <motion.p
             variants={createItemVariants(isMobile)}
             className="mt-4 text-lg md:text-xl text-gray-300 dark:text-gray-400 max-w-3xl mx-auto"
-          >
-            We craft intuitive, beautiful, and user-centric digital
-            experiences that solve real problems and drive business growth.
+                    >{service?.description || 'We craft intuitive, beautiful, and user-centric digital experiences that solve real problems and drive business growth.'}
+
           </motion.p>
         </div>
         <motion.button

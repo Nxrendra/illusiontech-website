@@ -21,10 +21,9 @@ import {
 } from 'lucide-react';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { createItemVariants } from '@/components/ui/animations';
-import { services } from '@/lib/data/services';
-import { useIsMobile } from '@/hooks/useIsMobile';
+import { ServiceWithIcon } from './page';
+import { IServiceData } from '@/lib/models/Service';import { useIsMobile } from '@/hooks/useIsMobile';
 
-const maintenancePlans = services.filter((s) => s.type === 'support');
 
 const faqs = [
   {
@@ -85,7 +84,12 @@ const whyChooseUsFeatures: WhyChooseUsFeature[] = [
   },
 ];
 
-export default function SupportMaintenanceClientPage() {
+interface SupportMaintenanceClientPageProps {
+  mainService: (IServiceData & { _id: string }) | null;
+  plans: ServiceWithIcon[];
+}
+
+export default function SupportMaintenanceClientPage({ mainService, plans }: SupportMaintenanceClientPageProps) {
   const isMobile = useIsMobile();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -158,14 +162,13 @@ export default function SupportMaintenanceClientPage() {
         <div className="container text-center">
           <h1
             className="text-4xl md:text-5xl font-bold text-white"
-          >
-            Website Support & Maintenance
+                    >{mainService?.name || 'Website Support & Maintenance'}
+
           </h1>
           <p
             className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
-          >
-            Protect your investment and ensure your website runs smoothly with
-            our reliable maintenance plans.
+                   >{mainService?.description || 'Protect your investment and ensure your website runs smoothly with our reliable maintenance plans.'}
+
           </p>
         </div>
         <motion.button
@@ -199,7 +202,7 @@ export default function SupportMaintenanceClientPage() {
             variants={plansStaggerContainer}
             className="space-y-12"
           >
-            {maintenancePlans.map((plan) => (
+            {plans.map((plan) => (
               <motion.div
                 key={plan.name}
                 variants={createItemVariants(isMobile)}
@@ -250,7 +253,7 @@ export default function SupportMaintenanceClientPage() {
                       What's Included:
                     </h4>
                     <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
-                      {plan.features.map((feature) => (
+                      {(plan.features || []).map((feature) => (
                         <li key={feature} className="flex items-center gap-3">
                           <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span className="text-gray-700 dark:text-muted-foreground">

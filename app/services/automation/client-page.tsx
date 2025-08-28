@@ -27,6 +27,7 @@ import {
   LucideProps,
   ChevronDown,
 } from 'lucide-react';
+import { IServiceData } from '@/lib/models/Service';
 import { motion, useScroll } from 'framer-motion';
 
 // Type definition for Lucide icons
@@ -55,7 +56,7 @@ type AutomationProcessStep = {
 };
 
 // Updated service details
-const automationServices: AutomationService[] = [
+const staticAutomationServices: AutomationService[] = [
   {
     icon: Link2,
     name: 'Custom API Integrations',
@@ -196,8 +197,18 @@ const slideInRight = {
   },
 };
 
-export default function AutomationClientPage() {
-  const iconHover = { scale: 1.15, rotate: -5 };
+interface AutomationClientPageProps {
+  service: (IServiceData & { _id: string }) | null;
+}
+
+export default function AutomationClientPage({ service }: AutomationClientPageProps) {
+  const automationServices =
+    service?.keyFeatures?.map((kf, i) => ({
+      // Use the icon from the static data as a fallback
+      icon: staticAutomationServices[i]?.icon || Link2,
+      name: kf.title,
+      description: kf.description,
+    })) || staticAutomationServices;  const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
 
   // Logic to detect scroll direction and position
@@ -282,16 +293,14 @@ export default function AutomationClientPage() {
           <motion.h1
             className="text-4xl md:text-6xl font-bold text-white leading-tight"
             variants={fadeIn}
-          >
-            Automate Workflows, Integrate Systems
+                   >{service?.name || 'Automate Workflows, Integrate Systems'}
+
           </motion.h1>
           <motion.p
             className="mt-6 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
             variants={fadeIn}
-          >
-            Unlock new levels of productivity. We build custom automation and
-            integration solutions that allow your business to work smarter, not
-            harder.
+                   >{service?.description || 'Unlock new levels of productivity. We build custom automation and integration solutions that allow your business to work smarter, not harder.'}
+
           </motion.p>
         </div>
         <motion.button

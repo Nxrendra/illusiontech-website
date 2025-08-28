@@ -61,30 +61,33 @@ const ServiceSchema: Schema = new Schema({
 // Pre-save hook to automatically generate the service link from its slug and type.
 ServiceSchema.pre<IService>('save', async function(next) {
   if (this.isModified('slug') || this.isModified('type')) {
-    let link = '';
+    let generatedLink = '';
+    // Determine the base path based on the service type
     switch (this.type) {
       case 'web-development':
-        link = `/services/web-development#${this.slug}`;
+        // Services of type 'web-development' are sections on the /services/web-development page
+        generatedLink = `/services/web-development#${this.slug}`;
         break;
       case 'support':
-        link = `/services/support-maintenance#${this.slug}`;
+        // Services of type 'support' are sections on the /services/support-maintenance page
+        generatedLink = `/services/support-maintenance#${this.slug}`;
         break;
       case 'design':
       case 'automation':
         // For these types, the slug itself defines the page route.
         // e.g., a service named "UI/UX Design" has slug "ui-ux-design" and page "/services/ui-ux-design"
-        link = `/services/${this.slug}`;
+        generatedLink = `/services/${this.slug}`;
         break;
       case 'support-main':
         // This is a special case for the summary card.
-        link = `/services/support-maintenance`;
+        generatedLink = `/services/support-maintenance`;
         break;
       default:
         // Fallback for any other types, linking to a section on the main services page.
-        link = `/services#${this.slug}`;
+        generatedLink = `/services#${this.slug}`;
         break;
     }
-    this.link = link;
+    this.link = generatedLink;
   }
   next();
 });
