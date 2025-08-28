@@ -58,50 +58,49 @@ const ServiceSchema: Schema = new Schema({
   timestamps: true
 });
 
-// Pre-save hook to automatically generate the service slug from its name.
-// This ensures the slug is always up-to-date and valid for link generation.
-// It runs on every save to correct any stale data.
-ServiceSchema.pre<IService>('save', async function(next) {
+// This single pre-save hook handles both slug and link generation to ensure they are always in sync.
+// It runs on every save to correct any stale data and handle name changes gracefully.
+ServiceSchema.pre<IService>('save', function(next) {
+  // --- 1. Slug Generation ---
+  // We generate the slug from the name. This is the source of truth for the URL part.
   if (this.name) {
-    this.slug = this.name.toLowerCase()
+    // Special case for "Automation & Integration" to match the existing page route /services/automation
+    const nameForSlug = this.name === 'Automation & Integration' ? 'Automation' : this.name;
+
+    this.slug = nameForSlug.toLowerCase()
       .replace(/\//g, '-')          // Replace slashes with hyphens
       .replace(/[^a-z0-9\s-]/g, '') // Remove other non-alphanumeric chars
       .replace(/\s+/g, '-')       // Replace spaces with hyphens
       .replace(/-+/g, '-');       // Replace multiple hyphens with a single one
   }
-  next();
-});
 
-// Pre-save hook to automatically generate the service link from its slug and type.
-ServiceSchema.pre<IService>('save', async function(next) {
-  if (this.isModified('slug') || this.isModified('type')) {
+  // --- 2. Link Generation ---
+  // We generate the link based on the newly generated slug and the service type.
+  // This runs every time to ensure the link is always correct.
+  if (this.slug && this.type) {
     let generatedLink = '';
-    // Determine the base path based on the service type
     switch (this.type) {
       case 'web-development':
-        // Services of type 'web-development' are sections on the /services/web-development page
         generatedLink = `/services/web-development#${this.slug}`;
         break;
       case 'support':
-        // Services of type 'support' are sections on the /services/support-maintenance page
         generatedLink = `/services/support-maintenance#${this.slug}`;
         break;
       case 'design':
       case 'automation':
-        // e.g., a service with slug "ui-ux-design" links to page "/services/ui-ux-design"
+        // These types link to their own dedicated page, using the slug for the path.
         generatedLink = `/services/${this.slug}`;
         break;
       case 'support-main':
-        // This is a special case for the summary card.
         generatedLink = `/services/support-maintenance`;
         break;
       default:
-        // Fallback for any other types, linking to a section on the main services page.
         generatedLink = `/services#${this.slug}`;
         break;
     }
     this.link = generatedLink;
   }
+
   next();
 });
 
