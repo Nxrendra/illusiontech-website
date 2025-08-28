@@ -82,7 +82,7 @@ const staticDesignServices: DesignService[] = [
   },
 ];
 
-const designProcess: DesignProcessStep[] = [
+const staticDesignProcess: DesignProcessStep[] = [
   {
     icon: Search,
     name: '1. Discover & Research',
@@ -109,7 +109,7 @@ const designProcess: DesignProcessStep[] = [
   },
 ];
 
-const designPhilosophy: DesignPhilosophyPoint[] = [
+const staticDesignPhilosophy: DesignPhilosophyPoint[] = [
   {
     icon: Heart,
     title: 'User-Centric Approach',
@@ -135,13 +135,32 @@ interface UIUXDesignClientPageProps {
 }
 
 export default function UIUXDesignClientPage({ service }: UIUXDesignClientPageProps) {
-  const designServices =
-    service?.keyFeatures?.map((kf, i) => ({
-      // Use the icon from the static data as a fallback
-      icon: staticDesignServices[i]?.icon || Palette,
-      name: kf.title,
-      description: kf.description,
-    })) || staticDesignServices;  const isMobile = useIsMobile();
+  const allKeyFeatures = service?.keyFeatures || [];
+
+  // Filter features for each section. Use lowercase, simple names.
+  const serviceFeatures = allKeyFeatures.filter(f => f.section === 'services');
+  const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
+  const philosophyFeatures = allKeyFeatures.filter(f => f.section === 'philosophy');
+
+  // Map CMS keyFeatures to the page sections, falling back to static data
+  const designServices = staticDesignServices.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: serviceFeatures[i]?.title || staticPoint.name,
+    description: serviceFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const designProcess = staticDesignProcess.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: processFeatures[i]?.title || staticPoint.name,
+    description: processFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const designPhilosophy = staticDesignPhilosophy.map((staticPoint, i) => ({
+    ...staticPoint,
+    title: philosophyFeatures[i]?.title || staticPoint.title,
+    description: philosophyFeatures[i]?.description || staticPoint.description,
+  }));
+  const isMobile = useIsMobile();
   const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
 

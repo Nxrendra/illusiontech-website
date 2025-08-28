@@ -12,7 +12,7 @@ export interface IServiceData {
   longDescription?: string;
   timeline?: string;
   features?: string[];
-  keyFeatures?: { title: string; description: string }[];
+  keyFeatures?: { title: string; description: string; section?: string }[];
   link?: string;
   themeName?: string; // The name of the selected theme preset
   theme?: {
@@ -42,7 +42,7 @@ const ServiceSchema: Schema = new Schema({
   longDescription: { type: String },
   timeline: { type: String },
   features: { type: [String], default: [] },
-  keyFeatures: { type: [{ title: String, description: String }], default: [] },
+  keyFeatures: { type: [{ title: String, description: String, section: String }], default: [] },
   link: { type: String },
   themeName: { type: String, default: 'Default' },
   theme: {

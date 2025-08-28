@@ -84,7 +84,7 @@ const staticAutomationServices: AutomationService[] = [
 ];
 
 // New "Why Choose Us" data
-const whyChooseUsPoints: WhyChooseUsPoint[] = [
+const staticWhyChooseUsPoints: WhyChooseUsPoint[] = [
   {
     icon: BarChart3,
     title: 'Increased Efficiency',
@@ -112,7 +112,7 @@ const whyChooseUsPoints: WhyChooseUsPoint[] = [
 ];
 
 // New "Our Process" data
-const automationProcess: AutomationProcessStep[] = [
+const staticAutomationProcess: AutomationProcessStep[] = [
   {
     icon: Search,
     step: '01',
@@ -202,13 +202,33 @@ interface AutomationClientPageProps {
 }
 
 export default function AutomationClientPage({ service }: AutomationClientPageProps) {
-  const automationServices =
-    service?.keyFeatures?.map((kf, i) => ({
-      // Use the icon from the static data as a fallback
-      icon: staticAutomationServices[i]?.icon || Link2,
-      name: kf.title,
-      description: kf.description,
-    })) || staticAutomationServices;  const iconHover = { scale: 1.15, rotate: -5 };
+  const allKeyFeatures = service?.keyFeatures || [];
+
+  // Filter features for each section. Use lowercase, simple names.
+  const serviceFeatures = allKeyFeatures.filter(f => f.section === 'services');
+  const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
+  const whyUsFeatures = allKeyFeatures.filter(f => f.section === 'why-us');
+
+  // Map CMS keyFeatures to the page sections, falling back to static data
+  const automationServices = staticAutomationServices.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: serviceFeatures[i]?.title || staticPoint.name,
+    description: serviceFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const automationProcess = staticAutomationProcess.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: processFeatures[i]?.title || staticPoint.name,
+    description: processFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const whyChooseUsPoints = staticWhyChooseUsPoints.map((staticPoint, i) => ({
+    ...staticPoint,
+    title: whyUsFeatures[i]?.title || staticPoint.title,
+    description: whyUsFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
 
   // Logic to detect scroll direction and position

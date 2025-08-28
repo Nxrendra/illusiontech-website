@@ -115,14 +115,14 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
     setFormData(prev => ({ ...prev, features: (prev.features || []).filter((_, i) => i !== index) }));
   };
 
-  const handleKeyFeatureChange = (index: number, field: 'title' | 'description', value: string) => {
+  const handleKeyFeatureChange = (index: number, field: 'title' | 'description' | 'section', value: string) => {
     const newKeyFeatures = [...(formData.keyFeatures || [])];
     newKeyFeatures[index] = { ...newKeyFeatures[index], [field]: value };
     setFormData(prev => ({ ...prev, keyFeatures: newKeyFeatures }));
   };
 
   const addKeyFeature = () => {
-    setFormData(prev => ({ ...prev, keyFeatures: [...(prev.keyFeatures || []), { title: '', description: '' }] }));
+    setFormData(prev => ({ ...prev, keyFeatures: [...(prev.keyFeatures || []), { title: '', description: '', section: '' }] }));
   };
 
   const removeKeyFeature = (index: number) => {

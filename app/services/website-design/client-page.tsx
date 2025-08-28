@@ -77,7 +77,7 @@ type FeaturePoint = {
   description: string;
 };
 
-const whyChooseUsPoints: FeaturePoint[] = [
+const staticWhyChooseUsPoints: FeaturePoint[] = [
   {
     icon: Users,
     name: 'Collaborative Process',
@@ -98,7 +98,7 @@ const whyChooseUsPoints: FeaturePoint[] = [
   },
 ];
 
-const designPhilosophyPoints = [
+const staticDesignPhilosophyPoints = [
   {
     icon: Target,
     name: 'User-Centric at Heart',
@@ -119,7 +119,7 @@ const designPhilosophyPoints = [
   },
 ];
 
-const designProcess: FeaturePoint[] = [
+const staticDesignProcess: FeaturePoint[] = [
   {
     icon: Sparkles,
     name: '1. Consultation & Strategy',
@@ -151,13 +151,40 @@ interface WebsiteDesignClientPageProps {
 }
 
 export default function WebsiteDesignClientPage({ service }: WebsiteDesignClientPageProps) {
-  const designFocusPoints =
-    service?.keyFeatures?.map((kf, i) => ({
-      // Use the icon from the static data as a fallback
-      icon: staticDesignFocusPoints[i]?.icon || LayoutDashboard,
-      name: kf.title,
-      description: kf.description,
-    })) || staticDesignFocusPoints;  const isMobile = useIsMobile();
+  const allKeyFeatures = service?.keyFeatures || [];
+
+  // Filter features for each section. Use lowercase, simple names.
+  const focusFeatures = allKeyFeatures.filter(f => f.section === 'focus');
+  const whyUsFeatures = allKeyFeatures.filter(f => f.section === 'why-us');
+  const philosophyFeatures = allKeyFeatures.filter(f => f.section === 'philosophy');
+  const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
+
+  // Map CMS keyFeatures to the page sections, falling back to static data
+  const designFocusPoints = staticDesignFocusPoints.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: focusFeatures[i]?.title || staticPoint.name,
+    description: focusFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const whyChooseUsPoints = staticWhyChooseUsPoints.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: whyUsFeatures[i]?.title || staticPoint.name,
+    description: whyUsFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const designPhilosophyPoints = staticDesignPhilosophyPoints.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: philosophyFeatures[i]?.title || staticPoint.name,
+    description: philosophyFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const designProcess = staticDesignProcess.map((staticPoint, i) => ({
+    ...staticPoint,
+    name: processFeatures[i]?.title || staticPoint.name,
+    description: processFeatures[i]?.description || staticPoint.description,
+  }));
+
+  const isMobile = useIsMobile();
   const iconHover = { scale: 1.1, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 400, damping: 15 };
 
