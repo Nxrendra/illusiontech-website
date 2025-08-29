@@ -200,9 +200,15 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           <div className="space-y-2"><Label htmlFor="description">Short Description</Label><Textarea id="description" name="description" value={formData.description} onChange={handleInputChange} placeholder="A brief summary for service cards." /></div>
           <div className="space-y-2"><Label htmlFor="longDescription">Detailed Description</Label><Textarea id="longDescription" name="longDescription" value={formData.longDescription} onChange={handleInputChange} placeholder="A detailed description for the service page." rows={4} /></div>
           <div className="space-y-2"><Label htmlFor="audience">Target Audience</Label><Input id="audience" name="audience" value={formData.audience || ''} onChange={handleInputChange} placeholder="e.g., Small Businesses, Startups" /></div>
-          <div className="flex items-center space-x-4 pt-4">
-            <div className="flex items-center space-x-2"><Switch id="featured" checked={formData.featured} onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })} /><Label htmlFor="featured">Featured Service</Label></div>
-            <div className="flex items-center space-x-2"><Switch id="isCoreService" checked={formData.isCoreService} onCheckedChange={(checked) => setFormData({ ...formData, isCoreService: checked })} /><Label htmlFor="isCoreService">Core Service</Label></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border bg-muted/50 p-4">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2"><Switch id="featured" checked={formData.featured} onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })} /><Label htmlFor="featured">Show on Homepage Carousel</Label></div>
+              <p className="text-xs text-muted-foreground">Toggling this on will make this service appear in the main carousel on the homepage.</p>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2"><Switch id="isCoreService" checked={formData.isCoreService} onCheckedChange={(checked) => setFormData({ ...formData, isCoreService: checked })} /><Label htmlFor="isCoreService">Is a Core Service</Label></div>
+              <p className="text-xs text-muted-foreground">Marks this as a primary offering, which may affect its display in other sections.</p>
+            </div>
           </div>
 
           <FeatureManagement features={formData.features || []} onFeatureChange={handleFeatureChange} onAddFeature={addFeature} onRemoveFeature={removeFeature} />
