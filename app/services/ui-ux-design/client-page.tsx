@@ -142,24 +142,30 @@ export default function UIUXDesignClientPage({ service }: UIUXDesignClientPagePr
   const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
   const philosophyFeatures = allKeyFeatures.filter(f => f.section === 'philosophy');
 
-  // Map CMS keyFeatures to the page sections, falling back to static data
-  const designServices = staticDesignServices.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: serviceFeatures[i]?.title || staticPoint.name,
-    description: serviceFeatures[i]?.description || staticPoint.description,
-  }));
+  // Use CMS data if available, otherwise fall back to static data for the entire section.
+  const designServices = serviceFeatures.length > 0
+    ? serviceFeatures.map((feature, i) => ({
+        icon: staticDesignServices[i]?.icon || Palette,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignServices;
 
-  const designProcess = staticDesignProcess.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: processFeatures[i]?.title || staticPoint.name,
-    description: processFeatures[i]?.description || staticPoint.description,
-  }));
+  const designProcess = processFeatures.length > 0
+    ? processFeatures.map((feature, i) => ({
+        icon: staticDesignProcess[i]?.icon || Search,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignProcess;
 
-  const designPhilosophy = staticDesignPhilosophy.map((staticPoint, i) => ({
-    ...staticPoint,
-    title: philosophyFeatures[i]?.title || staticPoint.title,
-    description: philosophyFeatures[i]?.description || staticPoint.description,
-  }));
+  const designPhilosophy = philosophyFeatures.length > 0
+    ? philosophyFeatures.map((feature, i) => ({
+        icon: staticDesignPhilosophy[i]?.icon || Heart,
+        title: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignPhilosophy;
   const isMobile = useIsMobile();
   const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
@@ -235,13 +241,13 @@ export default function UIUXDesignClientPage({ service }: UIUXDesignClientPagePr
           <motion.h1
             variants={createItemVariants(isMobile)}
             className="text-4xl md:text-5xl font-bold text-white"
-                    >{service?.name || 'Designing Experiences that Delight'}
+                    >{service?.name ?? 'Designing Experiences that Delight'}
 
           </motion.h1>
           <motion.p
             variants={createItemVariants(isMobile)}
             className="mt-4 text-lg md:text-xl text-gray-300 dark:text-gray-400 max-w-3xl mx-auto"
-                    >{service?.description || 'We craft intuitive, beautiful, and user-centric digital experiences that solve real problems and drive business growth.'}
+                    >{service?.longDescription ?? 'We craft intuitive, beautiful, and user-centric digital experiences that solve real problems and drive business growth.'}
 
           </motion.p>
         </div>

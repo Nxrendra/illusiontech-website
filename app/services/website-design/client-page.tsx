@@ -159,30 +159,38 @@ export default function WebsiteDesignClientPage({ service }: WebsiteDesignClient
   const philosophyFeatures = allKeyFeatures.filter(f => f.section === 'philosophy');
   const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
 
-  // Map CMS keyFeatures to the page sections, falling back to static data
-  const designFocusPoints = staticDesignFocusPoints.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: focusFeatures[i]?.title || staticPoint.name,
-    description: focusFeatures[i]?.description || staticPoint.description,
-  }));
+  // Use CMS data if available, otherwise fall back to static data for the entire section.
+  const designFocusPoints = focusFeatures.length > 0
+    ? focusFeatures.map((feature, i) => ({
+        icon: staticDesignFocusPoints[i]?.icon || LayoutDashboard,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignFocusPoints;
 
-  const whyChooseUsPoints = staticWhyChooseUsPoints.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: whyUsFeatures[i]?.title || staticPoint.name,
-    description: whyUsFeatures[i]?.description || staticPoint.description,
-  }));
+  const whyChooseUsPoints = whyUsFeatures.length > 0
+    ? whyUsFeatures.map((feature, i) => ({
+        icon: staticWhyChooseUsPoints[i]?.icon || Users,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticWhyChooseUsPoints;
 
-  const designPhilosophyPoints = staticDesignPhilosophyPoints.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: philosophyFeatures[i]?.title || staticPoint.name,
-    description: philosophyFeatures[i]?.description || staticPoint.description,
-  }));
+  const designPhilosophyPoints = philosophyFeatures.length > 0
+    ? philosophyFeatures.map((feature, i) => ({
+        icon: staticDesignPhilosophyPoints[i]?.icon || Target,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignPhilosophyPoints;
 
-  const designProcess = staticDesignProcess.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: processFeatures[i]?.title || staticPoint.name,
-    description: processFeatures[i]?.description || staticPoint.description,
-  }));
+  const designProcess = processFeatures.length > 0
+    ? processFeatures.map((feature, i) => ({
+        icon: staticDesignProcess[i]?.icon || Sparkles,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticDesignProcess;
 
   const isMobile = useIsMobile();
   const iconHover = { scale: 1.1, rotate: -5 };
@@ -259,13 +267,13 @@ export default function WebsiteDesignClientPage({ service }: WebsiteDesignClient
           <motion.h1
             variants={createItemVariants(isMobile)}
             className="text-4xl md:text-5xl font-bold text-white font-playfair"
-                    >{service?.name || "Designs That Speak Your Brand's Language"}
+                    >{service?.name ?? "Designs That Speak Your Brand's Language"}
 
           </motion.h1>
           <motion.p
             variants={createItemVariants(isMobile)}
             className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
-                    >{service?.description || "First impressions matter. We specialize in creating visually stunning and intuitive website designs that engage users and reflect the unique identity of your brand."}
+                    >{service?.longDescription ?? "First impressions matter. We specialize in creating visually stunning and intuitive website designs that engage users and reflect the unique identity of your brand."}
 
           </motion.p>
         </div>

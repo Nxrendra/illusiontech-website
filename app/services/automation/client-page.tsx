@@ -209,24 +209,30 @@ export default function AutomationClientPage({ service }: AutomationClientPagePr
   const processFeatures = allKeyFeatures.filter(f => f.section === 'process');
   const whyUsFeatures = allKeyFeatures.filter(f => f.section === 'why-us');
 
-  // Map CMS keyFeatures to the page sections, falling back to static data
-  const automationServices = staticAutomationServices.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: serviceFeatures[i]?.title || staticPoint.name,
-    description: serviceFeatures[i]?.description || staticPoint.description,
-  }));
+  // Use CMS data if available, otherwise fall back to static data for the entire section.
+  const automationServices = serviceFeatures.length > 0
+    ? serviceFeatures.map((feature, i) => ({
+        icon: staticAutomationServices[i]?.icon || Link2,
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticAutomationServices;
 
-  const automationProcess = staticAutomationProcess.map((staticPoint, i) => ({
-    ...staticPoint,
-    name: processFeatures[i]?.title || staticPoint.name,
-    description: processFeatures[i]?.description || staticPoint.description,
-  }));
+  const automationProcess = processFeatures.length > 0
+    ? processFeatures.map((feature, i) => ({
+        ...staticAutomationProcess[i], // Keep step property
+        name: feature.title,
+        description: feature.description,
+      }))
+    : staticAutomationProcess;
 
-  const whyChooseUsPoints = staticWhyChooseUsPoints.map((staticPoint, i) => ({
-    ...staticPoint,
-    title: whyUsFeatures[i]?.title || staticPoint.title,
-    description: whyUsFeatures[i]?.description || staticPoint.description,
-  }));
+  const whyChooseUsPoints = whyUsFeatures.length > 0
+    ? whyUsFeatures.map((feature, i) => ({
+        icon: staticWhyChooseUsPoints[i]?.icon || BarChart3,
+        title: feature.title,
+        description: feature.description,
+      }))
+    : staticWhyChooseUsPoints;
 
   const iconHover = { scale: 1.15, rotate: -5 };
   const iconTransition = { type: 'spring', stiffness: 300, damping: 15 };
@@ -313,13 +319,13 @@ export default function AutomationClientPage({ service }: AutomationClientPagePr
           <motion.h1
             className="text-4xl md:text-6xl font-bold text-white leading-tight"
             variants={fadeIn}
-                   >{service?.name || 'Automate Workflows, Integrate Systems'}
+                   >{service?.name ?? 'Automate Workflows, Integrate Systems'}
 
           </motion.h1>
           <motion.p
             className="mt-6 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
             variants={fadeIn}
-                   >{service?.description || 'Unlock new levels of productivity. We build custom automation and integration solutions that allow your business to work smarter, not harder.'}
+                   >{service?.longDescription ?? 'Unlock new levels of productivity. We build custom automation and integration solutions that allow your business to work smarter, not harder.'}
 
           </motion.p>
         </div>
