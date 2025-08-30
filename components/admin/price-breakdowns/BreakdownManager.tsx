@@ -5,9 +5,9 @@ import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { BreakdownList } from './BreakdownList';
 import { BreakdownForm } from './BreakdownForm';
-import { IPriceBreakdown } from '@/lib/models/PriceBreakdown';
+import { IPriceBreakdownData } from '@/lib/models/PriceBreakdown';
 
-type SerializedBreakdown = IPriceBreakdown & { serviceId: { _id: string, name: string } };
+type SerializedBreakdown = Omit<IPriceBreakdownData, 'serviceId'> & { _id: string; serviceId: { _id: string; name: string } };
 
 interface BreakdownManagerProps {
   initialBreakdowns: SerializedBreakdown[];
@@ -24,13 +24,16 @@ export default function BreakdownManager({ initialBreakdowns, services }: Breakd
     setIsFormOpen(true);
   };
 
-  const handleSave = (savedBreakdown: IPriceBreakdown) => {
+  const handleSave = (savedBreakdown: IPriceBreakdownData & { _id: string }) => {
     // This is a bit of a hack to update the list without a full re-fetch
     const service = services.find(s => s._id === savedBreakdown.serviceId.toString());
-    const displayData = { ...savedBreakdown, serviceId: { _id: service?._id || '', name: service?.name || 'N/A' } };
+    const displayData: SerializedBreakdown = {
+      ...savedBreakdown, // This is now a plain object, so the spread is safe
+      serviceId: { _id: service?._id || '', name: service?.name || 'N/A' },
+    };
 
     if (selectedBreakdown) {
-      setBreakdowns(prev => prev.map(b => b._id === savedBreakdown._id ? displayData : b));
+      setBreakdowns(prev => prev.map(b => b._id === displayData._id ? displayData : b));
     } else {
       setBreakdowns(prev => [displayData, ...prev]);
     }
@@ -49,4 +52,3 @@ export default function BreakdownManager({ initialBreakdowns, services }: Breakd
     </div>
   );
 }
-

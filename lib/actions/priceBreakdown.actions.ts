@@ -5,7 +5,8 @@ import { connectToDB } from '@/lib/mongoose';
 import PriceBreakdown, { IPriceBreakdown, IPriceBreakdownData } from '@/lib/models/PriceBreakdown';
 import { verifyAdminSession } from '../auth-utils';
 
-type BreakdownInput = Omit<IPriceBreakdownData, 'slug'>;
+// The form sends serviceId as a string, so we define the input type accordingly.
+type BreakdownInput = Omit<IPriceBreakdownData, 'slug' | 'serviceId'> & { serviceId: string };
 
 export async function createPriceBreakdown(data: BreakdownInput) {
   await verifyAdminSession();
@@ -25,7 +26,11 @@ export async function getPriceBreakdowns() {
   try {
     await connectToDB();
     const breakdowns = await PriceBreakdown.find({}).sort({ title: 1 }).populate('serviceId', 'name').lean();
-    return JSON.parse(JSON.stringify(breakdowns)) as (IPriceBreakdown & { serviceId: { _id: string, name: string } })[];
+    // This type matches the `SerializedBreakdown` type used in the client components,
+    // ensuring that we are returning plain objects, not Mongoose documents.
+    type SerializedBreakdownWithService = Omit<IPriceBreakdownData, 'serviceId'> & { _id: string; serviceId: { _id: string; name: string } };
+
+    return JSON.parse(JSON.stringify(breakdowns)) as SerializedBreakdownWithService[];
   } catch (error) {
     console.error('Error fetching price breakdowns:', error);
     return [];

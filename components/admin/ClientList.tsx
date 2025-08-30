@@ -1,18 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { IClient } from '@/lib/models/Client';
 import { Button } from '@/components/ui/Button';
 import { MoreHorizontal, Edit, Trash2, Loader2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/AlertDialog';
 import { Badge } from '@/components/ui/Badge';
-
-type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
-  _id: string;
-  joinedDate: string;
-};
+import type { SerializedClient } from '@/lib/actions/client.actions';
 
 interface ClientListProps {
   clients: SerializedClient[];

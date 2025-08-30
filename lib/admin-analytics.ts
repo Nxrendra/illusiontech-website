@@ -1,6 +1,6 @@
 import { connectToDB } from '@/lib/mongoose';
 import ContactSubmission, { IContactSubmission } from '@/lib/models/ContactSubmission';
-import Client, { IClient } from '@/lib/models/Client';
+import Client, { IClientData } from '@/lib/models/Client';
 import Message from '@/lib/models/Message';
 import NewsletterSubscriber from '@/lib/models/NewsletterSubscriber';
 import { cookies } from 'next/headers';
@@ -16,8 +16,8 @@ export type SerializedAnalyticsData = {
   newThisMonth: number;
   submissionsOverTime: { date: string; count: number }[];
   clientsByPlan: { name: string; value: number }[];
-  recentSubmissions: (IContactSubmission & { _id: string; createdAt: string })[];
-  recentClients: (IClient & { _id: string; createdAt: string })[];
+  recentSubmissions: (IContactSubmission & { _id: string; createdAt: string; })[];
+  recentClients: (IClientData & { _id: string; createdAt: string; })[];
   recentChatSessions: { sessionId: string; lastMessage: string; name: string; createdAt: string }[];
   error?: string;
 };
@@ -112,7 +112,7 @@ export async function getAnalyticsData(): Promise<SerializedAnalyticsData> {
       name: item._id || 'None',
       value: item.count,
     }));
-    const recentClients = (firstClientStats.recent || []) as (IClient & { _id: string; createdAt: string; })[];
+    const recentClients = (firstClientStats.recent || []) as (IClientData & { _id: string; createdAt: string; })[];
 
     // Return serialized data
     return JSON.parse(JSON.stringify({

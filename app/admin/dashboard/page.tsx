@@ -1,7 +1,7 @@
 import { verifyAdminSession } from '@/lib/auth-utils';
 import { connectToDB } from '@/lib/mongoose';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
-import ClientModel, { IClient } from '@/lib/models/Client';
+import ClientModel, { IClientData } from '@/lib/models/Client';
 import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactSubmission';
 
 import { DashboardStats } from '@/components/admin/DashboardStats';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
 type SerializedService = IServiceData & { _id: string; createdAt: string; };
-type SerializedClient = IClient & { _id: string; createdAt: string; };
+type SerializedClient = IClientData & { _id: string; createdAt: string; };
 type SerializedSubmission = IContactSubmissionData & { _id: string; createdAt: string; };
 
 interface DashboardPageData {

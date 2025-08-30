@@ -1,12 +1,12 @@
 import { formatDistanceToNow } from 'date-fns';
 import { FileText, UserPlus, MessageSquare } from 'lucide-react';
 import { IContactSubmissionData } from '@/lib/models/ContactSubmission';
-import { IClient } from '@/lib/models/Client';
+import { IClientData } from '@/lib/models/Client';
 
 // A type to unify different kinds of activities
 type ActivityItem =
   | { type: 'submission'; data: IContactSubmissionData & { _id: string; createdAt: string } }
-  | { type: 'client'; data: IClient & { _id: string; createdAt: string } }
+  | { type: 'client'; data: IClientData & { _id: string; createdAt: string } }
   | { type: 'chat'; data: { sessionId: string; name: string; createdAt: string; lastMessage: string; } };
 
 const serviceTypeLabels: { [key: string]: string } = {
@@ -24,7 +24,7 @@ export function RecentActivity({
   chats,
 }: {
   submissions: (IContactSubmissionData & { _id: string; createdAt: string })[],
-  clients: (IClient & { _id: string; createdAt: string })[],
+  clients: (IClientData & { _id: string; createdAt: string })[],
   chats: { sessionId: string; name: string; createdAt: string; lastMessage: string; }[],
 }) {
   // Combine and sort activities

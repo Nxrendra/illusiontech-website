@@ -6,12 +6,8 @@ import { PlusCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import ClientList from './ClientList';
 import ClientForm from './ClientForm';
-import { IClient } from '@/lib/models/Client';
-
-type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
-  _id: string;
-  joinedDate: string;
-};
+import { deleteClient } from '@/lib/actions/client.actions';
+import type { SerializedClient } from '@/lib/actions/client.actions';
 
 interface ClientManagerProps {
   initialClients: SerializedClient[];
@@ -51,13 +47,8 @@ export default function ClientManager({ initialClients, serviceNames }: ClientMa
 
   const handleRemove = async (clientId: string) => {
     try {
-      const response = await fetch(`/api/admin/clients/${clientId}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const result = await response.json();
+      const result = await deleteClient(clientId);
+      if (!result.success) {
         throw new Error(result.error || 'Failed to delete client.');
       }
 

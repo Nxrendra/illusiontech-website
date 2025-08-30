@@ -7,12 +7,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import type { IClient } from '@/lib/models/Client';
-
-type SerializedClient = Omit<IClient, 'joinedDate' | '_id'> & {
-  _id: string;
-  joinedDate: string;
-};
+import { createClient, updateClient } from '@/lib/actions/client.actions';
+import type { SerializedClient } from '@/lib/actions/client.actions';
 
 interface ClientFormProps {
   isOpen: boolean;
@@ -50,25 +46,16 @@ export default function ClientForm({ isOpen, onClose, onSave, client, servicePla
     e.preventDefault();
     setIsSaving(true);
 
-    const url = client ? `/api/admin/clients/${client._id}` : '/api/admin/clients';
-    const method = client ? 'PUT' : 'POST';
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
+      const result = client
+        ? await updateClient(client._id, formData)
+        : await createClient(formData);
+      if (!result.success || !result.data) {
         throw new Error(result.error || 'Failed to save client.');
       }
 
       toast.success(`Client ${client ? 'updated' : 'added'} successfully!`);
-      onSave(result);
+      onSave(result.data);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
       toast.error(errorMessage);

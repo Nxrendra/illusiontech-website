@@ -7,10 +7,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { MoreVertical, Edit, Trash2, ExternalLink } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/AlertDialog';
-import { IPriceBreakdown } from '@/lib/models/PriceBreakdown';
+import { IPriceBreakdownData } from '@/lib/models/PriceBreakdown';
 import { deletePriceBreakdown } from '@/lib/actions/priceBreakdown.actions';
 
-type SerializedBreakdown = IPriceBreakdown & { serviceId: { _id: string, name: string } };
+type SerializedBreakdown = Omit<IPriceBreakdownData, 'serviceId'> & { _id: string; serviceId: { _id: string; name: string } };
 
 interface BreakdownListProps {
   breakdowns: SerializedBreakdown[];
@@ -61,4 +61,3 @@ export function BreakdownList({ breakdowns, onEdit, onDelete }: BreakdownListPro
     </div>
   );
 }
-

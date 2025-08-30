@@ -9,30 +9,34 @@ import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { Loader2, PlusCircle, XCircle } from 'lucide-react';
-import { IPriceBreakdown, IPriceBreakdownData } from '@/lib/models/PriceBreakdown';
+import { IPriceBreakdownData } from '@/lib/models/PriceBreakdown';
 import { createPriceBreakdown, updatePriceBreakdown } from '@/lib/actions/priceBreakdown.actions';
 
-type SerializedBreakdown = IPriceBreakdown & { serviceId: { _id: string, name: string } };
+type SerializedBreakdown = Omit<IPriceBreakdownData, 'serviceId'> & { _id: string; serviceId: { _id: string; name: string } };
 type ServiceSelectItem = { _id: string; name: string };
 
 interface BreakdownFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (breakdown: IPriceBreakdown) => void;
+  onSave: (breakdown: IPriceBreakdownData & { _id: string }) => void;
   breakdown: SerializedBreakdown | null;
   services: ServiceSelectItem[];
 }
 
-const initialFormData: Omit<IPriceBreakdownData, 'slug'> = { title: '', serviceId: '' as any, summary: '', priceRange: '', timeframe: '', sections: [], notes: '' };
+type BreakdownFormData = Omit<IPriceBreakdownData, 'slug' | 'serviceId'> & { serviceId: string };
+
+const initialFormData: BreakdownFormData = { title: '', serviceId: '', summary: '', priceRange: '', timeframe: '', sections: [], notes: '' };
 
 export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: BreakdownFormProps) {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<BreakdownFormData>(initialFormData);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       if (breakdown) {
-        setFormData({ ...breakdown, serviceId: breakdown.serviceId._id as any });
+        // Destructure to create a clean form data object without the `_id` from the breakdown prop.
+        const { title, summary, priceRange, timeframe, sections, notes, serviceId } = breakdown;
+        setFormData({ title, summary, priceRange, timeframe, sections, notes: notes || '', serviceId: serviceId._id });
       } else {
         setFormData(initialFormData);
       }
@@ -89,7 +93,7 @@ export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: 
           <div className="p-4 border rounded-lg space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2"><Label htmlFor="title">Document Title</Label><Input id="title" name="title" value={formData.title} onChange={handleInputChange} required /></div>
-              <div className="space-y-2"><Label htmlFor="serviceId">Link to Service</Label><Select name="serviceId" value={formData.serviceId as any} onValueChange={(val) => setFormData(p => ({ ...p, serviceId: val as any }))} required><SelectTrigger><SelectValue placeholder="Select a service..." /></SelectTrigger><SelectContent>{services.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}</SelectContent></Select></div>
+              <div className="space-y-2"><Label htmlFor="serviceId">Link to Service</Label><Select name="serviceId" value={formData.serviceId} onValueChange={(val) => setFormData(p => ({ ...p, serviceId: val }))} required><SelectTrigger><SelectValue placeholder="Select a service..." /></SelectTrigger><SelectContent>{services.map(s => <SelectItem key={s._id} value={s._id}>{s.name}</SelectItem>)}</SelectContent></Select></div>
             </div>
             <div className="space-y-2"><Label htmlFor="summary">Summary</Label><Textarea id="summary" name="summary" value={formData.summary} onChange={handleInputChange} required /></div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -142,4 +146,3 @@ export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: 
     </Dialog>
   );
 }
-

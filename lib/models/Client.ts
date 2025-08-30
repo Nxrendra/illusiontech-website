@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, models } from 'mongoose';
 
-export interface IClient extends Document {
+export interface IClientData {
   name: string;
   email: string;
   phoneNumber?: string;
@@ -10,8 +10,9 @@ export interface IClient extends Document {
   notes?: string;
   joinedDate: Date;
 }
+export interface IClient extends IClientData, Document {}
 
-const ClientSchema: Schema = new Schema({
+const ClientSchema: Schema<IClient> = new Schema({
   name: {
     type: String,
     required: [true, 'Client name is required.'],
