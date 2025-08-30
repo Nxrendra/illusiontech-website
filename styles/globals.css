@@ -85,33 +85,81 @@
   bottom: 90px !important;
 }
 
-.ContactFormPhoneInput .PhoneInputInput {
-  background-color: hsl(222 47% 11%); /* bg-slate-900 */
-  color: white;
-  border: 1px solid hsl(215 28% 27%); /* border-slate-700 */
-  border-radius: 0.375rem; /* rounded-md */
-  padding: 0.5rem 0.75rem;
-  width: 100%;
-  transition: all 0.3s ease-in-out;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+@layer components {
+  .ContactFormPhoneInput .PhoneInputInput {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .ContactFormPhoneInput .PhoneInputInput:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.4);
+    transform: scale(1.05);
+  }
+
+  .ContactFormPhoneInput .PhoneInputCountry {
+    background-color: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    border-right: none;
+    border-radius: calc(var(--radius) - 2px) 0 0 calc(var(--radius) - 2px);
+  }
+
+  .ContactFormPhoneInput .PhoneInputCountrySelectArrow {
+    opacity: 0.6;
+  }
 }
 
-.ContactFormPhoneInput .PhoneInputInput:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  border-color: hsl(262 83% 60%); /* border-accent */
-  box-shadow: 0 0 0 2px hsla(262, 83%, 60%, 0.4); /* ring-accent */
-  transform: scale(1.05);
-}
-
-.ContactFormPhoneInput .PhoneInputCountry {
-  background-color: hsl(222 47% 11%); /* bg-slate-900 */
-  border: 1px solid hsl(215 28% 27%); /* border-slate-700 */
-  border-right: none;
-  border-radius: 0.375rem 0 0 0.375rem;
-}
-
-.ContactFormPhoneInput .PhoneInputCountrySelectArrow {
-  opacity: 0.6;
+@layer utilities {
+  @media print {
+    /* Hide everything on the page by default */
+    body * {
+      visibility: hidden;
+    }
+    /* Only show the print area and its contents */
+    #print-area, #print-area * {
+      visibility: visible;
+    }
+    /* Make the print area take up the whole page */
+    #print-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      padding: 1.5rem; /* Add some margin for printing */
+    }
+    /* Hide elements that shouldn't be printed */
+    .no-print {
+      display: none !important;
+    }
+    /* Reset styles for better print readability */
+    #print-area .bg-muted\/50,
+    #print-area .bg-card {
+      background-color: transparent !important;
+    }
+    #print-area .shadow-lg,
+    #print-area .shadow-sm {
+      box-shadow: none !important;
+    }
+    #print-area .border,
+    #print-area .bg-border {
+      border-color: #d1d5db !important; /* gray-300 */
+    }
+    #print-area .text-foreground,
+    #print-area .text-card-foreground,
+    #print-area .text-accent {
+      color: #000 !important;
+    }
+    #print-area .text-muted-foreground {
+      color: #4b5563 !important; /* gray-600 */
+    }
+  }
 }
