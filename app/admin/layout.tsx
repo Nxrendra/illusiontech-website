@@ -4,6 +4,7 @@ import {
   Users,
   Briefcase,
   FileText,
+  ClipboardEdit,
   BarChart2,
   MessageSquare,
   Newspaper,
@@ -20,6 +21,7 @@ import { Button } from '@/components/ui/Button';
 const navItems = [
   { href: '/admin/dashboard', icon: Home, label: 'Dashboard' },
   { href: '/admin/dashboard/services', icon: Briefcase, label: 'Services & Features' },
+  { href: '/admin/dashboard/content', icon: ClipboardEdit, label: 'Page Content' },
   { href: '/admin/dashboard/clients', icon: Users, label: 'Clients' },
   { href: '/admin/dashboard/contact-submissions', icon: FileText, label: 'Submissions' },
   { href: '/admin/dashboard/chat-sessions', icon: MessageSquare, label: 'Chat Sessions' },

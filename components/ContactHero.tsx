@@ -6,10 +6,11 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { IPageContentData } from '@/lib/models/PageContent';
 
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
-export function ContactHero() {
+export function ContactHero({ content }: { content: IPageContentData }) {
   // Default to false. We'll only show the button on the client after confirming scroll position.
   // This ensures server and initial client render are the same (no button).
   const [showScrollDown, setShowScrollDown] = useState(false);
@@ -129,13 +130,12 @@ export function ContactHero() {
         <h1 
           className="text-4xl md:text-5xl font-bold text-white"
         >
-          Let's Build Something Great Together
+          {content.contactHeroHeading ?? "Let's Build Something Great Together"}
         </h1>
         <p 
           className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
         >
-          Have a project in mind or just want to say hello? We'd love to hear from you.
-          Fill out the form below or use our contact details to reach out.
+          {content.contactHeroSubheading ?? "Have a project in mind or just want to say hello? We'd love to hear from you. Fill out the form below or use our contact details to reach out."}
         </p>
       </div>
       <motion.button

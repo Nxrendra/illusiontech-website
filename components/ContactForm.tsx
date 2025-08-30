@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { motion, Variants, AnimatePresence } from 'framer-motion';
 import { useAssistantStore } from '@/lib/assistant-store';
+import { IPageContentData } from '@/lib/models/PageContent';
 import { services } from '@/lib/data/services';
 
 const formVariants: Variants = {
@@ -180,7 +181,7 @@ const InteractiveField = ({
   );
 };
 // The actual form component that handles state and submission
-function Form() {
+function Form({ content }: { content: IPageContentData }) {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const setInteraction = useAssistantStore((state) => state.setInteraction);
   const [currentStep, setCurrentStep] = useState(1);
@@ -446,7 +447,7 @@ function Form() {
             >
               {currentStep === 1 && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-white text-center">What can we help you with?</h3>
+                  <h3 className="text-xl font-bold text-white text-center">{content.contactFormStep1Heading ?? 'What can we help you with?'}</h3>
                   <ServiceOption label="A New Website or Application" value="new-project" description="Choose this if you have a new idea you want to bring to life." />
                   <ServiceOption label="Website Support & Maintenance" value="maintenance" description="Select this for ongoing support for an existing website." />
                   <ServiceOption label="UI/UX Design" value="ui-ux-design" description="For projects focused on user experience and interface design." />
@@ -458,7 +459,7 @@ function Form() {
 
               {currentStep === 2 && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-white text-center mb-4">Tell us more</h3>
+                  <h3 className="text-xl font-bold text-white text-center mb-4">{content.contactFormStep2Heading ?? 'Tell us more'}</h3>
 
                   {formData.serviceType === 'maintenance' && (
                     <div className="space-y-4 animate-fade-in-up">
@@ -545,7 +546,7 @@ function Form() {
 
               {currentStep === 3 && (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-white text-center mb-4">Your Contact Information</h3>
+                  <h3 className="text-xl font-bold text-white text-center mb-4">{content.contactFormStep3Heading ?? 'Your Contact Information'}</h3>
                   <InteractiveField message="Please enter your first name." className="space-y-2">
                       <Label htmlFor="firstName" className={labelClasses}>First Name</Label>
                       <Input id="firstName" name="firstName" type="text" placeholder="John" required value={formData.firstName} onChange={handleChange} disabled={status.type === 'submitting'} className={inputClasses} />
@@ -674,10 +675,10 @@ function Form() {
 }
 
 // The main component that wraps the form with the reCAPTCHA provider
-export default function ContactForm() {
+export default function ContactForm({ content }: { content: IPageContentData }) {
   return (
     <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}>
-      <Form />
+      <Form content={content} />
     </GoogleReCaptchaProvider>
   );
 }

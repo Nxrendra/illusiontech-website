@@ -1,5 +1,6 @@
 'use client';
 
+import { IPageContentData } from '@/lib/models/PageContent';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 
@@ -26,26 +27,33 @@ const itemVariants: Variants = {
   },
 };
 
-export function ContactInformation() {
+export function ContactInformation({ content }: { content: IPageContentData }) {
+  const heading = content.contactInfoHeading ?? 'Contact Information';
+  const subheading = content.contactInfoSubheading ?? 'Our team is available to answer your questions and discuss your project needs.';
+  const email = content.contactEmail ?? 'illusiontechdev@gmail.com';
+  const phone = content.contactPhone ?? '+1 (868) 467-1453';
+  const address = content.contactAddress ?? 'Remote, Trinidad and Tobago';
+  const workingHours = content.contactWorkingHours ?? 'Mon - Fri: 9:00 AM - 5:00 PM\nSaturday: 8:00 AM - 12:00 PM';
+
   return (
     <motion.div
       className="space-y-8"
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.2 }}
+      viewport={{ once: true, amount: 0.2 }}
     >
       <div>
         <motion.h2 className="text-3xl font-bold text-foreground" variants={itemVariants}>
-          Contact Information
+          {heading}
         </motion.h2>
         <motion.p className="mt-2 text-muted-foreground" variants={itemVariants}>
-          Our team is available to answer your questions and discuss your project needs.
+          {subheading}
         </motion.p>
       </div>
       <div className="space-y-4">
         <motion.a
-          href="mailto:illusiontechdev@gmail.com"
+          href={`mailto:${email}`}
           variants={itemVariants}
           whileHover={{
             scale: 1.05,
@@ -61,12 +69,12 @@ export function ContactInformation() {
             <div>
               <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors duration-300">Email Us</h3>
               <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">Send your project details or inquiries to our team.</p>
-              <span className="text-accent font-medium group-hover:underline">illusiontechdev@gmail.com</span>
+              <span className="text-accent font-medium group-hover:underline">{email}</span>
             </div>
           </div>
         </motion.a>
         <motion.a
-          href="tel:+18684671453"
+          href={`tel:${phone.replace(/\s/g, '')}`}
           variants={itemVariants}
           whileHover={{
             scale: 1.05,
@@ -82,7 +90,7 @@ export function ContactInformation() {
             <div>
               <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors duration-300">Call or Whatsapp Us</h3>
               <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">Speak with us directly for a quicker response.</p>
-              <span className="text-accent font-medium group-hover:underline">+1 (868) 467-1453</span>
+              <span className="text-accent font-medium group-hover:underline">{phone}</span>
             </div>
           </div>
         </motion.a>
@@ -103,8 +111,9 @@ export function ContactInformation() {
               <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors duration-300">Working Hours</h3>
               <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">Our general availability for meetings and support.</p>
               <div className="mt-2 text-accent font-medium">
-                <p>Mon - Fri: 9:00 AM - 5:00 PM</p>
-                <p>Saturday: 8:00 AM - 12:00 PM</p>
+                {workingHours.split('\n').map((line, i) => (
+                  <p key={i}>{line}</p>
+                ))}
                 <p className="text-xs text-muted-foreground mt-1">Timezone: AST (Atlantic Standard Time)</p>
               </div>
             </div>
@@ -125,7 +134,7 @@ export function ContactInformation() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors duration-300">Our Location</h3>
-              <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">Remote, Trinidad and Tobago</p>
+              <p className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">{address}</p>
               <p className="text-muted-foreground/80 text-sm">(Meetings by appointment only)</p>
             </div>
           </div>

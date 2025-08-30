@@ -1,68 +1,52 @@
 import type { Metadata } from 'next';
-import ContactForm from '@/components/ContactForm';
-import { ContactHero } from '@/components/ContactHero';
-import { ContactInformation } from '@/components/ContactInformation';
+import ContactClientPage from './client-page';
+import { connectToDB } from '@/lib/mongoose';
+import PageContent, { IPageContentData } from '@/lib/models/PageContent';
+import React from 'react';
 
 export const dynamic = 'force-dynamic';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://illusiontech.dev';
-
-const localBusinessSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'IllusionTech Development',
-  image: 'https://illusiontech.dev/og-image.png',
-  '@id': `${siteUrl}/#organization`,
-  url: `${siteUrl}/contact`,
-  telephone: '+1-868-XXX-XXXX', // <-- Replace with your actual phone number
-  email: 'hello@illusiontech.dev',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Port of Spain',
-    addressCountry: 'TT',
-  },
-  areaServed: {
-    '@type': 'Country',
-    name: 'Trinidad and Tobago',
-  },
-  sameAs: [
-    // TODO: Add your social media profile URLs here
-  ],
-};
-
 export const metadata: Metadata = {
   title: 'Contact Us | IllusionTech Development',
-  description:
-    'Get in touch with IllusionTech for a free consultation or a custom quote on your web development project in Trinidad and Tobago.',
+  description: 'Get in touch with IllusionTech for custom web development, design, and automation services. We are based in Trinidad and Tobago and ready to help you with your next project.',
   alternates: {
     canonical: '/contact',
   },
-  openGraph: {
-    type: 'website',
-    url: '/contact',
-    title: 'Contact Us | IllusionTech Development',
-    description: 'Get in touch for a free consultation or a custom quote on your web development project.',
-    images: [{ url: '/og-image.png' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Contact Us | IllusionTech Development',
-    description: 'Get in touch for a free consultation or a custom quote on your web development project.',
-    images: ['/og-image.png'],
-  },
 };
 
-export default function ContactPage() {
+async function getPageContent(): Promise<IPageContentData> {
+  try {
+    await connectToDB();
+    const content = await PageContent.findOne({}).lean();
+    return content ? JSON.parse(JSON.stringify(content)) : {};
+  } catch (error) {
+    console.error("Failed to fetch page content:", error);
+    return {};
+  }
+}
+
+export default async function ContactPage() {
+  const content = await getPageContent();
+
+  // Dynamically create the JSON-LD schema based on CMS content or defaults
+  const localBusinessSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'IllusionTech Development',
+    image: 'https://www.illusiontechdevelopment.com/og-image.png', // Assuming a static image
+    url: 'https://www.illusiontechdevelopment.com/contact',
+    telephone: content.contactPhone ?? '+1 (868) 467-1453',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'TT',
+      addressLocality: content.contactAddress ?? 'Trinidad and Tobago',
+    },
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-      <ContactHero />
-      <section id="contact-content" className="py-16 md:py-24 bg-background">
-        <div className="container grid md:grid-cols-2 gap-16 items-start">
-          <ContactInformation />
-          <ContactForm />
-        </div>
-      </section>
+      <ContactClientPage content={content} />
     </>
   );
 }
