@@ -4,7 +4,7 @@
 import mailcheck from 'mailcheck';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useRef } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useRef, useMemo } from 'react';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -22,7 +22,7 @@ import {
 import { motion, Variants, AnimatePresence } from 'framer-motion';
 import { useAssistantStore } from '@/lib/assistant-store';
 import { IPageContentData } from '@/lib/models/PageContent';
-import { services } from '@/lib/data/services';
+import { ServiceForForm } from '@/app/contact/page';
 
 const formVariants: Variants = {
   offscreen: {
@@ -41,70 +41,6 @@ const stepVariants: Variants = {
   visible: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: -50 },
 };
-
-// --- Dynamic Data Generation from Single Source of Truth ---
-
-const webDevServices = services.filter((s) => s.type === 'web-development');
-const supportServices = services.filter((s) => s.type === 'support');
-
-const newProjectPackages = [
-  ...webDevServices.map((s) => ({ value: s.id, label: s.name })),
-  { value: 'unsure', label: "I'm not sure yet" },
-];
-
-const maintenancePlans = [
-  ...supportServices.map((s) => ({ value: s.id, label: s.name })),
-  { value: 'unsure', label: "I'm not sure yet" },
-];
-
-const projectBudgetRanges = [
-  { value: '500-700', label: '$500 - $700 TTD' }, // Corresponds to solo-showcase
-  { value: '800-1300', label: '$800 - $1,300 TTD' }, // Corresponds to starter
-  { value: '1400-3000', label: '$1,400 - $3,000 TTD' }, // Corresponds to business
-  { value: '3500+', label: '$3,500+ TTD' }, // Corresponds to pro
-  { value: 'flexible', label: 'Flexible' },
-];
-
-const maintenanceBudgetRanges = [
-  { value: '250', label: '$250 TTD / month' }, // Corresponds to support-basic
-  { value: '500', label: '$500 TTD / month' }, // Corresponds to support-growth
-  { value: '800', label: '$800 TTD / month' }, // Corresponds to support-premium
-  { value: 'flexible', label: 'Flexible' },
-];
-
-const projectTimelines = [
-  { value: '1w', label: '1 Week' },
-  { value: '2-3w', label: '2-3 Weeks' },
-  { value: '1m', label: '1 Month' },
-  { value: '2m', label: '2 Months' },
-  { value: '3m', label: '3 Months' },
-  { value: 'flexible', label: 'Flexible' }
-];
-
-const maintenanceContractLengths = [
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly (3 months)' },
-  { value: 'annually', label: 'Annually (1 year)' },
-  { value: 'flexible', label: 'Flexible' },
-];
-
-// --- Pre-computed maps for budget/package synchronization ---
-const packageToBudgetMap = new Map(
-  projectBudgetRanges
-    .map((b, i) => (webDevServices[i] ? [webDevServices[i].id, b.value] : null))
-    .filter(Boolean) as [string, string][]
-);
-const budgetToPackageMap = new Map(Array.from(packageToBudgetMap.entries()).map(([k, v]) => [v, k]));
-
-const maintenanceToBudgetMap = new Map(
-  maintenanceBudgetRanges
-    .map((b, i) => (supportServices[i] ? [supportServices[i].id, b.value] : null))
-    .filter(Boolean) as [string, string][]
-);
-const budgetToMaintenanceMap = new Map(
-  Array.from(maintenanceToBudgetMap.entries()).map(([k, v]) => [v, k])
-);
-
 
 // Reusable Select component for a consistent look
 const Select = ({
@@ -181,10 +117,73 @@ const InteractiveField = ({
   );
 };
 // The actual form component that handles state and submission
-function Form({ content }: { content: IPageContentData }) {
+function Form({ content, services }: { content: IPageContentData, services: ServiceForForm[] }) {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const setInteraction = useAssistantStore((state) => state.setInteraction);
   const [currentStep, setCurrentStep] = useState(1);
+
+  // --- Dynamic Data Generation ---
+  const {
+    webDevServices,
+    supportServices,
+    newProjectPackages,
+    maintenancePlans,
+    projectBudgetRanges,
+    maintenanceBudgetRanges,
+    projectTimelines,
+    maintenanceContractLengths,
+    packageToBudgetMap,
+    budgetToPackageMap,
+    maintenanceToBudgetMap,
+    budgetToMaintenanceMap,
+  } = useMemo(() => {
+    const webDevServices = services.filter((s) => s.type === 'web-development');
+    const supportServices = services.filter((s) => s.type === 'support');
+
+    const newProjectPackages = [
+      ...webDevServices.map((s) => ({ value: s.slug || s._id, label: s.name })),
+      { value: 'unsure', label: "I'm not sure yet" },
+    ];
+
+    const maintenancePlans = [
+      ...supportServices.map((s) => ({ value: s.slug || s._id, label: s.name })),
+      { value: 'unsure', label: "I'm not sure yet" },
+    ];
+
+    const priceToValue = (price: string) => price.replace(/[^0-9-]/g, '');
+
+    const projectBudgetRanges = [
+      ...webDevServices.map((s) => ({ value: priceToValue(s.price || ''), label: s.price || '' })).filter(b => b.label),
+      { value: 'flexible', label: 'Flexible' },
+    ];
+
+    const maintenanceBudgetRanges = [
+      ...supportServices.map((s) => ({ value: priceToValue(s.price || ''), label: s.price || '' })).filter(b => b.label),
+      { value: 'flexible', label: 'Flexible' },
+    ];
+
+    const projectTimelines = content.projectTimelines?.length ? content.projectTimelines : [
+      { value: '1w', label: '1 Week' }, { value: '2-3w', label: '2-3 Weeks' }, { value: '1m', label: '1 Month' },
+      { value: '2m', label: '2 Months' }, { value: '3m', label: '3 Months' }, { value: 'flexible', label: 'Flexible' }
+    ];
+
+    const maintenanceContractLengths = content.maintenanceContractLengths?.length ? content.maintenanceContractLengths : [
+      { value: 'monthly', label: 'Monthly' }, { value: 'quarterly', label: 'Quarterly (3 months)' },
+      { value: 'annually', label: 'Annually (1 year)' }, { value: 'flexible', label: 'Flexible' }
+    ];
+
+    const packageToBudgetMap = new Map(webDevServices.map(s => [s.slug || s._id, priceToValue(s.price || '')]));
+    const budgetToPackageMap = new Map(Array.from(packageToBudgetMap.entries()).map(([k, v]) => [v, k]));
+    const maintenanceToBudgetMap = new Map(supportServices.map(s => [s.slug || s._id, priceToValue(s.price || '')]));
+    const budgetToMaintenanceMap = new Map(Array.from(maintenanceToBudgetMap.entries()).map(([k, v]) => [v, k]));
+
+    return {
+      webDevServices, supportServices, newProjectPackages, maintenancePlans,
+      projectBudgetRanges, maintenanceBudgetRanges, projectTimelines, maintenanceContractLengths,
+      packageToBudgetMap, budgetToPackageMap, maintenanceToBudgetMap, budgetToMaintenanceMap
+    };
+  }, [services, content]);
+
   const [formData, setFormData] = useState({
     serviceType: '',
     newProjectPackage: '',
@@ -675,10 +674,10 @@ function Form({ content }: { content: IPageContentData }) {
 }
 
 // The main component that wraps the form with the reCAPTCHA provider
-export default function ContactForm({ content }: { content: IPageContentData }) {
+export default function ContactForm({ content, services }: { content: IPageContentData, services: ServiceForForm[] }) {
   return (
     <GoogleReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}>
-      <Form content={content} />
+      <Form content={content} services={services} />
     </GoogleReCaptchaProvider>
   );
 }

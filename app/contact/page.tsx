@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import ContactClientPage from './client-page';
 import { connectToDB } from '@/lib/mongoose';
 import PageContent, { IPageContentData } from '@/lib/models/PageContent';
+import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import React from 'react';
+import { getIcon } from '@/lib/get-icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,8 +27,30 @@ async function getPageContent(): Promise<IPageContentData> {
   }
 }
 
+export type ServiceForForm = Omit<IServiceData, 'icon'> & {
+  _id: string;
+  icon: React.ReactElement;
+};
+
+async function getServicesForForm(): Promise<ServiceForForm[]> {
+  try {
+    await connectToDB();
+    const servicesFromDB = await ServiceModel.find({
+      type: { $in: ['web-development', 'support'] }
+    }).sort({ position: 1 }).lean();
+
+    const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
+
+    return serializedServices.map(service => ({ ...service, icon: getIcon(service.icon) as React.ReactElement }));
+  } catch (error) {
+    console.error("Failed to fetch services for contact form:", error);
+    return [];
+  }
+}
+
 export default async function ContactPage() {
   const content = await getPageContent();
+  const services = await getServicesForForm();
 
   // Dynamically create the JSON-LD schema based on CMS content or defaults
   const localBusinessSchema = {
@@ -46,7 +70,7 @@ export default async function ContactPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
-      <ContactClientPage content={content} />
+      <ContactClientPage content={content} services={services} />
     </>
   );
 }

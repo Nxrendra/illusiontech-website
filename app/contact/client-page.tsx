@@ -6,12 +6,14 @@ import ContactForm from '@/components/ContactForm';
 import { GridBackground } from '@/components/GridBackground';
 import ProcessTimeline from '@/components/ProcessTimeline';
 import { IPageContentData } from '@/lib/models/PageContent';
+import { ServiceForForm } from './page';
 
 interface ContactClientPageProps {
   content: IPageContentData;
+  services: ServiceForForm[];
 }
 
-export default function ContactClientPage({ content }: ContactClientPageProps) { 
+export default function ContactClientPage({ content, services }: ContactClientPageProps) { 
   return (
     <main>
       <ContactHero content={content} />
@@ -22,7 +24,7 @@ export default function ContactClientPage({ content }: ContactClientPageProps) {
               <ContactInformation content={content} />
             </div>
             <div>
-              <ContactForm content={content} />
+              <ContactForm content={content} services={services} />
             </div>
           </div>
         </section>

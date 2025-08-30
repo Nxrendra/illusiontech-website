@@ -12,6 +12,8 @@ export interface IPageContentData {
   contactFormStep1Heading?: string;
   contactFormStep2Heading?: string;
   contactFormStep3Heading?: string;
+  projectTimelines?: { value: string; label: string }[];
+  maintenanceContractLengths?: { value: string; label: string }[];
 }
 
 export interface IPageContent extends IPageContentData, Document {}
@@ -28,6 +30,26 @@ const PageContentSchema: Schema = new Schema({
   contactFormStep1Heading: { type: String, default: 'What can we help you with?' },
   contactFormStep2Heading: { type: String, default: 'Tell us more' },
   contactFormStep3Heading: { type: String, default: 'Your Contact Information' },
+  projectTimelines: {
+    type: [{ value: String, label: String }],
+    default: [
+      { value: '1w', label: '1 Week' },
+      { value: '2-3w', label: '2-3 Weeks' },
+      { value: '1m', label: '1 Month' },
+      { value: '2m', label: '2 Months' },
+      { value: '3m', label: '3 Months' },
+      { value: 'flexible', label: 'Flexible' }
+    ]
+  },
+  maintenanceContractLengths: {
+    type: [{ value: String, label: String }],
+    default: [
+      { value: 'monthly', label: 'Monthly' },
+      { value: 'quarterly', label: 'Quarterly (3 months)' },
+      { value: 'annually', label: 'Annually (1 year)' },
+      { value: 'flexible', label: 'Flexible' },
+    ]
+  },
 }, { timestamps: true });
 
 const PageContent = models.PageContent || mongoose.model<IPageContent>('PageContent', PageContentSchema);

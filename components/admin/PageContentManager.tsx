@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { toast } from 'sonner';
 import { Loader2, Save } from 'lucide-react';
-import { IPageContentData } from '@/lib/models/PageContent';
+import { IPageContentData, IPageContent } from '@/lib/models/PageContent';
+import OptionListManagement from './OptionListManagement';
 
 interface PageContentManagerProps {
   initialContent: IPageContentData;
@@ -20,6 +21,20 @@ export default function PageContentManager({ initialContent }: PageContentManage
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleOptionChange = (listName: keyof IPageContentData, index: number, field: 'value' | 'label', value: string) => {
+    const list = [...(formData[listName] as { value: string; label: string }[] || [])];
+    list[index] = { ...list[index], [field]: value };
+    setFormData(prev => ({ ...prev, [listName]: list }));
+  };
+
+  const handleAddOption = (listName: keyof IPageContentData) => {
+    setFormData(prev => ({ ...prev, [listName]: [...(prev[listName] as any[] || []), { value: '', label: '' }] }));
+  };
+
+  const handleRemoveOption = (listName: keyof IPageContentData, index: number) => {
+    setFormData(prev => ({ ...prev, [listName]: (prev[listName] as any[] || []).filter((_, i) => i !== index) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +88,24 @@ export default function PageContentManager({ initialContent }: PageContentManage
           <div><Label htmlFor="contactFormStep3Heading">Step 3 Heading</Label><Input id="contactFormStep3Heading" name="contactFormStep3Heading" value={formData.contactFormStep3Heading || ''} onChange={handleInputChange} /></div>
         </div>
       </div>
+
+      <OptionListManagement
+        title="Project Timelines"
+        description="Options for the 'Project Timeline' dropdown in the contact form."
+        options={formData.projectTimelines || []}
+        onOptionChange={(index, field, value) => handleOptionChange('projectTimelines', index, field, value)}
+        onAddOption={() => handleAddOption('projectTimelines')}
+        onRemoveOption={(index) => handleRemoveOption('projectTimelines', index)}
+      />
+
+      <OptionListManagement
+        title="Maintenance Contract Lengths"
+        description="Options for the 'Contract Length' dropdown for maintenance plans."
+        options={formData.maintenanceContractLengths || []}
+        onOptionChange={(index, field, value) => handleOptionChange('maintenanceContractLengths', index, field, value)}
+        onAddOption={() => handleAddOption('maintenanceContractLengths')}
+        onRemoveOption={(index) => handleRemoveOption('maintenanceContractLengths', index)}
+      />
 
       <div className="flex justify-end">
         <Button type="submit" disabled={isSaving}>
