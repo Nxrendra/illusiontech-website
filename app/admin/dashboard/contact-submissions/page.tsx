@@ -5,6 +5,7 @@ import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactS
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { SubmissionsChart } from '@/components/admin/SubmissionsChart';
 import { SubmissionCard } from '@/components/admin/SubmissionCard';
+import { AdminHeader } from '@/components/admin/AdminHeader';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -85,29 +86,29 @@ export default async function ContactSubmissionsPage() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div className="bg-background p-4 sm:p-6 md:p-8 rounded-lg">
-      <h1 className="text-3xl font-bold text-foreground mb-2">Submissions Dashboard</h1>
-      <p className="text-muted-foreground mb-8">An overview of all contact form inquiries.</p>
+    <>
+      <AdminHeader title="Submissions" />
+      <main className="flex-1 space-y-6 p-4 sm:p-6 md:p-8">
+        {/* Stats Cards */}
+        <DashboardStats 
+          totalSubmissions={totalSubmissions}
+          newProjectsCount={newProjectsCount}
+          maintenanceCount={maintenanceCount}
+        />
 
-      {/* Stats Cards */}
-      <DashboardStats 
-        totalSubmissions={totalSubmissions}
-        newProjectsCount={newProjectsCount}
-        maintenanceCount={maintenanceCount}
-      />
+        {/* Charts */}
+        <SubmissionsChart serviceTypeData={serviceTypeData} submissionsChartData={submissionsChartData} />
 
-      {/* Charts */}
-      <SubmissionsChart serviceTypeData={serviceTypeData} submissionsChartData={submissionsChartData} />
-
-      {/* Submissions List */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold text-foreground mb-6">All Inquiries</h2>
-        <div className="space-y-6">
-          {submissions.map((submission) => (
-            <SubmissionCard key={submission._id} submission={submission} />
-          ))}
+        {/* Submissions List */}
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold text-foreground mb-6">All Inquiries</h2>
+          <div className="space-y-6">
+            {submissions.map((submission) => (
+              <SubmissionCard key={submission._id} submission={submission} />
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

@@ -21,7 +21,7 @@ const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { href: '/admin/dashboard/services', label: 'Services & Features', icon: Briefcase },
   { href: '/admin/dashboard/content', label: 'Page Content', icon: FileText },
-  { href: '/admin/dashboard/submissions', label: 'Submissions', icon: Inbox },
+  { href: '/admin/dashboard/contact-submissions', label: 'Submissions', icon: Inbox },
   { href: '/admin/dashboard/clients', label: 'Clients', icon: Users },
   { href: '/admin/dashboard/chat', label: 'AI Chat', icon: Bot },
   { href: '/admin/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
