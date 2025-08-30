@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
 import { Globe } from 'lucide-react';
-import { subNavServices } from '@/lib/data/services';
+import { adminPageLinks } from '@/lib/data/services';
 
 const mainLinks = [
   { name: 'Home', href: '/' },
@@ -38,7 +38,7 @@ export default function AdminPageLinks() {
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Service Pages</DropdownMenuLabel>
-        {subNavServices.map((service) => (
+        {adminPageLinks.map((service) => (
           <DropdownMenuItem key={service.link} asChild>
             <Link href={service.link} target="_blank" rel="noopener noreferrer">{service.name}</Link>
           </DropdownMenuItem>
@@ -47,4 +47,3 @@ export default function AdminPageLinks() {
     </DropdownMenu>
   );
 }
-
