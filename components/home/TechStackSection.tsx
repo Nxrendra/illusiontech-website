@@ -6,6 +6,7 @@ import { createItemVariants } from '@/components/ui/animations';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { SectionHeader } from './SectionHeader';
 import TechIcon from './TechIcon';
+import { IPageContentData } from '@/lib/models/PageContent';
 
 const techStack = [
   {
@@ -55,7 +56,7 @@ const techStack = [
   },
 ];
 
-export function TechStackSection() {
+export function TechStackSection({ content }: { content: IPageContentData }) {
   const isMobile = useIsMobile();
 
   return (
@@ -66,8 +67,11 @@ export function TechStackSection() {
     >
       <div className="container">
         <SectionHeader
-          title="Technology We Use"
-          description="We build with modern, robust, and scalable technologies to ensure your project's success and longevity."
+          title={content.homeTechStackHeading ?? 'Technology We Use'}
+          description={
+            content.homeTechStackSubheading ??
+            "We build with modern, robust, and scalable technologies to ensure your project's success and longevity."
+          }
           isMobile={isMobile}
         />
         <motion.div

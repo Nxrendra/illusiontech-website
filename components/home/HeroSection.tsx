@@ -6,13 +6,18 @@ import { motion, useScroll } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { IPageContentData } from '@/lib/models/PageContent';
 
 // Dynamically import the ParticlesComponent with SSR turned off.
 const ParticlesComponent = dynamic(() => import('./Particles'), {
   ssr: false,
 });
 
-export const HeroSection = () => {
+interface HeroSectionProps {
+  content: IPageContentData;
+}
+
+export const HeroSection = ({ content }: HeroSectionProps) => {
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
 
@@ -30,29 +35,31 @@ export const HeroSection = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="text-4xl md:text-6xl font-bold tracking-tight"
-        >
-          Crafting Digital <span className="text-accent">Illusions</span>
+          className="text-4xl md:text-6xl font-bold tracking-tight">
+          {content.homeHeroHeading ?? 'Crafting Digital Illusions'}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
-          className="mt-4 max-w-2xl text-lg text-muted-foreground md:text-xl"
-        >
-          We transform complex ideas into elegant web solutions that captivate
-          and convert.
+          className="mt-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
+          {content.homeHeroSubheading ??
+            'We transform complex ideas into elegant web solutions that captivate and convert.'}
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-          className="mt-8 flex gap-4"
-        >
+          className="mt-8 flex flex-wrap justify-center gap-4">
           <Button asChild size="large" variant="secondary">
             <Link href="/services">
-              Explore Services
+              {content.homeHeroCtaButtonText ?? 'Explore Services'}
               <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
+          <Button asChild size="large" variant="outline-light">
+            <Link href="/about">
+              {content.homeHeroSecondaryButtonText ?? 'Learn More'}
             </Link>
           </Button>
         </motion.div>

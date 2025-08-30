@@ -4,8 +4,13 @@ import { useState, FormEvent, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Loader2, Send } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
+import { IPageContentData } from '@/lib/models/PageContent';
 
-export default function NewsletterSection() {
+interface NewsletterSectionProps {
+  content: IPageContentData;
+}
+
+export default function NewsletterSection({ content }: NewsletterSectionProps) {
   const [email, setEmail] = useState('');
   const [formState, setFormState] = useState({
     status: 'idle' as 'idle' | 'loading' | 'success' | 'error',
@@ -78,11 +83,11 @@ export default function NewsletterSection() {
           variants={itemVariants}
           className="text-3xl md:text-4xl font-bold mb-4"
         >
-          Stay Ahead of the Curve
+          {content.homeNewsletterHeading ?? 'Stay Ahead of the Curve'}
         </motion.h2>
         <motion.p variants={itemVariants} className="text-lg text-muted-foreground mb-8">
-          Subscribe to our newsletter for the latest in tech, trends, and
-          exclusive offers.
+          {content.homeNewsletterSubheading ??
+            'Subscribe to our newsletter for the latest in tech, trends, and exclusive offers.'}
         </motion.p>
         <motion.form
           variants={itemVariants}

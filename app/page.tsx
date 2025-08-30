@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import HomeClientPage from './client-page';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import { getIcon } from '@/lib/get-icon';
+import PageContent, { IPageContentData } from '@/lib/models/PageContent';
 import React from 'react';
 import { connectToDB } from '@/lib/mongoose';
 
@@ -25,27 +26,44 @@ const webSiteSchema = {
   },
 };
 
-export const metadata: Metadata = {
-  title: 'Custom Web Development & Design in Trinidad | IllusionTech',
-  description:
-    'IllusionTech builds bespoke, high-performance websites and web applications in Trinidad and Tobago. Specializing in Next.js, React, and modern tech stacks to elevate your digital presence.',
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    type: 'website',
-    url: '/',
-    title: 'Custom Web Development & Design in Trinidad | IllusionTech',
-    description: 'Bespoke, high-performance websites and web applications in Trinidad and Tobago.',
-    images: [{ url: '/og-image.png' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Custom Web Development & Design in Trinidad | IllusionTech',
-    description: 'Bespoke, high-performance websites and web applications in Trinidad and Tobago.',
-    images: ['/og-image.png'],
-  },
-};
+async function getPageContent(): Promise<IPageContentData> {
+  try {
+    await connectToDB();
+    const content = await PageContent.findOne({}).lean();
+    return content ? JSON.parse(JSON.stringify(content)) : {};
+  } catch (error) {
+    console.error("Failed to fetch page content for homepage:", error);
+    return {};
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getPageContent();
+
+  const title = content.homeMetaTitle ?? 'Custom Web Development & Design in Trinidad | IllusionTech';
+  const description = content.homeMetaDescription ?? 'IllusionTech builds bespoke, high-performance websites and web applications in Trinidad and Tobago. Specializing in Next.js, React, and modern tech stacks to elevate your digital presence.';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      type: 'website',
+      url: '/',
+      title,
+      description,
+      images: [{ url: '/og-image.png' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/og-image.png'],
+    },
+  };
+}
 
 export type ServiceWithIcon = Omit<IServiceData, 'icon'> & {
   _id: string;
@@ -76,10 +94,11 @@ async function getServices(): Promise<ServiceWithIcon[]> {
 
 export default async function HomePage() {
   const services = await getServices();
+  const content = await getPageContent();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }} />
-      <HomeClientPage services={services} />
+      <HomeClientPage services={services} content={content} />
     </>
   );
 }

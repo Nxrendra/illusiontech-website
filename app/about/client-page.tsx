@@ -17,6 +17,8 @@ import {
   LayoutTemplate,
   ChevronDown,
 } from 'lucide-react';
+import { IPageContentData } from '@/lib/models/PageContent';
+import { getIcon } from '@/lib/get-icon';
 
 
 // Reusable animation variants
@@ -48,8 +50,8 @@ const AnimatedSection = ({ children, className, id }: { children: React.ReactNod
   );
 };
 
-// Content for sections
-const coreBeliefs = [
+// Default content for sections
+const defaultCoreBeliefs = [
   {
     icon: <Heart className="w-8 h-8 text-accent" />,
     title: 'Passion for Creation',
@@ -67,7 +69,7 @@ const coreBeliefs = [
   },
 ];
 
-const futureGoals = [
+const defaultFutureGoals = [
     {
         icon: <LayoutTemplate className="w-10 h-10 text-accent" />,
         title: "Customizable Web Templates",
@@ -80,10 +82,28 @@ const futureGoals = [
     }
 ];
 
+interface AboutClientPageProps {
+  content: IPageContentData;
+}
 
-export default function AboutClientPage() {
+export default function AboutClientPage({ content }: AboutClientPageProps) {
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
+
+  // Use CMS content if available, otherwise use defaults
+  const coreBeliefs = content.coreBeliefs?.length
+    ? content.coreBeliefs.map(b => {
+        const icon = getIcon(b.icon as string);
+        return { ...b, icon: icon && React.cloneElement(icon, { className: "w-8 h-8 text-accent" }) };
+      })
+    : defaultCoreBeliefs;
+
+  const futureGoals = content.futureGoals?.length
+    ? content.futureGoals.map(g => {
+        const icon = getIcon(g.icon as string);
+        return { ...g, icon: icon && React.cloneElement(icon, { className: "w-10 h-10 text-accent" }) };
+      })
+    : defaultFutureGoals;
 
   const particleOptions: ISourceOptions = {
     fullScreen: { enable: false },
@@ -189,10 +209,10 @@ export default function AboutClientPage() {
         <ParticleBackground options={particleOptions} className="absolute inset-0" />
         <div className="relative z-10 text-center container">
           <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-bold font-playfair">
-            Driven by Passion, Defined by Code.
+            {content.aboutHeroHeading ?? 'Driven by Passion, Defined by Code.'}
           </motion.h1>
           <motion.p variants={itemVariants} className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
-            We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.
+            {content.aboutHeroSubheading ?? 'We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.'}
           </motion.p>
         </div>
         <motion.button
@@ -213,9 +233,9 @@ export default function AboutClientPage() {
       <AnimatedSection id="our-story" className="py-20 md:py-28 bg-background min-h-screen flex flex-col justify-center">
         <div className="container">
           <motion.div variants={itemVariants} className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Story & Our "Why"</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{content.aboutStoryHeading ?? 'Our Story & Our "Why"'}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              We started IllusionTech with a simple belief: technology should be a tool for empowerment, not a barrier. Here’s what drives us every day.
+              {content.aboutStorySubheading ?? 'We started IllusionTech with a simple belief: technology should be a tool for empowerment, not a barrier. Here’s what drives us every day.'}
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -243,14 +263,17 @@ export default function AboutClientPage() {
         <div className="container grid lg:grid-cols-2 gap-16 items-center">
           <motion.div variants={itemVariants} className="space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Beyond a Website: The Power of a Web Application
+              {content.aboutWebAppHeading ?? 'Beyond a Website: The Power of a Web Application'}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              In today's digital landscape, a simple, static website is no longer enough. Businesses need dynamic, interactive experiences to engage customers and streamline operations. This is where web applications shine.
+              {content.aboutWebAppParagraph1 ?? "In today's digital landscape, a simple, static website is no longer enough. Businesses need dynamic, interactive experiences to engage customers and streamline operations. This is where web applications shine."}
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              Unlike a traditional website which primarily displays information, a <strong>web application</strong> is a powerful tool that allows users to perform tasks. Think of customer portals, booking systems, interactive dashboards, or online stores. They offer superior engagement, data-driven insights, and scalability for your business.
-            </p>
+            <p
+              className="text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: content.aboutWebAppParagraph2 ?? 'Unlike a traditional website which primarily displays information, a <strong>web application</strong> is a powerful tool that allows users to perform tasks. Think of customer portals, booking systems, interactive dashboards, or online stores. They offer superior engagement, data-driven insights, and scalability for your business.'
+              }}
+            />
           </motion.div>
           <motion.div
             variants={itemVariants}
@@ -258,9 +281,9 @@ export default function AboutClientPage() {
             transition={{ type: 'spring', stiffness: 300 }}
             className="p-8 bg-card rounded-lg shadow-lg border border-border"
           >
-            <h3 className="font-bold text-xl mb-4 flex items-center gap-3 text-card-foreground"><Code className="w-6 h-6 text-accent" />Our Technology in Action</h3>
+            <h3 className="font-bold text-xl mb-4 flex items-center gap-3 text-card-foreground"><Code className="w-6 h-6 text-accent" />{content.aboutTechActionHeading ?? 'Our Technology in Action'}</h3>
             <p className="text-muted-foreground">
-              The very website you are browsing is a high-performance web application built with the same cutting-edge technology we use for our clients. It demonstrates our commitment to speed, security, and a seamless user experience. It's not just a portfolio; it's a testament to our capabilities.
+              {content.aboutTechActionParagraph ?? "The very website you are browsing is a high-performance web application built with the same cutting-edge technology we use for our clients. It demonstrates our commitment to speed, security, and a seamless user experience. It's not just a portfolio; it's a testament to our capabilities."}
             </p>
           </motion.div>
         </div>
@@ -277,18 +300,18 @@ export default function AboutClientPage() {
             >
                 <div className="flex items-center gap-3 mb-4">
                     <DollarSign className="w-8 h-8 text-accent" />
-                    <h3 className="font-bold text-2xl">Our Pricing Philosophy</h3>
+                    <h3 className="font-bold text-2xl">{content.aboutPricingHeading ?? 'Our Pricing Philosophy'}</h3>
                 </div>
                 <p className="text-primary-foreground/90 leading-relaxed">
-                    We believe world-class web development shouldn't come with an inaccessible price tag. Our competitive pricing is a direct result of our lean, efficient workflow and low overhead. We focus on what truly matters: writing clean code, designing beautiful interfaces, and delivering exceptional value to our clients.
+                    {content.aboutPricingSubheading ?? "We believe world-class web development shouldn't come with an inaccessible price tag. Our competitive pricing is a direct result of our lean, efficient workflow and low overhead. We focus on what truly matters: writing clean code, designing beautiful interfaces, and delivering exceptional value to our clients."}
                 </p>
             </motion.div>
             <motion.div variants={itemVariants} className="space-y-4">
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                Premium Quality, Accessible Price
+                {content.aboutPremiumHeading ?? 'Premium Quality, Accessible Price'}
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                By leveraging modern tools and a streamlined process, we minimize unnecessary costs and pass those savings directly on to you. This allows us to provide top-tier, custom solutions that are typically associated with much larger agency fees.
+                {content.aboutPremiumSubheading ?? 'By leveraging modern tools and a streamlined process, we minimize unnecessary costs and pass those savings directly on to you. This allows us to provide top-tier, custom solutions that are typically associated with much larger agency fees.'}
                 </p>
             </motion.div>
         </div>
@@ -298,9 +321,9 @@ export default function AboutClientPage() {
       <AnimatedSection className="py-20 md:py-28 bg-muted">
         <div className="container">
           <motion.div variants={itemVariants} className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Vision for the Future</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{content.aboutFutureHeading ?? 'Our Vision for the Future'}</h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              We are constantly evolving and expanding our services to better serve our clients and the broader digital community. Here’s a glimpse of what’s next.
+              {content.aboutFutureSubheading ?? 'We are constantly evolving and expanding our services to better serve our clients and the broader digital community. Here’s a glimpse of what’s next.'}
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -333,18 +356,16 @@ export default function AboutClientPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.5 }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl font-bold mb-4"
-          >
-            Have a Project in Mind?
+            className="text-3xl md:text-4xl font-bold mb-4">
+            {content.aboutCtaHeading ?? 'Have a Project in Mind?'}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.5 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-lg text-gray-300 max-w-2xl mx-auto mb-8"
-          >
-            Let's turn your idea into an unforgettable digital experience. We're excited to hear what you're dreaming up.
+            className="text-lg text-gray-300 max-w-2xl mx-auto mb-8">
+            {content.aboutCtaSubheading ?? "Let's turn your idea into an unforgettable digital experience. We're excited to hear what you're dreaming up."}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}

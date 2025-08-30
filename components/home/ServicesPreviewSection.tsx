@@ -10,12 +10,14 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { createItemVariants } from '@/components/ui/animations';
 import { AnimatedSection, containerVariants } from '@/components/ui/AnimatedSection';
 import { SectionHeader } from './SectionHeader';
+import { IPageContentData } from '@/lib/models/PageContent';
 
 interface ServicesPreviewSectionProps {
   services: ServiceWithIcon[];
+  content: IPageContentData;
 }
 
-export function ServicesPreviewSection({ services }: ServicesPreviewSectionProps) {
+export function ServicesPreviewSection({ services, content }: ServicesPreviewSectionProps) {
   const isMobile = useIsMobile();
 
   return (
@@ -26,8 +28,8 @@ export function ServicesPreviewSection({ services }: ServicesPreviewSectionProps
     >
       <div className="container">
         <SectionHeader
-          title="Our Core Services"
-          description="We offer a range of services to bring your digital ideas to life, from simple landing pages to complex web applications."
+          title={content.homeServicesPreviewHeading ?? "Our Core Services"}
+          description={content.homeServicesPreviewSubheading ?? "We offer a range of services to bring your digital ideas to life, from simple landing pages to complex web applications."}
           isMobile={isMobile}
         />
         <motion.div
@@ -70,7 +72,7 @@ export function ServicesPreviewSection({ services }: ServicesPreviewSectionProps
         </motion.div>
         <motion.div variants={createItemVariants(isMobile)} className="text-center mt-16">
           <Button asChild size="large" variant="secondary">
-            <Link href="/services">See All Services</Link>
+            <Link href="/services">{content.homeServicesPreviewCtaButtonText ?? 'See All Services'}</Link>
           </Button>
         </motion.div>
       </div>
