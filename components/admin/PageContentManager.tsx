@@ -109,7 +109,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
   return (
     <Tabs defaultValue="home" className="space-y-4">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-3 bg-muted/80">
         <TabsTrigger value="home">Home Page</TabsTrigger>
         <TabsTrigger value="contact">Contact Page</TabsTrigger>
         <TabsTrigger value="about">About Page</TabsTrigger>
@@ -117,7 +117,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
       <form onSubmit={handleSubmit}>
         <TabsContent value="home" className="mt-0">
           <div className="p-6 bg-background rounded-lg border">
-            <h2 className="text-2xl font-bold mb-4">Home Page Content</h2>
+            <h2 className="text-2xl font-bold mb-6 text-primary">Home Page Content</h2>
             <Accordion type="multiple" className="w-full space-y-4">
               <AccordionItem value="meta">
                 <AccordionTrigger>Meta / SEO</AccordionTrigger>
@@ -139,7 +139,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="why-us">
                 <AccordionTrigger>Why Choose Us Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homeWhyChooseUsHeading">Heading</Label><Input id="homeWhyChooseUsHeading" name="homeWhyChooseUsHeading" value={formData.homeWhyChooseUsHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeWhyChooseUsSubheading">Subheading</Label><Textarea id="homeWhyChooseUsSubheading" name="homeWhyChooseUsSubheading" value={formData.homeWhyChooseUsSubheading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeWhyChooseUsCtaButtonText">CTA Button Text</Label><Input id="homeWhyChooseUsCtaButtonText" name="homeWhyChooseUsCtaButtonText" value={formData.homeWhyChooseUsCtaButtonText || ''} onChange={handleInputChange} /></div>
@@ -167,7 +167,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="services-preview">
                 <AccordionTrigger>Services Preview Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homeServicesPreviewHeading">Heading</Label><Input id="homeServicesPreviewHeading" name="homeServicesPreviewHeading" value={formData.homeServicesPreviewHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeServicesPreviewSubheading">Subheading</Label><Textarea id="homeServicesPreviewSubheading" name="homeServicesPreviewSubheading" value={formData.homeServicesPreviewSubheading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeServicesPreviewCtaButtonText">"See All" Button Text</Label><Input id="homeServicesPreviewCtaButtonText" name="homeServicesPreviewCtaButtonText" value={formData.homeServicesPreviewCtaButtonText || ''} onChange={handleInputChange} /></div>
@@ -177,7 +177,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="milestones">
                 <AccordionTrigger>Milestones Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homeMilestonesHeading">Heading</Label><Input id="homeMilestonesHeading" name="homeMilestonesHeading" value={formData.homeMilestonesHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeMilestonesSubheading">Subheading</Label><Textarea id="homeMilestonesSubheading" name="homeMilestonesSubheading" value={formData.homeMilestonesSubheading || ''} onChange={handleInputChange} /></div>
                   <h4 className="font-semibold pt-4 border-t">Milestones</h4>
@@ -198,7 +198,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="principles">
                 <AccordionTrigger>Principles Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homePrinciplesHeading">Heading</Label><Input id="homePrinciplesHeading" name="homePrinciplesHeading" value={formData.homePrinciplesHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homePrinciplesSubheading">Subheading</Label><Textarea id="homePrinciplesSubheading" name="homePrinciplesSubheading" value={formData.homePrinciplesSubheading || ''} onChange={handleInputChange} /></div>
                   <h4 className="font-semibold pt-4 border-t">Principles</h4>
@@ -224,7 +224,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="process">
                 <AccordionTrigger>Process Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homeProcessHeading">Heading</Label><Input id="homeProcessHeading" name="homeProcessHeading" value={formData.homeProcessHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeProcessSubheading">Subheading</Label><Textarea id="homeProcessSubheading" name="homeProcessSubheading" value={formData.homeProcessSubheading || ''} onChange={handleInputChange} /></div>
                   <h4 className="font-semibold pt-4 border-t">Process Steps</h4>
@@ -245,7 +245,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="knowledge">
                 <AccordionTrigger>Digital Knowledge Section</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="homeKnowledgeHeading">Heading</Label><Input id="homeKnowledgeHeading" name="homeKnowledgeHeading" value={formData.homeKnowledgeHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="homeKnowledgeSubheading">Subheading</Label><Textarea id="homeKnowledgeSubheading" name="homeKnowledgeSubheading" value={formData.homeKnowledgeSubheading || ''} onChange={handleInputChange} /></div>
                   <h4 className="font-semibold pt-4 border-t">Knowledge Points</h4>
@@ -285,7 +285,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
         <TabsContent value="contact" className="space-y-8 mt-0">
           <div className="p-6 bg-background rounded-lg border">
-            <h2 className="text-2xl font-bold mb-4">Contact Page Details</h2>
+            <h2 className="text-2xl font-bold mb-6 text-primary">Contact Page Details</h2>
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-muted-foreground pt-2 border-t">Hero Section</h3>
               <div><Label htmlFor="contactHeroHeading">Hero Heading</Label><Input id="contactHeroHeading" name="contactHeroHeading" value={formData.contactHeroHeading || ''} onChange={handleInputChange} /></div>
@@ -327,7 +327,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
         <TabsContent value="about" className="mt-0">
           <div className="p-6 bg-background rounded-lg border">
-            <h2 className="text-2xl font-bold mb-4">About Page Content</h2>
+            <h2 className="text-2xl font-bold mb-6 text-primary">About Page Content</h2>
             <Accordion type="multiple" className="w-full space-y-4">
               <AccordionItem value="meta">
                 <AccordionTrigger>Meta / SEO</AccordionTrigger>
@@ -356,7 +356,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="beliefs">
                 <AccordionTrigger>Core Beliefs</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   {(formData.coreBeliefs || []).map((belief, index) => (
                     <div key={index} className="p-4 border rounded-md space-y-3 relative">
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('coreBeliefs', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>                      <div className="space-y-2"><Label>Icon</Label><Select value={belief.icon} onValueChange={(val) => handleObjectArrayChange('coreBeliefs', index, 'icon', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{iconNames.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent></Select></div>
@@ -396,7 +396,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="future">
                 <AccordionTrigger>Future Goals</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
+                <AccordionContent className="space-y-6 pt-4">
                   <div className="space-y-2"><Label htmlFor="aboutFutureHeading">Heading</Label><Input id="aboutFutureHeading" name="aboutFutureHeading" value={formData.aboutFutureHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="aboutFutureSubheading">Subheading</Label><Textarea id="aboutFutureSubheading" name="aboutFutureSubheading" value={formData.aboutFutureSubheading || ''} onChange={handleInputChange} /></div>
                   {(formData.futureGoals || []).map((goal, index) => (
@@ -422,7 +422,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
           </div>
         </TabsContent>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end p-4 sm:px-6">
           <Button type="submit" disabled={isSaving}>
             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
             Save All Content

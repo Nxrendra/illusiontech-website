@@ -183,6 +183,7 @@ const PageContentSchema: Schema = new Schema({
   homeParallax1CtaButtonText: { type: String, default: 'Start Your Project' },
   homeServicesPreviewHeading: { type: String, default: 'Our Core Services' },
   homeServicesPreviewSubheading: { type: String, default: 'We offer a range of services to bring your digital ideas to life, from simple landing pages to complex web applications.' },
+  homeServicesPreviewCtaButtonText: { type: String, default: 'See All Services' },
   homeMilestonesHeading: { type: String, default: 'Our Milestones' },
   homeMilestonesSubheading: { type: String, default: 'We are proud of what we do. Our commitment to excellence is reflected in our numbers.' },
   milestones: {
@@ -196,8 +197,40 @@ const PageContentSchema: Schema = new Schema({
   },
   homePrinciplesHeading: { type: String, default: 'Our Guiding Principles' },
   homePrinciplesSubheading: { type: String, default: "Our work is driven by a core set of values that ensure excellence, partnership, and innovation in everything we create." },
+  principles: {
+    type: [{ icon: String, title: String, description: String }],
+    default: [
+      { icon: 'Star', title: 'Commitment to Quality', description: 'We are obsessed with delivering pixel-perfect, high-performance products. Our commitment to quality is unwavering, ensuring every project we handle is a masterpiece of form and function.' },
+      { icon: 'Users', title: 'Client-Centric Approach', description: 'Your success is our success. We believe in building strong, collaborative partnerships, listening to your needs, and aligning our strategy with your business objectives to achieve outstanding results.' },
+      { icon: 'Zap', title: 'Innovation at the Core', description: 'We stay at the forefront of technology, constantly exploring new tools and techniques to deliver innovative solutions that give you a competitive edge in the digital landscape.' }
+    ]
+  },
   homeNewsletterHeading: { type: String, default: 'Stay Ahead of the Curve' },
   homeNewsletterSubheading: { type: String, default: 'Subscribe to our newsletter for the latest in tech, trends, and exclusive offers.' },
+  homeProcessHeading: { type: String, default: 'Our Streamlined Process' },
+  homeProcessSubheading: { type: String, default: 'From concept to launch, we follow a structured path to ensure success.' },
+  processSteps: {
+    type: [{ step: String, title: String, description: String, icon: String }],
+    default: [
+      { step: '01', title: 'Discover', description: 'We listen to your vision and define project goals.', icon: 'Search' },
+      { step: '02', title: 'Design', description: 'We craft intuitive UI/UX and stunning visuals.', icon: 'Palette' },
+      { step: '03', title: 'Develop', description: 'We build a robust, scalable, and secure product.', icon: 'Code' },
+      { step: '04', title: 'Deliver', description: 'We launch your project and provide ongoing support.', icon: 'Rocket' }
+    ]
+  },
+  homeKnowledgeHeading: { type: String, default: 'Building Your Digital Foundation' },
+  homeKnowledgeSubheading: { type: String, default: "Knowledge is power. We believe in empowering our clients by explaining the 'why' behind the 'what'. Here are some core concepts vital to understanding the web and making informed decisions for your project." },
+  digitalKnowledgeBase: {
+    type: [{ icon: String, title: String, description: String }],
+    default: [
+      { icon: 'Globe', title: "Website vs. Web Application: What's the Difference?", description: "A <strong>website</strong> is primarily informational, like a digital brochure. It presents content to visitors (e.g., a company's services, a blog, a portfolio). A <strong>web application</strong> is interactive; it's a software program that runs in your browser. It allows users to perform tasks, manipulate data, and collaborate (e.g., online banking, project management tools, or social media sites). We help you decide which is right for your goals." },
+      { icon: 'Users', title: 'Who Benefits from a Digital Presence?', description: "Virtually everyone with a goal. For a <strong>businessman</strong>, it's a 24/7 lead generation machine and a mark of credibility. For a <strong>freelancer or artist</strong>, it's a professional portfolio to showcase work and attract clients. For a <strong>non-profit</strong>, it's a platform to raise awareness and gather support. Your digital presence is your most powerful tool for growth." },
+      { icon: 'ShieldCheck', title: 'The Critical Role of Security', description: "In an age of data breaches, security is non-negotiable. A secure website protects both your business and your customers' sensitive information. This includes implementing <strong>HTTPS</strong> (the padlock in your browser), protecting against common vulnerabilities, and ensuring user data is handled responsibly. A secure site builds trust and protects your reputation." },
+      { icon: 'Zap', title: 'Performance and SEO: Be Seen, Be Fast', description: "A slow website frustrates users and hurts your ranking on search engines like Google. We build high-performance sites that load in a flash. <strong>Search Engine Optimization (SEO)</strong> is the practice of structuring your site to rank higher in search results, driving organic traffic. From clean code to mobile-first design, we build with performance and visibility at the core." }
+    ]
+  },
+  homeTechStackHeading: { type: String, default: 'Technology We Use' },
+  homeTechStackSubheading: { type: String, default: "We build with modern, robust, and scalable technologies to ensure your project's success and longevity." },
   homeParallax2Heading: { type: String, default: 'Ready to Build Something Incredible?' },
   homeParallax2Subheading: { type: String, default: "Have an idea for a project? We're here to turn your vision into a digital reality. Let's collaborate and create something that stands out from the crowd." },
   homeParallax2CtaButtonText: { type: String, default: 'Request a Quote' },

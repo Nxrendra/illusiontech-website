@@ -2,6 +2,7 @@ import { verifyAdminSession } from '@/lib/auth-utils';
 import { connectToDB } from '@/lib/mongoose';
 import PageContent, { IPageContentData } from '@/lib/models/PageContent';
 import PageContentManager from '@/components/admin/PageContentManager';
+import { AdminHeader } from '@/components/admin/AdminHeader';
 import React from 'react';
 
 async function getContentData(): Promise<{ content?: IPageContentData; error?: string }> {
@@ -31,9 +32,11 @@ export default async function ContentPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Manage Page Content</h1>
-      <PageContentManager initialContent={content || {}} />
-    </div>
+    <>
+      <AdminHeader title="Page Content" />
+      <main className="flex-1 p-4 sm:px-6 sm:py-0">
+        <PageContentManager initialContent={content || {}} />
+      </main>
+    </>
   );
 }

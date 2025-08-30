@@ -7,6 +7,8 @@ import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactS
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { RecentActivity } from '@/components/admin/RecentActivity';
 import ServiceList from '@/components/admin/ServiceList';
+import { DashboardCharts } from '@/components/admin/DashboardCharts';
+import { AdminHeader } from '@/components/admin/AdminHeader';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
@@ -58,26 +60,57 @@ export default async function DashboardPage() {
     );
   }
 
+  const newProjectInquiries = submissions?.filter(s => s.serviceType === 'new-project').length || 0;
+  const maintenanceInquiries = submissions?.filter(s => s.serviceType === 'maintenance').length || 0;
+
+  // Process data for charts
+  const clientsByPlan = (clients || []).reduce((acc: { [key: string]: number }, client) => {
+    const plan = client.servicePlan || 'Unknown';
+    acc[plan] = (acc[plan] || 0) + 1;
+    return acc;
+  }, {});
+  const clientsChartData = Object.entries(clientsByPlan).map(([name, value]) => ({ name, value }));
+
+  const submissionsByDate = (submissions || []).reduce((acc: { [key: string]: number }, s) => {
+    const date = new Date(s.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+  const submissionsChartData = Object.entries(submissionsByDate)
+    .map(([date, count]) => ({ date, count }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(-30); // Get last 30 days of activity
+
   return (
-    <div className="flex-1 space-y-4 p-4 sm:p-6 md:p-8">
-      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-      <DashboardStats
-        clientCount={clients?.length || 0}
-        serviceCount={services?.length || 0}
-        submissionCount={submissions?.length || 0}
-      />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="lg:col-span-4 bg-muted/50 p-6 rounded-lg border">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-foreground">Service Offerings</h2>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/admin/dashboard/services">Manage Services</Link>
-            </Button>
+    <>
+      <AdminHeader title="Dashboard" />
+      <main className="flex-1 space-y-6 p-4 sm:p-6 md:p-8">
+        <DashboardStats
+          clientCount={clients?.length || 0}
+          serviceCount={services?.length || 0}
+          newProjectInquiries={newProjectInquiries}
+          maintenanceInquiries={maintenanceInquiries}
+        />
+
+        <DashboardCharts submissionsData={submissionsChartData} clientsData={clientsChartData} />
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <div className="lg:col-span-4">
+            <div className="bg-card p-6 rounded-lg border h-full">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-foreground">Service Offerings</h2>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/admin/dashboard/services">Manage Services</Link>
+                </Button>
+              </div>
+              <ServiceList services={services || []} isReadOnly={true} />
+            </div>
           </div>
-          <ServiceList services={services || []} isReadOnly={true} />
+          <div className="lg:col-span-3">
+            <RecentActivity submissions={submissions || []} clients={clients || []} chats={[]} />
+          </div>
         </div>
-        <div className="lg:col-span-3"><RecentActivity submissions={submissions || []} clients={clients || []} chats={[]} /></div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

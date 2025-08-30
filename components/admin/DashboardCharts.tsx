@@ -66,26 +66,9 @@ export function DashboardCharts({ submissionsData, clientsData }: DashboardChart
         <h3 className="text-lg font-semibold text-foreground mb-4">Clients by Plan</h3>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
-            <Tooltip
-              contentStyle={{
-                background: 'hsl(var(--background))',
-                border: '1px solid hsl(var(--border))',
-                color: 'hsl(var(--foreground))',
-              }}
-            />
-            <Pie
-              data={clientsData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              nameKey="name"
-            >
-              {clientsData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
+            <Tooltip contentStyle={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
+            <Pie data={clientsData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name">
+              {clientsData.map((entry, index) => (<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />))}
             </Pie>
             <Legend wrapperStyle={{ fontSize: '14px' }} />
           </PieChart>

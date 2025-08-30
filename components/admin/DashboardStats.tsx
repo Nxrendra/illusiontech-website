@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Users, Briefcase, FileText, MessageSquare, Rocket, ShieldCheck } from 'lucide-react';
+import { Users, Briefcase, FileText, Rocket, ShieldCheck } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -25,7 +25,8 @@ interface DashboardStatsProps {
   // Main dashboard props
   clientCount?: number;
   serviceCount?: number;
-  submissionCount?: number;
+  newProjectInquiries?: number;
+  maintenanceInquiries?: number;
   // Submission page props
   totalSubmissions?: number;
   newProjectsCount?: number;
@@ -35,7 +36,8 @@ interface DashboardStatsProps {
 export function DashboardStats({
   clientCount,
   serviceCount,
-  submissionCount,
+  newProjectInquiries,
+  maintenanceInquiries,
   totalSubmissions,
   newProjectsCount,
   maintenanceCount,
@@ -47,8 +49,8 @@ export function DashboardStats({
         <>
           <StatCard title="Total Clients" value={clientCount} icon={<Users className="h-4 w-4 text-muted-foreground" />} />
           <StatCard title="Total Services" value={serviceCount ?? 0} icon={<Briefcase className="h-4 w-4 text-muted-foreground" />} />
-          <StatCard title="Submissions" value={submissionCount ?? 0} icon={<FileText className="h-4 w-4 text-muted-foreground" />} />
-          <StatCard title="Active Chats" value={0} icon={<MessageSquare className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="New Project Inquiries" value={newProjectInquiries ?? 0} icon={<Rocket className="h-4 w-4 text-muted-foreground" />} />
+          <StatCard title="Support Requests" value={maintenanceInquiries ?? 0} icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />} />
         </>
       )}
       {/* Render submission-specific stats if totalSubmissions is provided */}

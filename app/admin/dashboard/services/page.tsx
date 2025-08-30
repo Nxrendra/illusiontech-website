@@ -2,6 +2,7 @@ import { verifyAdminSession } from '@/lib/auth-utils';
 import { connectToDB } from '@/lib/mongoose';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import ServiceManager from '@/components/admin/ServiceManager';
+import { AdminHeader } from '@/components/admin/AdminHeader';
 import React from 'react';
 
 // This type is necessary for data passed from Server Components to Client Components
@@ -42,9 +43,11 @@ export default async function ServicesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <h1 className="text-3xl font-bold tracking-tight mb-6">Manage Services & Features</h1>
-      <ServiceManager initialServices={services || []} />
-    </div>
+    <>
+      <AdminHeader title="Services & Features" />
+      <main className="flex-1 p-4 sm:px-6 sm:py-0">
+        <ServiceManager initialServices={services || []} />
+      </main>
+    </>
   );
 }

@@ -65,8 +65,8 @@ export function RecentActivity({
   };
 
   return (
-    <div className="bg-card border border-border rounded-lg p-5 shadow-sm">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Recent Activity</h3>
+    <div className="bg-card border border-border rounded-lg p-5 shadow-sm h-full">
+      <h3 className="text-xl font-bold text-foreground mb-6">Recent Activity</h3>
       <div className="space-y-4">
         {recentActivities.map(activity => (
           <div key={`${activity.type}-${activity.type === 'chat' ? activity.data.sessionId : activity.data._id}`} className="flex items-start gap-4">
