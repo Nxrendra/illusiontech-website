@@ -45,8 +45,8 @@ export const ParallaxSection = ({
   return (
     <section ref={sectionRef} className={`relative overflow-hidden bg-gray-900 dark:bg-black ${className}`}>
       <motion.div
-        className="absolute left-0 right-0 top-[-25%] bottom-[-25%] z-0 bg-cover bg-center opacity-20"
-        style={{ backgroundImage: `url(${imageUrl})`, y }}
+        className="absolute inset-0 top-[-25%] bottom-[-25%] z-0 bg-image-full opacity-20"
+        style={{ backgroundImage: `url(${imageUrl})`, y, willChange: 'transform' }}
       />
       <motion.div
         variants={containerVariants}

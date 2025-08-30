@@ -1,7 +1,7 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/about/client-page.tsx
 'use client';
 import ParticleBackground from '@/components/ParticleBackground';
-import type { ISourceOptions } from '@tsparticles/engine';
+import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
 import React, { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useInView, useScroll } from 'framer-motion';
@@ -18,6 +18,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { IPageContentData } from '@/lib/models/PageContent';
+import type { ISourceOptions } from '@tsparticles/engine';
 import { getIcon } from '@/lib/get-icon';
 
 
@@ -202,19 +203,13 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
       {/* Hero Section */}
       <motion.section
         className="relative min-h-screen flex items-center justify-center text-white bg-gray-900 dark:bg-black"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
       >
         <ParticleBackground options={particleOptions} className="absolute inset-0" />
-        <div className="relative z-10 text-center container">
-          <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-bold font-playfair">
-            {content.aboutHeroHeading ?? 'Driven by Passion, Defined by Code.'}
-          </motion.h1>
-          <motion.p variants={itemVariants} className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
-            {content.aboutHeroSubheading ?? 'We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.'}
-          </motion.p>
-        </div>
+        <HeaderAnimation
+          isAtTop={isAtTop}
+          title={content.aboutHeroHeading ?? 'Driven by Passion, Defined by Code.'}
+          description={content.aboutHeroSubheading ?? 'We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.'}
+        />
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
           onClick={handleScrollDown}

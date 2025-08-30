@@ -35,6 +35,7 @@ import { DigitalKnowledgeSection } from '@/components/home/DigitalKnowledgeSecti
 import NewsletterSection from '@/components/home/NewsletterSection';
 import { ServiceWithIcon } from './page';
 import { IPageContentData } from '@/lib/models/PageContent';
+import { ParallaxSection } from '@/components/home/ParallaxSection';
 import { getIcon } from '@/lib/get-icon';
 
 import TechIcon from '@/components/home/TechIcon';
@@ -67,54 +68,6 @@ const milestones = [
     label: 'Support Availability',
   },
 ];
-
-// A simple parallax section component
-interface ParallaxSectionProps {
-  imageUrl: string;
-  children: React.ReactNode;
-  className?: string;
-}
-
-const ParallaxSection = ({ imageUrl, children, className }: ParallaxSectionProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ['-20%', '20%']);
-  const isInView = useInView(ref, { amount: 0.3, once: false });
-
-  return (
-    <div
-      ref={ref}
-      className={`relative overflow-hidden bg-gray-900 dark:bg-black ${className}`}
-    >
-      <motion.div
-        className="absolute inset-0 opacity-20"
-        style={{
-          y,
-        }}
-      >
-        <Image
-          src={imageUrl}
-          alt="" // Alt text is empty as the image is purely decorative
-          fill
-          style={{ objectFit: 'cover' }}
-          quality={75}
-          sizes="100vw"
-        />
-      </motion.div>
-      <motion.div
-        className="relative container text-center z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-      >
-        {children}
-      </motion.div>
-    </div>
-  );
-};
 
 function AnimatedNumber({ value, suffix = '' }: { value: number, suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);

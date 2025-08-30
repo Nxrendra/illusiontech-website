@@ -6,6 +6,7 @@ import { motion, useScroll } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
 import { IPageContentData } from '@/lib/models/PageContent';
 
 // Dynamically import the ParticlesComponent with SSR turned off.
@@ -30,22 +31,12 @@ export const HeroSection = ({ content }: HeroSectionProps) => {
   return (
     <section className="relative h-screen flex items-center justify-center text-center overflow-hidden text-white bg-gray-900 dark:bg-black">
       <ParticlesComponent />
-      <div className="relative z-10 p-4 flex flex-col items-center">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="text-4xl md:text-6xl font-bold tracking-tight">
-          {content.homeHeroHeading ?? 'Crafting Digital Illusions'}
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
-          className="mt-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
-          {content.homeHeroSubheading ??
-            'We transform complex ideas into elegant web solutions that captivate and convert.'}
-        </motion.p>
+      <div className="relative z-10 p-4 flex flex-col items-center w-full">
+        <HeaderAnimation
+          isAtTop={isAtTop}
+          title={content.homeHeroHeading ?? 'Crafting Digital Illusions'}
+          description={content.homeHeroSubheading ?? 'We transform complex ideas into elegant web solutions that captivate and convert.'}
+        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

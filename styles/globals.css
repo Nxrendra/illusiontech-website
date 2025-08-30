@@ -119,6 +119,12 @@
 }
 
 @layer utilities {
+  .bg-image-full {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
   @media print {
     /* Hide everything on the page by default */
     body * {

@@ -1,13 +1,7 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/services/support-maintenance/client-page.tsx
 'use client';
 
-import {
-  useState,
-  ForwardRefExoticComponent,
-  RefAttributes,
-  useEffect,
-  useRef,
-} from 'react';
+import { useState, ForwardRefExoticComponent, RefAttributes, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
@@ -20,6 +14,7 @@ import {
   LucideProps,
 } from 'lucide-react';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
+import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
 import { createItemVariants } from '@/components/ui/animations';
 import { ServiceWithIcon } from './page';
 import { IServiceData } from '@/lib/models/Service';
@@ -94,7 +89,6 @@ interface SupportMaintenanceClientPageProps {
 export default function SupportMaintenanceClientPage({ mainService, plans }: SupportMaintenanceClientPageProps) {
   const isMobile = useIsMobile();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-
   const lastY = useRef(0);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const [isAtTop, setIsAtTop] = useState(true);
@@ -102,11 +96,7 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY > lastY.current) {
-        setScrollDirection('down');
-      } else if (currentY < lastY.current) {
-        setScrollDirection('up');
-      }
+      setScrollDirection(currentY > lastY.current ? 'down' : 'up');
       lastY.current = currentY;
       setIsAtTop(currentY < 10);
     };
@@ -161,18 +151,11 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
       <section
         className="bg-gray-900 dark:bg-black py-20 md:py-28 min-h-screen flex flex-col items-center justify-center relative"
       >
-        <div className="container text-center">
-          <h1
-            className="text-4xl md:text-5xl font-bold text-white"
-                    >{mainService?.name || 'Website Support & Maintenance'}
-
-          </h1>
-          <p
-            className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
-                   >{mainService?.description || 'Protect your investment and ensure your website runs smoothly with our reliable maintenance plans.'}
-
-          </p>
-        </div>
+        <HeaderAnimation
+          title={mainService?.name || 'Website Support & Maintenance'}
+          description={mainService?.description || 'Protect your investment and ensure your website runs smoothly with our reliable maintenance plans.'}
+          isAtTop={isAtTop}
+        />
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
           onClick={handleScrollDown}
