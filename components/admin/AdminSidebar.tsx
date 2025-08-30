@@ -3,16 +3,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Briefcase,
+  ArrowLeft,
   BarChart2,
+  Bot,
+  Briefcase,
   FileText,
+  Users2,
   Inbox,
   LayoutGrid,
   Newspaper,
   Settings,
   Users,
-  ArrowLeft,
-  Bot,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from  '@/components/ui/Tooltip';
@@ -23,6 +24,7 @@ const navItems = [
   { href: '/admin/dashboard/content', label: 'Page Content', icon: FileText },
   { href: '/admin/dashboard/contact-submissions', label: 'Submissions', icon: Inbox },
   { href: '/admin/dashboard/clients', label: 'Clients', icon: Users },
+  { href: '/admin/dashboard/agents', label: 'Agents', icon: Users2 },
   { href: '/admin/dashboard/chat', label: 'AI Chat', icon: Bot },
   { href: '/admin/dashboard/analytics', label: 'Analytics', icon: BarChart2 },
   { href: '/admin/dashboard/newsletter', label: 'Newsletter', icon: Newspaper },

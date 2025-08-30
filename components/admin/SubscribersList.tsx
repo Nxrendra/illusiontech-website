@@ -70,7 +70,9 @@ export default function SubscribersList({ subscribers, onRemove }: SubscribersLi
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleRemoveClick(subscriber._id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Remove</AlertDialogAction>
+                    <AlertDialogAction asChild>
+                      <Button variant="destructive" onClick={() => handleRemoveClick(subscriber._id)}>Remove</Button>
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

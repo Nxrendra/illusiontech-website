@@ -107,9 +107,11 @@ export default function ClientList({ clients, onEdit, onRemove }: ClientListProp
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRemove} disabled={isDeleting === clientToRemove?._id} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {isDeleting === clientToRemove?._id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Delete
+            <AlertDialogAction asChild>
+              <Button variant="destructive" onClick={confirmRemove} disabled={isDeleting === clientToRemove?._id}>
+                {isDeleting === clientToRemove?._id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Delete
+              </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

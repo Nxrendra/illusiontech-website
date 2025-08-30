@@ -72,7 +72,7 @@ interface BroadcastMailOptions {
   recipientEmails: string[];
   subject: string;
   html: string;
-  text: string;
+  text?: string;
 }
 
 export async function sendBroadcastEmail({ recipientEmails, subject, html, text }: BroadcastMailOptions) {
@@ -97,7 +97,7 @@ export async function sendBroadcastEmail({ recipientEmails, subject, html, text 
       bcc: batch,
       subject,
       html,
-      text,
+      text: text || html.replace(/<[^>]*>?/gm, ''),
     };
 
     try {

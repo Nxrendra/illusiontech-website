@@ -4,6 +4,7 @@ import { PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/Sheet';
 import { AdminSidebarNav } from './AdminSidebar';
+import AdminPageLinks from './AdminPageLinks';
 
 interface AdminHeaderProps {
   title: string;
@@ -24,7 +25,9 @@ export function AdminHeader({ title }: AdminHeaderProps) {
         </SheetContent>
       </Sheet>
       <h1 className="text-xl sm:text-2xl font-semibold text-foreground">{title}</h1>
-      {/* You can add user profile button or other header items here */}
+      <div className="ml-auto">
+        <AdminPageLinks />
+      </div>
     </header>
   );
 }
