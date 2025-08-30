@@ -208,10 +208,7 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
             </p>
           </motion.div>
           <ServiceCarousel
-            services={services.filter(
-              (service) =>
-                service.type === 'web-development' || service.type === 'support'
-            )}
+            services={services.filter((service) => service.isCoreService)}
           />
         </div>
       </section>

@@ -56,7 +56,7 @@ async function getServices(): Promise<ServiceWithIcon[]> {
   try {
     await connectToDB();
     // Fetch core services, limit to 4 for the preview, and sort for consistency.
-    const servicesFromDB = await ServiceModel.find({ isCoreService: true }).sort({ homepagePosition: 1, position: 1, name: 1 }).limit(4).lean();
+    const servicesFromDB = await ServiceModel.find({ featured: true }).sort({ homepagePosition: 1, position: 1, name: 1 }).limit(4).lean();
 
     // Properly serialize the data to convert complex types (like ObjectId) to simple strings.
     const serializedServices: (IServiceData & { _id: string })[] = JSON.parse(JSON.stringify(servicesFromDB));
