@@ -285,7 +285,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
         <TabsContent value="contact" className="space-y-8 mt-0">
           <div className="p-6 bg-background rounded-lg border">
-            <h2 className="text-2xl font-bold mb-6 text-primary">Contact Page Details</h2>
+            <h2 className="text-2xl font-bold mb-6 text-primary">Contact Page</h2>
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-muted-foreground pt-2 border-t">Hero Section</h3>
               <div><Label htmlFor="contactHeroHeading">Hero Heading</Label><Input id="contactHeroHeading" name="contactHeroHeading" value={formData.contactHeroHeading || ''} onChange={handleInputChange} /></div>
@@ -327,7 +327,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
         <TabsContent value="about" className="mt-0">
           <div className="p-6 bg-background rounded-lg border">
-            <h2 className="text-2xl font-bold mb-6 text-primary">About Page Content</h2>
+            <h2 className="text-2xl font-bold mb-6 text-primary">About Page</h2>
             <Accordion type="multiple" className="w-full space-y-4">
               <AccordionItem value="meta">
                 <AccordionTrigger>Meta / SEO</AccordionTrigger>
@@ -356,7 +356,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="beliefs">
                 <AccordionTrigger>Core Beliefs</AccordionTrigger>
-                <AccordionContent className="space-y-6 pt-4">
+                <AccordionContent className="space-y-4 pt-4">
                   {(formData.coreBeliefs || []).map((belief, index) => (
                     <div key={index} className="p-4 border rounded-md space-y-3 relative">
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('coreBeliefs', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>                      <div className="space-y-2"><Label>Icon</Label><Select value={belief.icon} onValueChange={(val) => handleObjectArrayChange('coreBeliefs', index, 'icon', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{iconNames.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent></Select></div>
@@ -396,7 +396,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
               <AccordionItem value="future">
                 <AccordionTrigger>Future Goals</AccordionTrigger>
-                <AccordionContent className="space-y-6 pt-4">
+                <AccordionContent className="space-y-4 pt-4">
                   <div className="space-y-2"><Label htmlFor="aboutFutureHeading">Heading</Label><Input id="aboutFutureHeading" name="aboutFutureHeading" value={formData.aboutFutureHeading || ''} onChange={handleInputChange} /></div>
                   <div className="space-y-2"><Label htmlFor="aboutFutureSubheading">Subheading</Label><Textarea id="aboutFutureSubheading" name="aboutFutureSubheading" value={formData.aboutFutureSubheading || ''} onChange={handleInputChange} /></div>
                   {(formData.futureGoals || []).map((goal, index) => (
@@ -422,7 +422,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
           </div>
         </TabsContent>
 
-        <div className="flex justify-end p-4 sm:px-6">
+        <div className="flex justify-end p-4 sm:px-6 sticky bottom-0 bg-background/80 backdrop-blur-sm border-t -mx-6 -mb-6 rounded-b-lg">
           <Button type="submit" disabled={isSaving}>
             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
             Save All Content

@@ -6,8 +6,8 @@ import ContactSubmission, { IContactSubmissionData } from '@/lib/models/ContactS
 
 import { DashboardStats } from '@/components/admin/DashboardStats';
 import { RecentActivity } from '@/components/admin/RecentActivity';
-import ServiceList from '@/components/admin/ServiceList';
 import { DashboardCharts } from '@/components/admin/DashboardCharts';
+import { DashboardServicePreview } from '@/components/admin/DashboardServicePreview';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
@@ -97,13 +97,13 @@ export default async function DashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-4">
             <div className="bg-card p-6 rounded-lg border h-full">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-foreground">Service Offerings</h2>
                 <Button asChild variant="outline" size="sm">
                   <Link href="/admin/dashboard/services">Manage Services</Link>
                 </Button>
               </div>
-              <ServiceList services={services || []} isReadOnly={true} />
+              <DashboardServicePreview services={services || []} />
             </div>
           </div>
           <div className="lg:col-span-3">

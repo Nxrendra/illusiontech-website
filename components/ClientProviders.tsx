@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/shared/Footer';
 import { Toaster } from 'react-hot-toast';
 import CookieConsentBanner from '@/components/ui/CookieConsentBanner';
+import { usePathname } from 'next/navigation';
 
 const ChatWidgetContainer = dynamic(
   () => import('@/components/chat/ChatWidgetContainer'),
@@ -19,12 +20,15 @@ export default function ClientProviders({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isAdminPage = pathname?.startsWith('/admin');
+
   return (
     <ThemeProvider attribute="class" defaultTheme="dark">
       <Toaster position="bottom-center" toastOptions={{ className: 'font-sans' }} />
-      <Navbar />
+      {!isAdminPage && <Navbar />}
       {children}
-      <Footer />
+      {!isAdminPage && <Footer />}
       <ChatWidgetContainer />
       <CookieConsentBanner />
     </ThemeProvider>
