@@ -2,6 +2,7 @@
 
 import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 const processSteps = [
     { name: 'Discover', description: 'In-depth discussion about project goals and audience to craft a winning strategy.' },
@@ -38,8 +39,22 @@ const stepVariantsRight: Variants = {
     },
 };
 
+const stepVariantsMobile: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: 'spring',
+            bounce: 0.3,
+            duration: 0.8,
+        },
+    },
+};
+
 export default function ProcessTimeline() {
     const timelineRef = useRef(null);
+    const isMobile = useIsMobile();
     const { scrollYProgress } = useScroll({
         target: timelineRef,
         offset: ["start center", "end center"]
@@ -75,7 +90,7 @@ export default function ProcessTimeline() {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: false, amount: 0.5 }}
-                            variants={index % 2 === 0 ? stepVariants : stepVariantsRight}
+                            variants={isMobile ? stepVariantsMobile : (index % 2 === 0 ? stepVariants : stepVariantsRight)}
                         >
                             {/* The dot on the line */}
                             <div className="absolute left-4 md:left-1/2 top-1 -translate-x-1/2 z-10">
