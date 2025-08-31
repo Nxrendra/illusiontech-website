@@ -55,7 +55,7 @@ export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: 
     setFormData(p => ({ ...p, sections: newSections }));
   };
 
-  const addSection = () => setFormData(p => ({ ...p, sections: [...p.sections, { title: '', totalPrice: '', items: [] }] }));
+  const addSection = () => setFormData(p => ({ ...p, sections: [...p.sections, { title: '', totalPrice: '', idealFor: '', description: '', items: [] }] }));
   const removeSection = (sectionIndex: number) => setFormData(p => ({ ...p, sections: p.sections.filter((_, i) => i !== sectionIndex) }));
   const addItem = (sectionIndex: number) => {
     const newSections = [...formData.sections];
@@ -71,12 +71,22 @@ export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
+
+    if (!formData.serviceId) {
+      toast.error('Please link the breakdown to a service.');
+      setIsSaving(false);
+      return;
+    }
+
     try {
       const result = breakdown ? await updatePriceBreakdown(breakdown._id, formData) : await createPriceBreakdown(formData);
       if (result.success && result.data) {
         toast.success(`Breakdown ${breakdown ? 'updated' : 'created'} successfully!`);
         onSave(result.data);
-      } else { throw new Error(result.error); }
+      } else {
+        // Use a more specific error message if the server provides one.
+        throw new Error(result.error || 'An unknown error occurred on the server.');
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'An unexpected error occurred.');
     } finally {
