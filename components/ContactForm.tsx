@@ -568,7 +568,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                       onChange={handlePhoneChange}
                       disabled={status.type === 'submitting'}
                       // The custom CSS in globals.css will style the input.
-                      // The className and numberInputProps props are removed to let the library and dedicated CSS handle layout and styling.
+                      // The className prop is removed to let the library handle its own layout.
                     />
                   </InteractiveField>                </div>
               )}
