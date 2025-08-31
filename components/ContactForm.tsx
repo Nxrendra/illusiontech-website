@@ -4,7 +4,7 @@
 import mailcheck from 'mailcheck';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useMemo } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useRef, useMemo } from 'react';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -206,6 +206,8 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
     address: string;
   } | null>(null);
 
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+
   // This effect hook ensures that whenever the user navigates to a new step,
   // any previous validation errors are cleared. This prevents old error
   // messages from a failed submission attempt on one step from reappearing
@@ -213,6 +215,27 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   useEffect(() => {
     setStatus({ type: 'idle', message: '' });
   }, [currentStep]);
+
+  useEffect(() => {
+    // This is a workaround to move the Google reCAPTCHA badge into the form.
+    // This should only run once on mount.
+    // The badge is rendered in a separate container by the Google script,
+    // so we poll for its existence and then move it into our desired container.
+    const interval = setInterval(() => {
+      const badge = document.querySelector<HTMLElement>('.grecaptcha-badge');
+      if (badge) {
+        clearInterval(interval);
+        // The badge is positioned fixed by default. We want it to be part of the form's layout flow.
+        badge.style.position = 'static';
+        if (recaptchaContainerRef.current) {
+          recaptchaContainerRef.current.appendChild(badge);
+        }
+      }
+    }, 100);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -318,7 +341,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   };
 
   // Reusable classes for consistent styling
-  const inputClasses = "transition duration-300 ease-in-out focus:scale-105 focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
+  const inputClasses = "transition duration-300 ease-in-out focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
   const labelClasses = "text-slate-300";
 
   const validateStep = (step: number): string | null => {
@@ -535,7 +558,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                     <Label htmlFor="email" className={labelClasses}>Email Address</Label>
                     <Input id="email" name="email" type="email" placeholder="you@example.com" required value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} disabled={status.type === 'submitting'} className={inputClasses} />
                   </InteractiveField>
-                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2">
+                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2 ContactFormPhoneInput">
                     <Label htmlFor="phoneNumber" className={labelClasses}>Phone Number (Optional)</Label>
                     <PhoneInput
                       id="phoneNumber"
@@ -544,9 +567,8 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                       value={formData.phoneNumber}
                       onChange={handlePhoneChange}
                       disabled={status.type === 'submitting'}
-
-                      numberInputProps={{ className: inputClasses }}
-                      className="w-full sm:w-1/2"
+                      // The custom CSS in globals.css will style the input.
+                      // The className and numberInputProps props are removed to let the library and dedicated CSS handle layout and styling.
                     />
                   </InteractiveField>                </div>
               )}
@@ -601,38 +623,48 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
           </p>
 
           {/* Navigation Buttons */}
-          <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-4">
-            <InteractiveField message="Go back to the previous step.">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleBack}
-                className={`w-full sm:w-auto transition-opacity duration-300 ${
-                  currentStep === 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                }`}
-                disabled={status.type === 'submitting'}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-            </InteractiveField>
-            <InteractiveField message={currentStep === totalSteps ? 'Submit your inquiry to our team.' : 'Proceed to the next step.'}>
-              <Button
-                type={currentStep === totalSteps ? 'submit' : 'button'}
-                onClick={currentStep < totalSteps ? handleNext : undefined}
-                className="w-full sm:w-auto transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95"
-                disabled={status.type === 'submitting'}
-              >
-                {status.type === 'submitting'
-                  ? 'Sending...'
-                  : currentStep === totalSteps
-                  ? 'Submit'
-                  : <>
-                      Next
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>}
-              </Button>
-            </InteractiveField>
+          <div className="mt-6 flex items-center justify-between">
+            {/* Wrapper to constrain the size of the reCAPTCHA badge. This prevents
+                the original un-transformed size from pushing other elements off-screen. */}
+            <div className="w-[128px] h-[30px] sm:w-[172px] sm:h-[40px] overflow-hidden">
+              <div
+                ref={recaptchaContainerRef}
+                className="transform scale-50 sm:scale-[0.67] origin-top-left"
+              />
+            </div>
+            <div className="flex items-center gap-x-2">
+              <InteractiveField message="Go back to the previous step.">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleBack}
+                  className={`transition-opacity duration-300 ${
+                    currentStep === 1 ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                  }`}
+                  disabled={status.type === 'submitting'}
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4 hidden sm:inline-block" />
+                  Back
+                </Button>
+              </InteractiveField>
+              <InteractiveField message={currentStep === totalSteps ? 'Submit your inquiry to our team.' : 'Proceed to the next step.'}>
+                <Button
+                  type={currentStep === totalSteps ? 'submit' : 'button'}
+                  onClick={currentStep < totalSteps ? handleNext : undefined}
+                  className="transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95"
+                  disabled={status.type === 'submitting'}
+                >
+                  {status.type === 'submitting'
+                    ? 'Sending...'
+                    : currentStep === totalSteps
+                    ? 'Submit'
+                    : <>
+                        Next
+                        <ArrowRight className="ml-2 h-4 w-4 hidden sm:inline-block" />
+                      </>}
+                </Button>
+              </InteractiveField>
+            </div>
           </div>
         </form>
       </motion.div>
