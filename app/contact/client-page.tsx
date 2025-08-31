@@ -21,20 +21,20 @@ export default function ContactClientPage({ content, services }: ContactClientPa
   const isMobile = useIsMobile();
   return (
     <main>
-      {/* <ContactHero content={content} /> */}
+      <ContactHero content={content} />
       <GridBackground>
         <AnimatedSection id="contact-content" className="min-h-screen flex items-center py-20 md:py-28" viewport={{ once: false, amount: 0.2 }}>
           <div className="container grid md:grid-cols-2 gap-16 items-start">
             <motion.div variants={createItemVariantsLeft(isMobile)}>
               <ContactInformation content={content} />
             </motion.div>
-            {/* <motion.div variants={createItemVariantsRight(isMobile)}>
+            <motion.div variants={createItemVariantsRight(isMobile)}>
               <ContactForm content={content} services={services} />
-            </motion.div> */}
+            </motion.div>
           </div>
         </AnimatedSection>
       </GridBackground>
-      {/* <ProcessTimeline />  */}
+      <ProcessTimeline /> 
     </main >
   );
 }
