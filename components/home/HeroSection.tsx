@@ -2,11 +2,10 @@
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { motion, useScroll } from 'framer-motion';
+import { motion, useScroll, useInView } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
+import { useState, useEffect, useRef } from 'react';
 import { IPageContentData } from '@/lib/models/PageContent';
 
 // Dynamically import the ParticlesComponent with SSR turned off.
@@ -18,9 +17,21 @@ interface HeroSectionProps {
   content: IPageContentData;
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.2, ease: 'easeOut' } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+};
+
 export const HeroSection = ({ content }: HeroSectionProps) => {
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
+  const heroRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.2 });
 
   useEffect(() => {
     return scrollY.on('change', (currentY) => {
@@ -29,19 +40,23 @@ export const HeroSection = ({ content }: HeroSectionProps) => {
   }, [scrollY]);
 
   return (
-    <section className="relative h-screen flex items-center justify-center text-center overflow-hidden text-white bg-gray-900 dark:bg-black">
+    <motion.section
+      ref={heroRef}
+      className="relative h-screen flex items-center justify-center text-center overflow-hidden text-white bg-gray-900 dark:bg-black"
+      variants={containerVariants}
+      initial="hidden"
+      animate={isHeroInView ? 'visible' : 'hidden'}
+    >
       <ParticlesComponent />
-      <div className="relative z-10 p-4 flex flex-col items-center w-full">
-        <HeaderAnimation
-          isAtTop={isAtTop}
-          title={content.homeHeroHeading ?? 'Crafting Digital Illusions'}
-          description={content.homeHeroSubheading ?? 'We transform complex ideas into elegant web solutions that captivate and convert.'}
-        />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
-          className="mt-8 flex flex-wrap justify-center gap-4">
+      <div className="relative z-10 p-4 flex flex-col items-center">
+        <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-bold tracking-tight">
+          {content.homeHeroHeading ?? 'Crafting Digital Illusions'}
+        </motion.h1>
+        <motion.p variants={itemVariants} className="mt-4 max-w-2xl text-lg text-muted-foreground md:text-xl">
+          {content.homeHeroSubheading ??
+            'We transform complex ideas into elegant web solutions that captivate and convert.'}
+        </motion.p>
+        <motion.div variants={itemVariants} className="mt-8 flex flex-wrap justify-center gap-4">
           <Button asChild size="large" variant="secondary">
             <Link href="/services">
               {content.homeHeroCtaButtonText ?? 'Explore Services'}
@@ -91,6 +106,6 @@ export const HeroSection = ({ content }: HeroSectionProps) => {
           <ChevronDown className="h-6 w-6 text-foreground" />
         </Link>
       </motion.div>
-    </section>
+    </motion.section>
   );
 };

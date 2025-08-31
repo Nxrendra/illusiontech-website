@@ -3,7 +3,7 @@
 
 import { useState, ForwardRefExoticComponent, RefAttributes, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useInView } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import {
   CheckCircle2,
@@ -14,13 +14,21 @@ import {
   LucideProps,
 } from 'lucide-react';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
-import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
 import { createItemVariants } from '@/components/ui/animations';
 import { ServiceWithIcon } from './page';
 import { IServiceData } from '@/lib/models/Service';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import ServiceDetailCard from '@/components/ServiceDetailCard';
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
 
 const faqs = [
   {
@@ -93,6 +101,8 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const [isAtTop, setIsAtTop] = useState(true);
 
+  const heroRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.2 });
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
@@ -148,14 +158,21 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
   return (
     <>
       {/* Header Section */}
-      <section
+      <motion.section
+        ref={heroRef}
         className="bg-gray-900 dark:bg-black py-20 md:py-28 min-h-screen flex flex-col items-center justify-center relative"
+        variants={containerVariants}
+        initial="hidden"
+        animate={isHeroInView ? 'visible' : 'hidden'}
       >
-        <HeaderAnimation
-          title={mainService?.name || 'Website Support & Maintenance'}
-          description={mainService?.description || 'Protect your investment and ensure your website runs smoothly with our reliable maintenance plans.'}
-          isAtTop={isAtTop}
-        />
+        <div className="container text-center">
+          <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl font-bold text-white">
+            {mainService?.name || 'Website Support & Maintenance'}
+          </motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
+            {mainService?.description || 'Protect your investment and ensure your website runs smoothly with our reliable maintenance plans.'}
+          </motion.p>
+        </div>
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
           onClick={handleScrollDown}
@@ -168,7 +185,7 @@ export default function SupportMaintenanceClientPage({ mainService, plans }: Sup
         >
           <ChevronDown className="w-8 h-8" />
         </motion.button>
-      </section>
+      </motion.section>
 
       {/* Maintenance Plans Section */}
       <AnimatedSection

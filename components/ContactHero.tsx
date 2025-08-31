@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -10,11 +10,24 @@ import { IPageContentData } from '@/lib/models/PageContent';
 
 const ParticleBackground = dynamic(() => import('@/components/ParticleBackground'), { ssr: false });
 
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.2 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+};
+
 export function ContactHero({ content }: { content: IPageContentData }) {
   // Default to false. We'll only show the button on the client after confirming scroll position.
   // This ensures server and initial client render are the same (no button).
   const [showScrollDown, setShowScrollDown] = useState(false);
   const isMobile = useIsMobile();
+  const heroRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.2 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -122,21 +135,26 @@ export function ContactHero({ content }: { content: IPageContentData }) {
   };
 
   return (
-    <section 
+    <motion.section 
+      ref={heroRef}
       className="relative overflow-hidden bg-gray-900 dark:bg-black min-h-screen flex flex-col items-center justify-center"
+      variants={containerVariants}
+      initial="hidden"
+      animate={isHeroInView ? 'visible' : 'hidden'}
     >
       <ParticleBackground options={particleOptions} className="absolute inset-0" />
       <div className="container text-center relative z-10">
-        <h1 
-          className="text-4xl md:text-5xl font-bold text-white"
+      <motion.h1 
+          variants={itemVariants}          className="text-4xl md:text-5xl font-bold text-white"
         >
           {content.contactHeroHeading ?? "Let's Build Something Great Together"}
-        </h1>
-        <p 
+         </motion.h1>
+        <motion.p 
+          variants={itemVariants}
           className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
         >
           {content.contactHeroSubheading ?? "Have a project in mind or just want to say hello? We'd love to hear from you. Fill out the form below or use our contact details to reach out."}
-        </p>
+        </motion.p>
       </div>
       <motion.button
         className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
@@ -150,6 +168,6 @@ export function ContactHero({ content }: { content: IPageContentData }) {
       >
         <ChevronDown className="w-8 h-8" />
       </motion.button>
-    </section>
+    </motion.section>
   );
 }

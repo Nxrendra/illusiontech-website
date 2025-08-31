@@ -1,7 +1,7 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/about/client-page.tsx
 'use client';
 import ParticleBackground from '@/components/ParticleBackground';
-import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
+import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import React, { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useInView, useScroll } from 'framer-motion';
@@ -31,24 +31,6 @@ const containerVariants = {
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-};
-
-// AnimatedSection wrapper
-const AnimatedSection = ({ children, className, id }: { children: React.ReactNode; className?: string; id?: string }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { amount: 0.2, once: false });
-  return (
-    <motion.section
-      ref={ref}
-      id={id}
-      className={className}
-      variants={containerVariants}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-    >
-      {children}
-    </motion.section>
-  );
 };
 
 // Default content for sections
@@ -90,6 +72,8 @@ interface AboutClientPageProps {
 export default function AboutClientPage({ content }: AboutClientPageProps) {
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
+  const heroRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.2 });
 
   // Use CMS content if available, otherwise use defaults
   const coreBeliefs = content.coreBeliefs?.length
@@ -202,14 +186,21 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
     <>
       {/* Hero Section */}
       <motion.section
+        ref={heroRef}
         className="relative min-h-screen flex items-center justify-center text-white bg-gray-900 dark:bg-black"
+        variants={containerVariants}
+        initial="hidden"
+        animate={isHeroInView ? 'visible' : 'hidden'}
       >
         <ParticleBackground options={particleOptions} className="absolute inset-0" />
-        <HeaderAnimation
-          isAtTop={isAtTop}
-          title={content.aboutHeroHeading ?? 'Driven by Passion, Defined by Code.'}
-          description={content.aboutHeroSubheading ?? 'We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.'}
-        />
+        <div className="relative z-10 text-center container">
+          <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-bold font-playfair">
+            {content.aboutHeroHeading ?? 'Driven by Passion, Defined by Code.'}
+          </motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
+            {content.aboutHeroSubheading ?? 'We are IllusionTech—a small, dedicated team of developers and designers transforming complex problems into elegant digital solutions.'}
+          </motion.p>
+        </div>
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
           onClick={handleScrollDown}
@@ -225,7 +216,10 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
       </motion.section>
 
       {/* Who We Are & Why We Do It */}
-      <AnimatedSection id="our-story" className="py-20 md:py-28 bg-background min-h-screen flex flex-col justify-center">
+      <AnimatedSection
+        id="our-story"
+        className="py-20 md:py-28 bg-background min-h-screen flex flex-col justify-center"
+        viewport={{ once: false, amount: 0.2 }}>
         <div className="container">
           <motion.div variants={itemVariants} className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">{content.aboutStoryHeading ?? 'Our Story & Our "Why"'}</h2>
@@ -254,7 +248,7 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
       </AnimatedSection>
 
       {/* The Power of the Modern Web */}
-      <AnimatedSection className="py-20 md:py-28 bg-muted">
+      <AnimatedSection className="py-20 md:py-28 bg-muted" viewport={{ once: false, amount: 0.2 }}>
         <div className="container grid lg:grid-cols-2 gap-16 items-center">
           <motion.div variants={itemVariants} className="space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -285,7 +279,7 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
       </AnimatedSection>
 
       {/* Our Pricing Philosophy */}
-      <AnimatedSection className="py-20 md:py-28 bg-background">
+      <AnimatedSection className="py-20 md:py-28 bg-background" viewport={{ once: false, amount: 0.2 }}>
         <div className="container grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
                 variants={itemVariants}
@@ -313,7 +307,7 @@ export default function AboutClientPage({ content }: AboutClientPageProps) {
       </AnimatedSection>
 
       {/* Future Goals */}
-      <AnimatedSection className="py-20 md:py-28 bg-muted">
+      <AnimatedSection className="py-20 md:py-28 bg-muted" viewport={{ once: false, amount: 0.2 }}>
         <div className="container">
           <motion.div variants={itemVariants} className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">{content.aboutFutureHeading ?? 'Our Vision for the Future'}</h2>

@@ -1,17 +1,30 @@
 
 'use client';
 export const dynamic = 'force-dynamic';
-import { useState, useEffect } from 'react';
-import { motion, type Variants, useScroll } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, type Variants, useScroll, useInView } from 'framer-motion';
 import ContactTeaser from '@/components/ContactTeaser';
 import { ChevronDown } from 'lucide-react';
-import { HeaderAnimation } from '@/components/ui/HeaderAnimation';
 import { ServiceCarousel } from '@/components/ServiceCarousel';
 import ServiceDetailCard from '@/components/ServiceDetailCard';
 import ParticleBackground from '@/components/ParticleBackground';
 import type { ISourceOptions } from '@tsparticles/engine';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { ServiceWithIcon } from './page';
+
+const containerVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.15 } },
+};
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.6, ease: 'easeOut' },
+  },
+};
 
 interface ServicesClientPageProps {
   services: ServiceWithIcon[];
@@ -21,6 +34,8 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
   const { scrollY } = useScroll();
   const [isAtTop, setIsAtTop] = useState(true);
   const isMobile = useIsMobile();
+  const heroRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: false, amount: 0.2 });
 
   useEffect(() => {
     return scrollY.on('change', (currentY) => {
@@ -136,16 +151,23 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
     <>
       {/* Hero Section */}
       <motion.section
+        ref={heroRef}
         className="relative min-h-screen flex items-center justify-center text-white bg-gray-900 dark:bg-black"
+        variants={containerVariants}
+        initial="hidden"
+        animate={isHeroInView ? 'visible' : 'hidden'}
       >
         <ParticleBackground id="services-particles" options={particleOptions} className="absolute inset-0" />
-        <HeaderAnimation
-          isAtTop={isAtTop}
-          title="Our Services"
-          description="From custom web development to stunning UI/UX design, we offer a
+        <div className="relative z-10 text-center container">
+          <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-bold font-playfair">
+            Our Services
+          </motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg md:text-xl max-w-3xl mx-auto text-gray-300">
+            From custom web development to stunning UI/UX design, we offer a
             comprehensive suite of digital solutions to bring your vision to
-            life."
-        />
+            life.
+          </motion.p>
+        </div>
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
           onClick={handleScrollDown}
@@ -169,7 +191,7 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
             className="max-w-3xl mb-12 md:mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
+            viewport={{ once: false, amount: 0.5 }}
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -180,9 +202,7 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
               elevate your brand and drive growth. Explore our packages below.
             </p>
           </motion.div>
-          <ServiceCarousel
-            services={services.filter((service) => service.isCoreService)}
-          />
+          <ServiceCarousel services={services} />
         </div>
       </section>
 
