@@ -36,10 +36,10 @@ const formVariants: Variants = {
   },
 };
 
-const stepVariants: Variants = {
-  hidden: { opacity: 0, x: 50 },
+const stepVariants: Variants = { // Changed x-axis motion to y-axis to prevent overflow on mobile
+  hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -50 },
+  exit: { opacity: 0, y: -20 },
 };
 
 // Reusable Select component for a consistent look
@@ -415,7 +415,11 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
         viewport={{ once: false, amount: 0.3 }}
         variants={formVariants}
       >
-        <form onSubmit={handleSubmit}>
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          {/* Shimmer effect for dark backgrounds */}
+          <div className="absolute top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-25 animate-light-shimmer"></div>
+        </div>
+        <form onSubmit={handleSubmit} className="relative z-10">
           {/* Progress Bar and Step Counter */}
           <div className="mb-8">
             <p className="text-sm font-semibold text-center text-accent mb-2">
