@@ -25,16 +25,16 @@ export default function ContactClientPage({ content, services }: ContactClientPa
       <GridBackground>
         <AnimatedSection id="contact-content" className="min-h-screen flex items-center py-20 md:py-28" viewport={{ once: false, amount: 0.2 }}>
           <div className="container grid md:grid-cols-2 gap-16 items-start">
-            {/* <motion.div variants={createItemVariantsLeft(isMobile)}>
+            <motion.div variants={createItemVariantsLeft(isMobile)}>
               <ContactInformation content={content} />
-            </motion.div> */}
+            </motion.div>
             <motion.div variants={createItemVariantsRight(isMobile)}>
               <ContactForm content={content} services={services} />
             </motion.div>
           </div>
         </AnimatedSection>
       </GridBackground>
-      <ProcessTimeline /> 
+      {/* <ProcessTimeline />  */}
     </main >
   );
 }
