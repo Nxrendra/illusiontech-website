@@ -117,17 +117,15 @@ export default function ContactClientPage({ content, services }: ContactClientPa
   };
 
   return (
-    <main>
+    <main className="overflow-hidden">
       <motion.section
         ref={heroRef}
-        className="relative bg-gray-900 dark:bg-black py-40 md:py-28 flex flex-col items-center justify-center"
+        className="relative bg-gray-900 dark:bg-black min-h-screen flex items-center justify-center"
         variants={containerVariants}
         initial="hidden"
         animate={isHeroInView ? 'visible' : 'hidden'}
       >
-        <div className="absolute inset-0 overflow-hidden">
-          <ParticleBackground options={particleOptions} />
-        </div>
+        <ParticleBackground options={particleOptions} className="absolute inset-0" />
         <div className="container text-center relative z-10">
           <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl font-bold text-white">
             {content.contactHeroHeading ?? "Let's Build Something Great Together"}
@@ -162,6 +160,6 @@ export default function ContactClientPage({ content, services }: ContactClientPa
           </div>
         </AnimatedSection>
       </GridBackground>
-    </main >
+    </main>
   );
 }
