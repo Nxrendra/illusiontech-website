@@ -4,7 +4,7 @@
 import mailcheck from 'mailcheck';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useMemo } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useRef, useMemo } from 'react';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -206,6 +206,8 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
     address: string;
   } | null>(null);
 
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+
   // This effect hook ensures that whenever the user navigates to a new step,
   // any previous validation errors are cleared. This prevents old error
   // messages from a failed submission attempt on one step from reappearing
@@ -213,6 +215,27 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   useEffect(() => {
     setStatus({ type: 'idle', message: '' });
   }, [currentStep]);
+
+  useEffect(() => {
+    // This is a workaround to move the Google reCAPTCHA badge into the form.
+    // This should only run once on mount.
+    // The badge is rendered in a separate container by the Google script,
+    // so we poll for its existence and then move it into our desired container.
+    const interval = setInterval(() => {
+      const badge = document.querySelector<HTMLElement>('.grecaptcha-badge');
+      if (badge) {
+        clearInterval(interval);
+        // The badge is positioned fixed by default. We want it to be part of the form's layout flow.
+        badge.style.position = 'static';
+        if (recaptchaContainerRef.current) {
+          recaptchaContainerRef.current.appendChild(badge);
+        }
+      }
+    }, 100);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -318,7 +341,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   };
 
   // Reusable classes for consistent styling
-  const inputClasses = "transition duration-300 ease-in-out focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
+  const inputClasses = "transition duration-300 ease-in-out focus:scale-105 focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
   const labelClasses = "text-slate-300";
 
   const validateStep = (step: number): string | null => {
@@ -392,7 +415,11 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
         viewport={{ once: false, amount: 0.3 }}
         variants={formVariants}
       >
-        <form onSubmit={handleSubmit}>
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          {/* Shimmer effect for dark backgrounds */}
+          <div className="absolute top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-25 animate-light-shimmer"></div>
+        </div>
+        <form onSubmit={handleSubmit} className="relative z-10">
           {/* Progress Bar and Step Counter */}
           <div className="mb-8">
             <p className="text-sm font-semibold text-center text-accent mb-2">
@@ -531,7 +558,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                     <Label htmlFor="email" className={labelClasses}>Email Address</Label>
                     <Input id="email" name="email" type="email" placeholder="you@example.com" required value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} disabled={status.type === 'submitting'} className={inputClasses} />
                   </InteractiveField>
-                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2 ContactFormPhoneInput">
+                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2">
                     <Label htmlFor="phoneNumber" className={labelClasses}>Phone Number (Optional)</Label>
                     <PhoneInput
                       id="phoneNumber"
@@ -540,8 +567,9 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                       value={formData.phoneNumber}
                       onChange={handlePhoneChange}
                       disabled={status.type === 'submitting'}
-                      // The custom CSS in globals.css will style the input.
-                      // The className and numberInputProps props are removed to let the library and dedicated CSS handle layout and styling.
+
+                      numberInputProps={{ className: inputClasses }}
+                      className="w-full sm:w-1/2"
                     />
                   </InteractiveField>                </div>
               )}
@@ -596,8 +624,16 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
           </p>
 
           {/* Navigation Buttons */}
-          <div className="mt-6 flex items-center justify-end">
-            <div className="flex items-center gap-x-2">
+          <div className="mt-6 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Wrapper to constrain the size of the reCAPTCHA badge. This prevents
+                the original un-transformed size from pushing other elements off-screen. */}
+            <div className="mx-auto w-[128px] h-[30px] sm:mx-0 sm:w-[172px] sm:h-[40px] overflow-hidden">
+              <div
+                ref={recaptchaContainerRef}
+                className="transform scale-50 sm:scale-[0.67] origin-top-left"
+              />
+            </div>
+            <div className="flex w-full items-center justify-end gap-x-2 sm:w-auto">
               <InteractiveField message="Go back to the previous step.">
                 <Button
                   type="button"
