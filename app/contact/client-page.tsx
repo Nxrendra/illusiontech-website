@@ -4,7 +4,7 @@ import { ContactInformation } from '@/components/ContactInformation';
 import ContactForm from '@/components/ContactForm';
 import { GridBackground } from '@/components/GridBackground';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
-import { createItemVariantsLeft, createItemVariantsRight } from '@/components/ui/animations';
+import { createItemVariants, createItemVariantsLeft, createItemVariantsRight } from '@/components/ui/animations';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { motion, useInView, useScroll } from 'framer-motion';
 import { IPageContentData } from '@/lib/models/PageContent';
@@ -34,6 +34,12 @@ interface ContactClientPageProps {
 
 export default function ContactClientPage({ content, services }: ContactClientPageProps) { 
   const isMobile = useIsMobile();
+
+  // On mobile, use a standard vertical animation for both columns to prevent horizontal overflow.
+  // On desktop, use the horizontal slide-in animations.
+  const leftVariant = isMobile ? createItemVariants(isMobile) : createItemVariantsLeft(isMobile);
+  const rightVariant = isMobile ? createItemVariants(isMobile) : createItemVariantsRight(isMobile);
+
 
   // --- Hero Section Logic ---
   const { scrollY } = useScroll();
@@ -150,11 +156,11 @@ export default function ContactClientPage({ content, services }: ContactClientPa
 
       <GridBackground>
         <AnimatedSection id="contact-content" className="min-h-screen flex items-center py-20 md:py-28" viewport={{ once: false, amount: 0.2 }}>
-          <div className="container grid md:grid-cols-2 gap-16 items-start">
-            <motion.div variants={createItemVariantsLeft(isMobile)}>
+          <div className="container space-y-16 md:space-y-0 md:grid md:grid-cols-2 md:gap-16 items-start">
+            <motion.div variants={leftVariant}>
               <ContactInformation content={content} />
             </motion.div>
-            <motion.div variants={createItemVariantsRight(isMobile)}>
+            <motion.div variants={rightVariant}>
               <ContactForm content={content} services={services} />
             </motion.div>
           </div>
