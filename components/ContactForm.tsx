@@ -36,10 +36,10 @@ const formVariants: Variants = {
   },
 };
 
-const stepVariants: Variants = { // Replaced horizontal slide with a vertical slide + scale to prevent overflow
-  hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0 },
-  exit: { opacity: 0, scale: 0.95, y: -20 },
+const stepVariants: Variants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 },
 };
 
 // Reusable Select component for a consistent look
@@ -341,7 +341,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   };
 
   // Reusable classes for consistent styling
-  const inputClasses = "transition duration-300 ease-in-out focus:scale-105 focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
+  const inputClasses = "transition duration-300 ease-in-out focus:shadow-lg bg-slate-900 text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 border-slate-700 focus:border-accent";
   const labelClasses = "text-slate-300";
 
   const validateStep = (step: number): string | null => {
@@ -415,7 +415,11 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
         viewport={{ once: false, amount: 0.3 }}
         variants={formVariants}
       >
-        <form onSubmit={handleSubmit}>
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          {/* Shimmer effect for dark backgrounds */}
+          <div className="absolute top-0 left-[-100%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-25 animate-light-shimmer"></div>
+        </div>
+        <form onSubmit={handleSubmit} className="relative z-10">
           {/* Progress Bar and Step Counter */}
           <div className="mb-8">
             <p className="text-sm font-semibold text-center text-accent mb-2">
@@ -554,7 +558,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                     <Label htmlFor="email" className={labelClasses}>Email Address</Label>
                     <Input id="email" name="email" type="email" placeholder="you@example.com" required value={formData.email} onChange={handleChange} onBlur={handleEmailBlur} disabled={status.type === 'submitting'} className={inputClasses} />
                   </InteractiveField>
-                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2">
+                  <InteractiveField message="Optional: Provide a phone number for easier contact." className="space-y-2 ContactFormPhoneInput">
                     <Label htmlFor="phoneNumber" className={labelClasses}>Phone Number (Optional)</Label>
                     <PhoneInput
                       id="phoneNumber"
@@ -563,9 +567,8 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
                       value={formData.phoneNumber}
                       onChange={handlePhoneChange}
                       disabled={status.type === 'submitting'}
-
-                      numberInputProps={{ className: inputClasses }}
-                      className="w-full sm:w-1/2"
+                      // The custom CSS in globals.css will style the input.
+                      // The className and numberInputProps props are removed to let the library and dedicated CSS handle layout and styling.
                     />
                   </InteractiveField>                </div>
               )}
