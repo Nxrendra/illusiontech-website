@@ -82,7 +82,8 @@
 }
 
 .grecaptcha-badge {
-  bottom: 90px !important;
+  /* Hide the badge as per Google's terms, since we display the required text notice. */
+  visibility: hidden !important;
 }
 
 @layer components {

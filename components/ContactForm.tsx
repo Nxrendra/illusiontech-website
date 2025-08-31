@@ -4,7 +4,7 @@
 import mailcheck from 'mailcheck';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useRef, useMemo } from 'react';
+import { useState, FormEvent, ChangeEvent, useEffect, MouseEvent, useMemo } from 'react';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -36,10 +36,10 @@ const formVariants: Variants = {
   },
 };
 
-const stepVariants: Variants = { // Replaced horizontal slide with a vertical slide + scale to prevent overflow
-  hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0 },
-  exit: { opacity: 0, scale: 0.95, y: -20 },
+const stepVariants: Variants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 },
 };
 
 // Reusable Select component for a consistent look
@@ -206,8 +206,6 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
     address: string;
   } | null>(null);
 
-  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
-
   // This effect hook ensures that whenever the user navigates to a new step,
   // any previous validation errors are cleared. This prevents old error
   // messages from a failed submission attempt on one step from reappearing
@@ -215,27 +213,6 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
   useEffect(() => {
     setStatus({ type: 'idle', message: '' });
   }, [currentStep]);
-
-  useEffect(() => {
-    // This is a workaround to move the Google reCAPTCHA badge into the form.
-    // This should only run once on mount.
-    // The badge is rendered in a separate container by the Google script,
-    // so we poll for its existence and then move it into our desired container.
-    const interval = setInterval(() => {
-      const badge = document.querySelector<HTMLElement>('.grecaptcha-badge');
-      if (badge) {
-        clearInterval(interval);
-        // The badge is positioned fixed by default. We want it to be part of the form's layout flow.
-        badge.style.position = 'static';
-        if (recaptchaContainerRef.current) {
-          recaptchaContainerRef.current.appendChild(badge);
-        }
-      }
-    }, 100);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -619,15 +596,7 @@ function Form({ content, services }: { content: IPageContentData, services: Serv
           </p>
 
           {/* Navigation Buttons */}
-          <div className="mt-6 flex items-center justify-between">
-            {/* Wrapper to constrain the size of the reCAPTCHA badge. This prevents
-                the original un-transformed size from pushing other elements off-screen. */}
-            <div className="w-[128px] h-[30px] sm:w-[172px] sm:h-[40px] overflow-hidden">
-              <div
-                ref={recaptchaContainerRef}
-                className="transform scale-50 sm:scale-[0.67] origin-top-left"
-              />
-            </div>
+          <div className="mt-6 flex items-center justify-end">
             <div className="flex items-center gap-x-2">
               <InteractiveField message="Go back to the previous step.">
                 <Button
