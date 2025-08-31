@@ -70,14 +70,37 @@ export function BreakdownForm({ isOpen, onClose, onSave, breakdown, services }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
 
     if (!formData.serviceId) {
       toast.error('Please link the breakdown to a service.');
-      setIsSaving(false);
       return;
     }
 
+    // Enhanced validation to check for empty required fields before submitting
+    for (let i = 0; i < formData.sections.length; i++) {
+      const section = formData.sections[i];
+      if (!section.title.trim()) {
+        toast.error(`Section #${i + 1} is missing a title.`);
+        return;
+      }
+      if (!section.totalPrice.trim()) {
+        toast.error(`Section "${section.title}" is missing a total price.`);
+        return;
+      }
+      for (let j = 0; j < section.items.length; j++) {
+        const item = section.items[j];
+        if (!item.name.trim()) {
+          toast.error(`Item #${j + 1} in section "${section.title}" is missing a name.`);
+          return;
+        }
+        if (!item.price.trim()) {
+          toast.error(`Item "${item.name}" in section "${section.title}" is missing a price.`);
+          return;
+        }
+      }
+    }
+
+    setIsSaving(true);
     try {
       const result = breakdown ? await updatePriceBreakdown(breakdown._id, formData) : await createPriceBreakdown(formData);
       if (result.success && result.data) {

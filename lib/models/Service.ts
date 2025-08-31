@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, models } from 'mongoose';
+import mongoose, { Schema, Document, models, Model } from 'mongoose';
 
 // This interface represents the plain data structure of a service, without Mongoose's methods.
 export interface IServiceData {
@@ -104,6 +104,6 @@ ServiceSchema.pre<IService>('save', function(next) {
   next();
 });
 
-const Service = models.Service || mongoose.model<IService>('Service', ServiceSchema);
+const Service: Model<IService> = models.Service || mongoose.model<IService>('Service', ServiceSchema);
 
 export default Service;

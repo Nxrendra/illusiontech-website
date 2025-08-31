@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, models } from 'mongoose';
+import mongoose, { Schema, Document, models, Model } from 'mongoose';
 
 interface IBelief {
   icon: string;
@@ -236,6 +236,6 @@ const PageContentSchema: Schema = new Schema({
   homeParallax2CtaButtonText: { type: String, default: 'Request a Quote' },
 }, { timestamps: true });
 
-const PageContent = models.PageContent || mongoose.model<IPageContent>('PageContent', PageContentSchema);
+const PageContent: Model<IPageContent> = models.PageContent || mongoose.model<IPageContent>('PageContent', PageContentSchema);
 
 export default PageContent;

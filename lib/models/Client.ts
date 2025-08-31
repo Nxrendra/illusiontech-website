@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, models } from 'mongoose';
+import mongoose, { Schema, Document, models, Model } from 'mongoose';
 
 export interface IClientData {
   name: string;
@@ -52,6 +52,6 @@ const ClientSchema: Schema<IClient> = new Schema({
   },
 });
 
-const Client = models.Client || mongoose.model<IClient>('Client', ClientSchema);
+const Client: Model<IClient> = models.Client || mongoose.model<IClient>('Client', ClientSchema);
 
 export default Client;

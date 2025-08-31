@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose';
+import { Schema, model, models, Document, Model } from 'mongoose';
 
 export interface ISettings extends Document {
   siteName: string;
@@ -11,7 +11,6 @@ const SettingsSchema = new Schema<ISettings>({
   siteDescription: { type: String, default: 'High-performance web solutions and automation.' },
 }, { timestamps: true });
 
-const Settings = models.Settings || model<ISettings>('Settings', SettingsSchema);
+const Settings: Model<ISettings> = models.Settings || model<ISettings>('Settings', SettingsSchema);
 
 export default Settings;
-

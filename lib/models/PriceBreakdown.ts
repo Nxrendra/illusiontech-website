@@ -1,4 +1,4 @@
-import { Schema, model, models, Document, Types } from 'mongoose';
+import { Schema, model, models, Document, Types, Model } from 'mongoose';
 
 export interface IPriceBreakdownItem {
   name: string;
@@ -42,12 +42,6 @@ const PriceBreakdownSchema = new Schema<IPriceBreakdown>({
   notes: { type: String },
 }, { timestamps: true });
 
-PriceBreakdownSchema.pre('save', function(next) {
-  if (this.isModified('title')) { this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''); }
-  next();
-});
-
-const PriceBreakdown = models.PriceBreakdown || model<IPriceBreakdown>('PriceBreakdown', PriceBreakdownSchema);
+const PriceBreakdown: Model<IPriceBreakdown> = models.PriceBreakdown || model<IPriceBreakdown>('PriceBreakdown', PriceBreakdownSchema);
 
 export default PriceBreakdown;
-

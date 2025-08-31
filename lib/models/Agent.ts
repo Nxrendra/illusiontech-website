@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from 'mongoose';
+import { Schema, model, models, Document, Model } from 'mongoose';
 
 export interface IAgentData {
   fullName: string;
@@ -27,7 +27,6 @@ const AgentSchema = new Schema<IAgent>({
   notes: { type: String },
 }, { timestamps: true });
 
-const Agent = models.Agent || model<IAgent>('Agent', AgentSchema);
+const Agent: Model<IAgent> = models.Agent || model<IAgent>('Agent', AgentSchema);
 
 export default Agent;
-
