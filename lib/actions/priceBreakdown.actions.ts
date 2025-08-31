@@ -59,14 +59,20 @@ export async function getPriceBreakdowns() {
   }
 }
 
+// This type is now shared between getPriceBreakdowns and getPriceBreakdownBySlug
+export type SerializedBreakdownWithService = Omit<IPriceBreakdownData, 'serviceId'> & { _id: string; serviceId: { _id: string; name: string } };
+
 export async function getPriceBreakdownBySlug(slug: string) {
   try {
     await connectToDB();
-    const breakdown = await PriceBreakdown.findOne({ slug }).lean().exec();
+    const breakdown = await PriceBreakdown.findOne({ slug })
+      .populate('serviceId', 'name') // Populate the service name
+      .lean()
+      .exec();
     if (!breakdown) return null;
     // The data is serialized, so it's a plain object, not a Mongoose document.
     // We cast to a type that reflects this to ensure type safety on the client.
-    return JSON.parse(JSON.stringify(breakdown)) as IPriceBreakdownData & { _id: string };
+    return JSON.parse(JSON.stringify(breakdown)) as SerializedBreakdownWithService;
   } catch (error) {
     console.error(`Error fetching breakdown by slug ${slug}:`, error);
     return null;
