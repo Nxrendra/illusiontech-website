@@ -202,7 +202,9 @@ export default function ServicesClientPage({ services }: ServicesClientPageProps
               elevate your brand and drive growth. Explore our packages below.
             </p>
           </motion.div>
-          <ServiceCarousel services={services} />
+          <ServiceCarousel
+            services={services.filter((service) => service.isCoreService)}
+          />
         </div>
       </section>
 
