@@ -49,7 +49,7 @@ export default function ProcessTimeline() {
     const lineProgress = useTransform(scrollYProgress, [0, 0.9], [0, 1]); // End drawing a bit early
 
     return (
-        <section className="py-20 md:py-28 bg-muted" ref={timelineRef}>
+        <section className="py-20 md:py-28 bg-muted overflow-hidden" ref={timelineRef}>
             <div className="container">
                 <motion.h2
                     className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground"

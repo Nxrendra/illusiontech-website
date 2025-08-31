@@ -137,12 +137,14 @@ export function ContactHero({ content }: { content: IPageContentData }) {
   return (
     <motion.section 
       ref={heroRef}
-      className="relative overflow-hidden bg-gray-900 dark:bg-black min-h-screen flex flex-col items-center justify-center"
+      className="relative bg-gray-900 dark:bg-black min-h-screen flex flex-col items-center justify-center"
       variants={containerVariants}
       initial="hidden"
       animate={isHeroInView ? 'visible' : 'hidden'}
     >
-      <ParticleBackground options={particleOptions} className="absolute inset-0" />
+      <div className="absolute inset-0 overflow-hidden">
+        <ParticleBackground options={particleOptions} />
+      </div>
       <div className="container text-center relative z-10">
       <motion.h1 
           variants={itemVariants}          className="text-4xl md:text-5xl font-bold text-white"
