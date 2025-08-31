@@ -82,8 +82,12 @@
 }
 
 .grecaptcha-badge {
-  /* Hide the badge as per Google's terms, since we display the required text notice. */
-  visibility: hidden !important;
+  /* Move to bottom-left to avoid overlapping with the chat widget */
+  right: auto !important;
+  left: 8px !important;
+  bottom: 8px !important;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+  border-radius: 4px !important;
 }
 
 @layer components {
