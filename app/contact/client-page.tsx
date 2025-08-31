@@ -28,10 +28,9 @@ export default function ContactClientPage({ content, services }: ContactClientPa
             <motion.div variants={createItemVariantsLeft(isMobile)}>
               <ContactInformation content={content} />
             </motion.div>
-          <motion.div variants={createItemVariantsRight(isMobile)}>
--              <ContactForm content={content} services={services} />
--            </motion.div>
-
+            {/* <motion.div variants={createItemVariantsRight(isMobile)}>
+              <ContactForm content={content} services={services} />
+            </motion.div> */}
           </div>
         </AnimatedSection>
       </GridBackground>
