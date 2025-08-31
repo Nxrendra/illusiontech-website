@@ -34,7 +34,7 @@ export default function ContactClientPage({ content, services }: ContactClientPa
           </div>
         </AnimatedSection>
       </GridBackground>
-      <ProcessTimeline /> 
+      {/* <ProcessTimeline />  */}
     </main >
   );
 }
