@@ -14,11 +14,22 @@ const MOBILE_ASPECT_RATIO = 380 / 280; // Use a less tall aspect ratio for mobil
 const MOBILE_BREAKPOINT = 768;
 
 interface ServiceCarouselProps {
-  services: (Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement })[];
+  services: (Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement; slug?: string })[];
 }
 
-export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {
+export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services: initialServices }) => {
   const router = useRouter();
+
+  // This is a safeguard. The "Starter Website" package should always link to its
+  // specific section on the web development page. This handles the case where the
+  // link might be missing from the database for this specific service.
+  const services = useMemo(() => initialServices.map(s => {
+    if (s.slug === 'starter' && !s.link) {
+      return { ...s, link: '/services/web-development#starter' };
+    }
+    return s;
+  }), [initialServices]);
+
   const [rotation, setRotation] = useState(0); // This represents the number of steps rotated
   // Default to a non-mobile value on the server. The actual value will be set on the client.
   const [winW, setWinW] = useState<number>(1024);
@@ -236,9 +247,8 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
                   onTap={() => {
                     if (isActive) {
                       // If the active card is clicked, navigate to its page.
-                      if (s.link) {
-                        router.push(s.link);
-                      }
+                      // The fallback to '/services' is a safety net.
+                      router.push(s.link || '/services');
                     } else {
                       // If an inactive card is clicked, rotate it to the front.
                       let diff = index - activeIndex;
