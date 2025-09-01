@@ -276,12 +276,6 @@ export default function WebsiteDesignClientPage({ service }: WebsiteDesignClient
           >
             {service?.longDescription ?? "First impressions matter. We specialize in creating visually stunning and intuitive website designs that engage users and reflect the unique identity of your brand."}
           </motion.p>
-          <motion.p
-            variants={createItemVariants(isMobile)}
-            className="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto"
-                    >{service?.longDescription ?? "First impressions matter. We specialize in creating visually stunning and intuitive website designs that engage users and reflect the unique identity of your brand."}
-
-          </motion.p>
         </div>
         <motion.button
           className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors hidden md:block"
