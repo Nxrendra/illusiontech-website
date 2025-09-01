@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MousePointerClick } from 'lucide-react';
 import { ServiceCard } from '@/components/ServiceCard';
@@ -17,6 +18,7 @@ interface ServiceCarouselProps {
 }
 
 export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {
+  const router = useRouter();
   const [rotation, setRotation] = useState(0); // This represents the number of steps rotated
   // Default to a non-mobile value on the server. The actual value will be set on the client.
   const [winW, setWinW] = useState<number>(1024);
@@ -231,17 +233,21 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) =>
                   key={s._id}
                   initial={false}
                   className="absolute top-1/2 left-1/2 cursor-pointer"
-                  onTap={() => { // Rotate to the closest instance of the clicked card
-                    if (index === activeIndex) return;
-                    let diff = index - activeIndex;
-                    if (Math.abs(diff) > numServices / 2) {
-                      if (diff > 0) {
-                        diff -= numServices;
-                      } else {
-                        diff += numServices;
+                  onTap={() => {
+                    if (isActive) {
+                      // If the active card is clicked, navigate to its page.
+                      if (s.link) {
+                        router.push(s.link);
                       }
+                    } else {
+                      // If an inactive card is clicked, rotate it to the front.
+                      let diff = index - activeIndex;
+                      if (Math.abs(diff) > numServices / 2) {
+                        if (diff > 0) diff -= numServices;
+                        else diff += numServices;
+                      }
+                      setRotation(rotation + diff);
                     }
-                    setRotation(rotation + diff);
                   }}
                   style={{
                     width: card.width,

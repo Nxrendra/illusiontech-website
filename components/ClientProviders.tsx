@@ -24,7 +24,7 @@ export default function ClientProviders({
   const isAdminPage = pathname?.startsWith('/admin');
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark">
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <Toaster position="bottom-center" toastOptions={{ className: 'font-sans' }} />
       {!isAdminPage && <Navbar />}
       {children}
