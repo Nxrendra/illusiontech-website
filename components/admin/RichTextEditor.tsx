@@ -26,7 +26,8 @@ const ReactQuill = dynamic(async () => {
   const { default: RQ } = await import('react-quill');
 
   // Add our desired fonts and sizes to Quill's whitelist so they are not stripped.
-  const Font = RQ.Quill.import('formats/font');
+  // Use the 'style' attributor for font to allow inline font-family styles.
+  const Font = RQ.Quill.import('attributors/style/font');
   Font.whitelist = FONT_WHITELIST;
   RQ.Quill.register(Font, true);
 
