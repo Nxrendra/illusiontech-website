@@ -111,7 +111,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
       container: [
         [{ 'header': [1, 2, 3, false] }, { 'font': FONT_WHITELIST }, { 'size': FONT_SIZES }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
-        [{ 'color': COLORS }, { 'background': [] }],
+        [{ 'color': COLORS }, { 'background': COLORS }],
         [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
         [{ 'align': [] }],
         ['link', 'image', 'video'],
