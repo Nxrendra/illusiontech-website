@@ -4,6 +4,7 @@ import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import { getIcon } from '@/lib/get-icon';
 import React from 'react';
 import { connectToDB } from '@/lib/mongoose';
+import { getPageContent } from '@/lib/data/pageContent';
 
 export const dynamic = 'force-dynamic';
 

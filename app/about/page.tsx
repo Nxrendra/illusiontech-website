@@ -1,21 +1,9 @@
 // /Users/macbookair/Documents/IllusionTech-Development/app/about/page.tsx
 import type { Metadata } from 'next';
 import AboutClientPage from './client-page';
-import { connectToDB } from '@/lib/mongoose';
-import PageContent, { IPageContentData } from '@/lib/models/PageContent';
+import { getPageContent } from '@/lib/data/pageContent';
 
 export const dynamic = 'force-dynamic';
-
-async function getPageContent(): Promise<IPageContentData> {
-  try {
-    await connectToDB();
-    const content = await PageContent.findOne({}).lean();
-    return content ? JSON.parse(JSON.stringify(content)) : {};
-  } catch (error) {
-    console.error('Failed to fetch page content for About page:', error);
-    return {};
-  }
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getPageContent();

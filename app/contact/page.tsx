@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import ContactClientPage from './client-page';
 import { connectToDB } from '@/lib/mongoose';
-import PageContent, { IPageContentData } from '@/lib/models/PageContent';
+import { getPageContent } from '@/lib/data/pageContent';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import React from 'react';
 import { getIcon } from '@/lib/get-icon';
@@ -15,17 +15,6 @@ export const metadata: Metadata = {
     canonical: '/contact',
   },
 };
-
-async function getPageContent(): Promise<IPageContentData> {
-  try {
-    await connectToDB();
-    const content = await PageContent.findOne({}).lean();
-    return content ? JSON.parse(JSON.stringify(content)) : {};
-  } catch (error) {
-    console.error("Failed to fetch page content:", error);
-    return {};
-  }
-}
 
 export type ServiceForForm = Omit<IServiceData, 'icon'> & {
   _id: string;

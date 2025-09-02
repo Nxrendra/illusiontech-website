@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, MousePointerClick } from 'lucide-react';
 import { ServiceCard } from '@/components/ServiceCard';
@@ -14,22 +13,10 @@ const MOBILE_ASPECT_RATIO = 380 / 280; // Use a less tall aspect ratio for mobil
 const MOBILE_BREAKPOINT = 768;
 
 interface ServiceCarouselProps {
-  services: (Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement; slug?: string })[];
+  services: (Omit<IServiceData, 'icon'> & { _id: string; icon: React.ReactElement })[];
 }
 
-export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services: initialServices }) => {
-  const router = useRouter();
-
-  // This is a safeguard. The "Starter Website" package should always link to its
-  // specific section on the web development page. This handles the case where the
-  // link might be missing from the database for this specific service.
-  const services = useMemo(() => initialServices.map(s => {
-    if (s.slug === 'starter' && !s.link) {
-      return { ...s, link: '/services/web-development#starter' };
-    }
-    return s;
-  }), [initialServices]);
-
+export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services }) => {
   const [rotation, setRotation] = useState(0); // This represents the number of steps rotated
   // Default to a non-mobile value on the server. The actual value will be set on the client.
   const [winW, setWinW] = useState<number>(1024);
@@ -244,20 +231,17 @@ export const ServiceCarousel: React.FC<ServiceCarouselProps> = ({ services: init
                   key={s._id}
                   initial={false}
                   className="absolute top-1/2 left-1/2 cursor-pointer"
-                  onTap={() => {
-                    if (isActive) {
-                      // If the active card is clicked, navigate to its page.
-                      // The fallback to '/services' is a safety net.
-                      router.push(s.link || '/services');
-                    } else {
-                      // If an inactive card is clicked, rotate it to the front.
-                      let diff = index - activeIndex;
-                      if (Math.abs(diff) > numServices / 2) {
-                        if (diff > 0) diff -= numServices;
-                        else diff += numServices;
+                  onTap={() => { // Rotate to the closest instance of the clicked card
+                    if (index === activeIndex) return;
+                    let diff = index - activeIndex;
+                    if (Math.abs(diff) > numServices / 2) {
+                      if (diff > 0) {
+                        diff -= numServices;
+                      } else {
+                        diff += numServices;
                       }
-                      setRotation(rotation + diff);
                     }
+                    setRotation(rotation + diff);
                   }}
                   style={{
                     width: card.width,

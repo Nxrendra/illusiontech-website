@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import HomeClientPage from './client-page';
 import ServiceModel, { IServiceData } from '@/lib/models/Service';
 import { getIcon } from '@/lib/get-icon';
-import PageContent, { IPageContentData } from '@/lib/models/PageContent';
-import React from 'react';
 import { connectToDB } from '@/lib/mongoose';
-
+import React from 'react';
+import { getPageContent } from '@/lib/data/pageContent';
 export const dynamic = 'force-dynamic';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
@@ -26,16 +25,6 @@ const webSiteSchema = {
   },
 };
 
-async function getPageContent(): Promise<IPageContentData> {
-  try {
-    await connectToDB();
-    const content = await PageContent.findOne({}).lean();
-    return content ? JSON.parse(JSON.stringify(content)) : {};
-  } catch (error) {
-    console.error("Failed to fetch page content for homepage:", error);
-    return {};
-  }
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getPageContent();
