@@ -24,6 +24,7 @@ export default function LegalDocumentList({ initialDocuments }: { initialDocumen
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Visibility</TableHead>
               <TableHead>Last Updated</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -34,6 +35,9 @@ export default function LegalDocumentList({ initialDocuments }: { initialDocumen
                 <TableCell className="font-medium">{doc.title}</TableCell>
                 <TableCell>
                   <Badge variant={doc.isPublished ? 'default' : 'secondary'}>{doc.isPublished ? 'Published' : 'Draft'}</Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={doc.isPubliclyVisible ? 'outline' : 'secondary'}>{doc.isPubliclyVisible ? 'Public' : 'Private'}</Badge>
                 </TableCell>
                 <TableCell>{new Date(doc.updatedAt!).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">

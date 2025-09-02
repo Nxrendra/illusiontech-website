@@ -5,6 +5,7 @@ export interface ILegalDocumentData {
   slug: string;
   content: string;
   isPublished: boolean;
+  isPubliclyVisible: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -16,6 +17,7 @@ const LegalDocumentSchema = new Schema<ILegalDocument>({
   slug: { type: String, required: true, unique: true, index: true },
   content: { type: String, default: '' },
   isPublished: { type: Boolean, default: false },
+  isPubliclyVisible: { type: Boolean, default: false },
 }, { timestamps: true });
 
 LegalDocumentSchema.pre<ILegalDocument>('save', function(next) {

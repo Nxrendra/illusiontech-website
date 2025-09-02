@@ -130,45 +130,50 @@
   }
 
   @media print {
-    /* Hide everything on the page by default */
+    /* 1. Hide everything on the page by default */
     body * {
       visibility: hidden;
     }
-    /* Only show the print area and its contents */
-    #print-area, #print-area * {
+    
+    /* 2. Explicitly hide elements that should never be printed */
+    .non-printable {
+      display: none !important;
+    }
+
+    /* 3. Reveal the printable area and its contents */
+    .printable-area, .printable-area * {
       visibility: visible;
     }
-    /* Make the print area take up the whole page */
-    #print-area {
+    
+    /* 4. Position the printable area to fill the page */
+    .printable-area {
       position: absolute;
       left: 0;
       top: 0;
       width: 100%;
       padding: 1.5rem; /* Add some margin for printing */
+      margin: 0;
+
     }
-    /* Hide elements that shouldn't be printed */
-    .no-print {
-      display: none !important;
-    }
-    /* Reset styles for better print readability */
-    #print-area .bg-muted\/50,
-    #print-area .bg-card {
+    
+    .printable-area .bg-muted\/50,
+    .printable-area .bg-card {
       background-color: transparent !important;
     }
-    #print-area .shadow-lg,
-    #print-area .shadow-sm {
+    .printable-area .shadow-lg,
+    .printable-area .shadow-sm {
       box-shadow: none !important;
     }
-    #print-area .border,
-    #print-area .bg-border {
+    .printable-area .border,
+    .printable-area .bg-border {
       border-color: #d1d5db !important; /* gray-300 */
     }
-    #print-area .text-foreground,
-    #print-area .text-card-foreground,
-    #print-area .text-accent {
+    .printable-area .text-foreground,
+    .printable-area .text-card-foreground,
+    .printable-area .text-accent {
       color: #000 !important;
     }
-    #print-area .text-muted-foreground {
+    .printable-area .text-muted-foreground {
       color: #4b5563 !important; /* gray-600 */
     }
   }

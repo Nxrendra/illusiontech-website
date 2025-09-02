@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const document = await getLegalDocumentBySlug(params.slug);
-  if (!document || !document.isPublished) {
+  if (!document || !document.isPublished || !document.isPubliclyVisible) {
     return { title: 'Document Not Found' };
   }
   return {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function LegalDocumentPage({ params }: { params: { slug: string } }) {
   const document = await getLegalDocumentBySlug(params.slug);
 
-  if (!document || !document.isPublished) {
+  if (!document || !document.isPublished || !document.isPubliclyVisible) {
     notFound();
   }
 
