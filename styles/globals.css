@@ -193,5 +193,30 @@
     .printable-area .text-muted-foreground {
       color: #4b5563 !important; /* gray-600 */
     }
+
+    /* Watermark Styling */
+    .printable-area::after {
+      content: attr(data-watermark);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 12rem;
+      font-weight: 800;
+      color: rgba(0, 0, 0, 0.07);
+      z-index: -1;
+      pointer-events: none;
+      text-align: center;
+      white-space: nowrap;
+      /* Ensure it doesn't get selected */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .dark .printable-area::after {
+      color: rgba(255, 255, 255, 0.07);
+    }
   }
 }

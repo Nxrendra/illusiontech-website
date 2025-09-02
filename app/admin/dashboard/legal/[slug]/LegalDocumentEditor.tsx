@@ -23,6 +23,7 @@ export default function LegalDocumentEditor({ initialData }: { initialData: (ILe
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [watermarkText, setWatermarkText] = useState('');
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -87,6 +88,10 @@ export default function LegalDocumentEditor({ initialData }: { initialData: (ILe
           </div>
         </div>
         <div className="flex justify-between items-center">
+          <div className="space-y-1">
+            <Label htmlFor="watermark">Print Watermark (Optional)</Label>
+            <Input id="watermark" value={watermarkText} onChange={(e) => setWatermarkText(e.target.value)} placeholder="e.g., DRAFT, CONFIDENTIAL" className="w-full sm:w-64" />
+          </div>
           <div>{initialData && (<Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>{isDeleting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</> : 'Delete Document'}</Button>)}</div>
           <div className="flex items-center gap-2">
             <Button type="button" variant="outline" onClick={handlePrint}>
@@ -98,7 +103,7 @@ export default function LegalDocumentEditor({ initialData }: { initialData: (ILe
         </div>
       </div>
       {/* This area is hidden on screen and only becomes visible when printing */}
-      <div className="printable-area">
+      <div className="printable-area" data-watermark={watermarkText}>
         <div className="prose prose-slate dark:prose-invert max-w-none prose-h1:font-playfair prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl">
           <h1>{formData.title}</h1>
           <SanitizeHTML html={formData.content} />
