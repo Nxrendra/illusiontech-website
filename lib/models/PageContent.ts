@@ -86,8 +86,6 @@ export interface IPageContentData {
   homeParallax2Subheading?: string;
   homeParallax2CtaButtonText?: string;
 
-  // Contract Page
-  contractContent?: string;
   // Legal Pages
   termsOfServiceContent?: string;
   privacyPolicyContent?: string;
@@ -240,9 +238,6 @@ const PageContentSchema: Schema = new Schema({
   homeParallax2Heading: { type: String, default: 'Ready to Build Something Incredible?' },
   homeParallax2Subheading: { type: String, default: "Have an idea for a project? We're here to turn your vision into a digital reality. Let's collaborate and create something that stands out from the crowd." },
   homeParallax2CtaButtonText: { type: String, default: 'Request a Quote' },
-
-  // Contract Page
-  contractContent: { type: String, default: '<p>This is a placeholder for the service contract. Please edit this content in the admin panel.</p>' },
 
   // Legal Pages
   termsOfServiceContent: { type: String, default: '<p>Placeholder for Terms of Service. Edit in admin panel.</p>' },

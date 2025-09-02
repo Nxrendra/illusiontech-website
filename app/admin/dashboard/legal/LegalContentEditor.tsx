@@ -7,11 +7,11 @@ import { IPageContentData } from '@/lib/models/PageContent';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { Loader2 } from 'lucide-react';
 
 export default function LegalContentEditor({ initialContent }: { initialContent: IPageContentData }) {
   const router = useRouter();
   const [content, setContent] = useState({
-    contractContent: initialContent.contractContent || '',
     termsOfServiceContent: initialContent.termsOfServiceContent || '',
     privacyPolicyContent: initialContent.privacyPolicyContent || '',
   });
@@ -26,7 +26,7 @@ export default function LegalContentEditor({ initialContent }: { initialContent:
     const toastId = toast.loading('Saving legal documents...');
 
     try {
-      const response = await fetch('/api/admin/page-content', {
+      const response = await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(content),
@@ -50,15 +50,11 @@ export default function LegalContentEditor({ initialContent }: { initialContent:
 
   return (
     <div className="space-y-4">
-      <Tabs defaultValue="contract" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="contract">Service Contract</TabsTrigger>
+      <Tabs defaultValue="terms" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="terms">Terms of Service</TabsTrigger>
           <TabsTrigger value="privacy">Privacy Policy</TabsTrigger>
         </TabsList>
-        <TabsContent value="contract" className="mt-4">
-          <RichTextEditor value={content.contractContent} onChange={(v) => handleContentChange('contractContent', v)} placeholder="Enter the service contract terms here..." />
-        </TabsContent>
         <TabsContent value="terms" className="mt-4">
           <RichTextEditor value={content.termsOfServiceContent} onChange={(v) => handleContentChange('termsOfServiceContent', v)} placeholder="Enter the terms of service here..." />
         </TabsContent>
@@ -68,7 +64,7 @@ export default function LegalContentEditor({ initialContent }: { initialContent:
       </Tabs>
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={isSaving} size="large">
-          {isSaving ? 'Saving...' : 'Save All Documents'}
+          {isSaving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : 'Save Documents'}
         </Button>
       </div>
     </div>
