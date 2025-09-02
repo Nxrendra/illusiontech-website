@@ -70,14 +70,20 @@ export default function LegalDocumentEditor({ initialData }: { initialData: (ILe
       <div className="space-y-6 non-printable">
         <div className="space-y-2"><Label htmlFor="title">Document Title</Label><Input id="title" value={formData.title} onChange={(e) => setFormData(p => ({ ...p, title: e.target.value }))} placeholder="e.g., Terms of Service" /></div>
         <div className="space-y-2"><Label>Content</Label><RichTextEditor value={formData.content} onChange={(v) => setFormData(p => ({ ...p, content: v }))} /></div>
-        <div className="flex items-center space-x-6 pt-2">
-          <div className="flex items-center space-x-2">
-            <Switch id="isPublished" checked={formData.isPublished} onCheckedChange={(c) => setFormData(p => ({ ...p, isPublished: c }))} />
-            <Label htmlFor="isPublished">Published (Saved)</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
+          <div className="space-y-2">
+            <Label htmlFor="isPublished" className="font-semibold">Status</Label>
+            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-md">
+              <Switch id="isPublished" checked={formData.isPublished} onCheckedChange={(c) => setFormData(p => ({ ...p, isPublished: c }))} />
+              <Label htmlFor="isPublished" className="text-sm">Published</Label>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Switch id="isPubliclyVisible" checked={formData.isPubliclyVisible} onCheckedChange={(c) => setFormData(p => ({ ...p, isPubliclyVisible: c }))} />
-            <Label htmlFor="isPubliclyVisible" className="flex flex-col"><span>Publicly Visible</span><span className="text-xs text-muted-foreground">Makes it accessible at /legal/[slug]</span></Label>
+          <div className="space-y-2">
+            <Label htmlFor="isPubliclyVisible" className="font-semibold">Visibility</Label>
+            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-md">
+              <Switch id="isPubliclyVisible" checked={formData.isPubliclyVisible} onCheckedChange={(c) => setFormData(p => ({ ...p, isPubliclyVisible: c }))} />
+              <Label htmlFor="isPubliclyVisible" className="flex flex-col"><span className="text-sm">Publicly Visible</span><span className="text-xs text-muted-foreground">Makes it accessible at /legal/[slug]</span></Label>
+            </div>
           </div>
         </div>
         <div className="flex justify-between items-center">
