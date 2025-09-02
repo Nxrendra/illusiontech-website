@@ -30,7 +30,8 @@ const ReactQuill = dynamic(async () => {
   Font.whitelist = FONT_WHITELIST;
   RQ.Quill.register(Font, true);
 
-  const Size = RQ.Quill.import('formats/size');
+  // Use the 'style' attributor for size to allow pixel values, not just classes.
+  const Size = RQ.Quill.import('attributors/style/size');
   Size.whitelist = FONT_SIZES;
   RQ.Quill.register(Size, true);
 
