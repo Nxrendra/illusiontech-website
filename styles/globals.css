@@ -176,9 +176,12 @@
   .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { font-family: "Verdana", sans-serif; }
 
   /* Style the color picker dropdown to be a grid */
-  .quill-editor-wrapper .ql-snow .ql-color-picker .ql-picker-options {
+  /* Only apply grid layout WHEN the picker is expanded */
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-color-picker.ql-expanded .ql-picker-options {
     @apply grid grid-cols-7 gap-1 p-2;
     width: 182px; /* Adjust width to fit the grid */
+    /* Override Quill's default `display: block` for expanded options */
+    display: grid;
   }
 
   .quill-editor-wrapper .ql-snow .ql-picker.ql-color-picker .ql-picker-item {
