@@ -20,19 +20,6 @@ const LegalDocumentSchema = new Schema<ILegalDocument>({
   isPubliclyVisible: { type: Boolean, default: false },
 }, { timestamps: true });
 
-LegalDocumentSchema.pre<ILegalDocument>('save', function(next) {
-  if (this.isModified('title')) {
-    this.slug = this.title
-      .toLowerCase()
-      .trim()
-      .replace(/&/g, '-and-')          // Replace & with 'and'
-      .replace(/[^a-z0-9\s-]/g, '')   // Remove invalid chars
-      .replace(/\s+/g, '-')           // Collapse whitespace and replace by -
-      .replace(/-+/g, '-');           // Collapse dashes
-  }
-  next();
-});
-
 const LegalDocument: Model<ILegalDocument> = models.LegalDocument || mongoose.model<ILegalDocument>('LegalDocument', LegalDocumentSchema);
 
 export default LegalDocument;

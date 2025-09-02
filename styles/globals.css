@@ -120,6 +120,23 @@
   .ContactFormPhoneInput .PhoneInputCountrySelectArrow {
     opacity: 0.6;
   }
+
+  /* Custom styles for the Rich Text Editor (Quill) */
+  .ql-editor {
+    @apply text-base; /* Use Tailwind's base font size (16px by default) */
+    line-height: 1.6;
+  }
+
+  /* Ensure placeholder text matches the base font size and style */
+  .ql-editor.ql-blank::before {
+    @apply text-base not-italic text-muted-foreground;
+  }
+
+  /* Adjust Quill's default border to better match the UI */
+  .ql-container.ql-snow {
+    border-bottom-left-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+  }
 }
 
 @layer utilities {

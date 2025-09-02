@@ -19,10 +19,15 @@ const FONT_WHITELIST = [
 const ReactQuill = dynamic(async () => {
   const { default: RQ } = await import('react-quill');
 
-  // Add our desired fonts to Quill's whitelist.
+  // Add our desired fonts and sizes to Quill's whitelist.
   const Font = RQ.Quill.import('formats/font');
   Font.whitelist = FONT_WHITELIST;
   RQ.Quill.register(Font, true);
+
+  const Size = RQ.Quill.import('formats/size');
+  // The `false` value in the toolbar config represents the default 'Normal' size.
+  Size.whitelist = ['small', 'large', 'huge'];
+  RQ.Quill.register(Size, true);
 
   // eslint-disable-next-line react/display-name
   return ({ forwardedRef, ...props }: { forwardedRef: Ref<ReactQuillType> } & ReactQuillProps) => (
@@ -41,7 +46,7 @@ interface RichTextEditorProps {
 
 // Define the formats Quill should support.
 const formats = [
-  'header', 'font',
+  'header', 'font', 'size',
   'bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block',
   'color', 'background',
   'list', 'bullet', 'indent',
@@ -99,7 +104,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
   const modules = useMemo(() => ({
     toolbar: {
       container: [
-        [{ 'header': [1, 2, 3, false] }, { 'font': FONT_WHITELIST }],
+        [{ 'header': [1, 2, 3, false] }, { 'font': FONT_WHITELIST }, { 'size': ['small', false, 'large', 'huge'] }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
         [{ 'color': [] }, { 'background': [] }],
         [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
