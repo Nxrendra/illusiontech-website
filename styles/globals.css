@@ -187,6 +187,22 @@
   .quill-editor-wrapper .ql-snow .ql-picker.ql-color-picker .ql-picker-item {
     @apply h-5 w-5 rounded-sm border border-border/50;
   }
+
+  /* --- Quill Content Styles --- */
+  /* These classes are applied by Quill for font families and need to be defined
+     globally so they render correctly outside the editor (e.g., in previews or on public pages). */
+  .ql-font-serif { font-family: serif; }
+  .ql-font-monospace { font-family: monospace; }
+  .ql-font-arial { font-family: Arial, sans-serif; }
+  .ql-font-comic-sans-ms { font-family: "Comic Sans MS", cursive; }
+  .ql-font-courier-new { font-family: "Courier New", monospace; }
+  .ql-font-georgia { font-family: Georgia, serif; }
+  .ql-font-helvetica { font-family: Helvetica, sans-serif; }
+  .ql-font-lucida-sans-unicode { font-family: "Lucida Sans Unicode", sans-serif; }
+  .ql-font-tahoma { font-family: Tahoma, sans-serif; }
+  .ql-font-times-new-roman { font-family: "Times New Roman", serif; }
+  .ql-font-trebuchet-ms { font-family: "Trebuchet MS", sans-serif; }
+  .ql-font-verdana { font-family: Verdana, sans-serif; }
 }
 
 @layer utilities {

@@ -25,9 +25,9 @@ const COLORS = ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc'
 const ReactQuill = dynamic(async () => {
   const { default: RQ } = await import('react-quill');
 
-  // Add our desired fonts and sizes to Quill's whitelist so they are not stripped.
-  // Use the 'style' attributor for font to allow inline font-family styles.
-  const Font = RQ.Quill.import('attributors/style/font');
+  // Configure Quill to use classes for fonts, which is the default and most stable method.
+  // We will allow these classes through our sanitizer and style them globally.
+  const Font = RQ.Quill.import('formats/font');
   Font.whitelist = FONT_WHITELIST;
   RQ.Quill.register(Font, true);
 
