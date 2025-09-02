@@ -140,48 +140,48 @@
 
   /* --- Quill Toolbar & Dropdown Fixes --- */
 
-  .ql-toolbar.ql-snow {
+  .quill-editor-wrapper .ql-toolbar.ql-snow {
     @apply rounded-t-md border-input bg-transparent;
   }
 
   /* Set the content for all font and size picker items from their data-value */
-  .ql-snow .ql-picker.ql-font .ql-picker-label::before,
-  .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item::before {
     content: attr(data-value);
   }
 
-  .ql-snow .ql-picker.ql-size .ql-picker-label::before,
-  .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-size .ql-picker-item::before {
     content: attr(data-value);
   }
 
   /* For the font size dropdown, prevent the text from changing size */
-  .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-size .ql-picker-item::before {
     font-size: 14px !important;
   }
 
   /* Apply the correct font family to each item in the font dropdown for a better preview */
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before { font-family: "sans-serif"; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before { font-family: "serif"; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before { font-family: "monospace"; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { font-family: "Arial", sans-serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic-sans-ms"]::before { font-family: "Comic Sans MS", cursive; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before { font-family: "Courier New", monospace; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { font-family: "Georgia", serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="helvetica"]::before { font-family: "Helvetica", sans-serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lucida-sans-unicode"]::before { font-family: "Lucida Sans Unicode", sans-serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before { font-family: "Tahoma", sans-serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before { font-family: "Times New Roman", serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet-ms"]::before { font-family: "Trebuchet MS", sans-serif; }
-  .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { font-family: "Verdana", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before { font-family: "sans-serif"; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before { font-family: "serif"; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before { font-family: "monospace"; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before { font-family: "Arial", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic-sans-ms"]::before { font-family: "Comic Sans MS", cursive; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before { font-family: "Courier New", monospace; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before { font-family: "Georgia", serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="helvetica"]::before { font-family: "Helvetica", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="lucida-sans-unicode"]::before { font-family: "Lucida Sans Unicode", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before { font-family: "Tahoma", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before { font-family: "Times New Roman", serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="trebuchet-ms"]::before { font-family: "Trebuchet MS", sans-serif; }
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before { font-family: "Verdana", sans-serif; }
 
   /* Style the color picker dropdown to be a grid */
-  .ql-snow .ql-color-picker .ql-picker-options {
+  .quill-editor-wrapper .ql-snow .ql-color-picker .ql-picker-options {
     @apply grid grid-cols-7 gap-1 p-2;
     width: 182px; /* Adjust width to fit the grid */
   }
 
-  .ql-snow .ql-picker.ql-color-picker .ql-picker-item {
+  .quill-editor-wrapper .ql-snow .ql-picker.ql-color-picker .ql-picker-item {
     @apply h-5 w-5 rounded-sm border border-border/50;
   }
 }

@@ -124,7 +124,7 @@ export default function RichTextEditor({ value, onChange, placeholder, disabled 
   }), [imageHandler]);
 
   return (
-    <div className="bg-background rounded-md border border-input prose-p:my-0 prose-h1:my-0 prose-h2:my-0 prose-h3:my-0">
+    <div className="quill-editor-wrapper bg-background rounded-md border border-input prose-p:my-0 prose-h1:my-0 prose-h2:my-0 prose-h3:my-0">
       <ReactQuill
         forwardedRef={quillRef}
         theme="snow" value={value} onChange={onChange} modules={modules} formats={formats} placeholder={placeholder} readOnly={disabled} className="[&_.ql-editor]:min-h-[300px]"
