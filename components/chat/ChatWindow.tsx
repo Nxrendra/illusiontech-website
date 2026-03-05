@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useChat, type Message as VercelAIMessage } from 'ai/react';
 import { IMessage } from '@/lib/models/Message';
 import { Message } from '@/components/chat/Message';
 import { Send } from 'lucide-react';
@@ -12,53 +11,33 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ sessionId }: ChatWindowProps) {
-  // The useChat hook manages the chat state and interactions.
-  const {
-    messages,         // The array of chat messages.
-    input,            // The current value of the input field.
-    handleInputChange,// A handler for the input field's onChange event.
-    handleSubmit,     // A handler for the form's onSubmit event.
-    setMessages,      // A function to update the messages state.
-    isLoading,        // A boolean indicating if the AI is generating a response.
-  } = useChat({
-    // The API endpoint that the hook will call.
-    api: '/api/chat',
-    // The ID for this chat session. This is sent to the GET endpoint to fetch initial messages.
-    id: sessionId,
-    // Additional data to send with each POST request to the API.
-    body: {
-      sessionId,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    },
-      // This callback is called when the stream from the API has finished.
-    onFinish: async (message) => {
-      // The user's message is already saved by the API route.
-      // Now, save the assistant's final message to the database.
-      if (message.role === 'assistant') {
-        await fetch('/api/save-message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...message,
-            sessionId,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        socket_id: socketId,
-
-          }),
-        });
-      }
-    },
-  });
-
   const [socketId, setSocketId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // This effect fetches the initial chat history when the component mounts.
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!sessionId) return;
+      try {
+        const response = await fetch(`/api/messages?sessionId=${sessionId}`);
+        if (response.ok) {
+          const history: IMessage[] = await response.json();
+          setMessages(history);
+        }
+      } catch (error) {
+        console.error('Failed to fetch chat history:', error);
+      }
+    };
+    fetchHistory();
+  }, [sessionId]);
 
   // Create a ref to hold the latest messages array. This allows us to access
   // the most current messages inside the Pusher callback without needing to
   // add `messages` as a dependency to the `useEffect` hook.
-  const messagesRef = useRef<VercelAIMessage[]>([]);
+  const messagesRef = useRef<IMessage[]>([]);
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
@@ -81,24 +60,11 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
          // Use the ref to get the latest messages to avoid stale state in the closure.
       const currentMessages = messagesRef.current;
 
-        const messageIndex = currentMessages.findIndex(m => m.id === newMessage._id);
+      const messageExists = currentMessages.some(m => m._id === newMessage._id);
 
-      // If the message already exists (e.g., from the stream), update it.
-      if (messageIndex !== -1) {
-        const updatedMessages = [...currentMessages];
-        updatedMessages[messageIndex] = {
-          ...updatedMessages[messageIndex],
-          content: newMessage.text, // Ensure content is the final, saved version.
-        };
-        setMessages(updatedMessages);
-      } else {
-        // If it's a new message (e.g., from another user), add it to the list.
-        const newVercelMessage: VercelAIMessage = {
-          id: newMessage._id,
-          role: newMessage.sender === 'bot' ? 'assistant' : 'user',
-          content: newMessage.text,
-        };
-        setMessages([...currentMessages, newVercelMessage]);
+      // If the message doesn't exist, add it to the list.
+      if (!messageExists) {
+        setMessages(prev => [...prev, newMessage]);
       }
     });
 
@@ -115,17 +81,49 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // We wrap the default handleSubmit to inject the Pusher socket_id into the request body.
-  // This allows the server to avoid broadcasting the message back to the client that sent it.
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleSubmit(e, {
-      options: {
-        body: {
+    if (!input.trim()) return;
+
+    const newMessage: IMessage = {
+      _id: Date.now().toString(),
+      text: input,
+      sender: 'user',
+      sessionId,
+      timestamp: new Date(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/save-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: newMessage.text,
+          sender: 'user',
+          sessionId,
           socket_id: socketId,
-        },
-      },
-    });
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Server failed to save the message.');
+      }
+    } catch (error) {
+      console.error('Failed to send message', error);
+      // If the API call fails, remove the optimistic message from the UI.
+      setMessages(prev => prev.filter(msg => msg._id !== newMessage._id));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -135,25 +133,9 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
         <p className="text-sm text-gray-300">We typically reply in a few minutes.</p>
       </div>
       <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
-        {messages.map((msg: VercelAIMessage) => {
-          // Adapt the Vercel AI SDK message format to what our <Message /> component expects.
-          const messageProps: IMessage = {
-            _id: msg.id,
-            text: msg.content,
-            sender: msg.role === 'user' ? 'user' : 'bot',
-            sessionId: sessionId,
-            timestamp: msg.createdAt || new Date(),
-            timezone: '', // Not essential for display.
-          };
-          return <Message key={msg.id} message={messageProps} />;
-        })}
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-200 text-gray-800 rounded-lg p-3 max-w-xs animate-pulse">
-              <span className="italic">Assistant is typing...</span>
-            </div>
-          </div>
-        )}
+        {messages.map((msg) => (
+          <Message key={msg._id} message={msg} />
+        ))}
         <div ref={messagesEndRef} />
       </div>
       <div className="p-4 border-t bg-white">
