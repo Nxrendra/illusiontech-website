@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       { ...newMessage.toObject(), _id: newMessage._id.toString() },
       { socket_id }    );
 
-    return NextResponse.json({ status: 'ok' });
+    return NextResponse.json(newMessage);
   } catch (error) {
     // Check for MongoDB duplicate key error (code 11000)
     if (error instanceof Error && 'code' in error && (error as any).code === 11000) {

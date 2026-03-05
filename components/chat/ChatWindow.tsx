@@ -89,8 +89,9 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
     e.preventDefault();
     if (!input.trim()) return;
 
+    const tempId = Date.now().toString();
     const newMessage: IMessage = {
-      _id: Date.now().toString(),
+      _id: tempId,
       text: input,
       sender: 'user',
       sessionId,
@@ -111,16 +112,21 @@ export default function ChatWindow({ sessionId }: ChatWindowProps) {
           sender: 'user',
           sessionId,
           socket_id: socketId,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          timezone: newMessage.timezone,
         }),
       });
       if (!response.ok) {
         throw new Error('Server failed to save the message.');
       }
+
+      const savedMessage: IMessage = await response.json();
+
+      // Update the message in the state with the real _id from the database
+      setMessages(prev => prev.map(msg => (msg._id === tempId ? savedMessage : msg)));
     } catch (error) {
       console.error('Failed to send message', error);
       // If the API call fails, remove the optimistic message from the UI.
-      setMessages(prev => prev.filter(msg => msg._id !== newMessage._id));
+      setMessages(prev => prev.filter(msg => msg._id !== tempId));
     } finally {
       setIsLoading(false);
     }

@@ -4,7 +4,7 @@ import PageContent, { IPageContentData } from '@/lib/models/PageContent';
 import PageContentManager from '@/components/admin/PageContentManager';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import React from 'react';
-
+export const dynamic = 'force-dynamic';
 async function getContentData(): Promise<{ content?: IPageContentData; error?: string }> {
   try {
     await verifyAdminSession();

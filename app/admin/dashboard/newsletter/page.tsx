@@ -2,7 +2,7 @@ import { connectToDB } from '@/lib/mongoose';
 import NewsletterSubscriber, { INewsletterSubscriber } from '@/lib/models/NewsletterSubscriber';
 import NewsletterManager from '@/components/admin/NewsletterManager';
 import { verifyAdminSession } from '@/lib/auth-utils';
-
+export const dynamic = 'force-dynamic';
 // Type for serialized subscriber data, where ObjectId and Date are strings.
 type SerializedSubscriber = Omit<INewsletterSubscriber, 'subscribed_at' | '_id'> & {
   _id: string;
