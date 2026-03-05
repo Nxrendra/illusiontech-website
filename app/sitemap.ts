@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { connectToDB } from '@/lib/mongoose';
 import ServiceModel from '@/lib/models/Service';
-
+export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
   await connectToDB();
