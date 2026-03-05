@@ -5,6 +5,8 @@ import ServiceManager from '@/components/admin/ServiceManager';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import React from 'react';
 
+export const dynamic = 'force-dynamic';
+
 // This type is necessary for data passed from Server Components to Client Components
 type SerializedService = IServiceData & {
   _id: string;

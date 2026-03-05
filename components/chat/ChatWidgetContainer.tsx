@@ -5,12 +5,15 @@ import ChatWidget from '@/components/chat/ChatWidget';
 
 export default function ChatWidgetContainer() {
   const pathname = usePathname();
- // If the pathname is not yet available, or if it's an admin page,
-  // do not render the widget.
-  if (!pathname || pathname.startsWith('/admin')) {
-    return null;
-  }
+  // Temporarily disable the chat widget across the entire site.
+  // To re-enable, remove this block and uncomment the original logic.
+  return null;
 
-  return <ChatWidget />;
+  // // Original logic:
+  // // If the pathname is not yet available, or if it's an admin page,
+  // // do not render the widget.
+  // if (!pathname || pathname.startsWith('/admin')) {
+  //   return null;
+  // }
+  // return <ChatWidget />;
 }
-
