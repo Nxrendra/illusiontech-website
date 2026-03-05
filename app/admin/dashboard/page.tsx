@@ -11,6 +11,7 @@ import { DashboardServicePreview } from '@/components/admin/DashboardServicePrev
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+export const dynamic = 'force-dynamic';
 
 type SerializedService = IServiceData & { _id: string; createdAt: string; };
 type SerializedClient = IClientData & { _id: string; createdAt: string; };
