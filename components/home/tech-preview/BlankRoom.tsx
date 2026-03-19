@@ -1081,16 +1081,16 @@ function TechWalkway({ start, end, width = 1.5, color = "#00f0ff", yOffset = 0 }
             
             {/* Side Guard Rails (Physical geometry) */}
             <mesh position={[-width / 2 + 0.1, 0.1, 0]} castShadow>
-                <boxGeometry args={[0.1, 0.1, length]} />
+                <boxGeometry args={[0.15, 0.1, length]} />
                 <meshStandardMaterial color="#2a2a2a" roughness={0.3} metalness={0.9} />
             </mesh>
             <mesh position={[width / 2 - 0.1, 0.1, 0]} castShadow>
-                <boxGeometry args={[0.1, 0.1, length]} />
+                <boxGeometry args={[0.15, 0.1, length]} />
                 <meshStandardMaterial color="#2a2a2a" roughness={0.3} metalness={0.9} />
             </mesh>
 
             {/* Central Glass Section */}
-            <mesh position={[0, 0.051, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <mesh position={[0, 0.055, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[width - 0.4, length]} />
                 <meshStandardMaterial
                     color="#88ccff"
@@ -1100,13 +1100,29 @@ function TechWalkway({ start, end, width = 1.5, color = "#00f0ff", yOffset = 0 }
                     opacity={0.3}
                 />
             </mesh>
-             <mesh position={[0, 0.052, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+             <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                 <planeGeometry args={[width - 0.45, length]} />
+                 <meshBasicMaterial color={color} transparent opacity={0.3} wireframe />
+            </mesh>
+
+            {/* Central Glass Section */}
+            <mesh position={[0, 0.055, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[width - 0.4, length]} />
+                <meshStandardMaterial
+                    color="#88ccff"
+                    metalness={0.8}
+                    roughness={0.1}
+                    transparent
+                    opacity={0.3}
+                />
+            </mesh>
+             <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                  <planeGeometry args={[width - 0.45, length]} />
                  <meshBasicMaterial color={color} transparent opacity={0.3} wireframe />
             </mesh>
 
             {/* Central Matte Tread */}
-             <mesh position={[0, 0.055, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+             <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
                 <planeGeometry args={[width - 0.5, length]} />
                 <meshStandardMaterial color="#1a1a1a" roughness={0.9} metalness={0.4} />
             </mesh>
