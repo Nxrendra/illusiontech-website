@@ -22,7 +22,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
     }
 
-    const messagesFromDb: IMessageDocument[] = await Message.find({ sessionId }).sort({ timestamp: 1 }).lean();
+    const messagesFromDb = await Message.find({ sessionId }).sort({ timestamp: 1 }).lean();
 
     const vercelMessages: VercelAIMessage[] = messagesFromDb.map((msg) => ({
       id: msg._id.toString(),
