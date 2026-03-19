@@ -109,7 +109,7 @@ export default function TechRoomScene() {
   const [isMobile, setIsMobile] = useState(false);
   const [view, setView] = useState<ViewState>('overview'); // Default to overview
   const [isEntered, setIsEntered] = useState(false);
-  const [rotationSpeed, setRotationSpeed] = useState<RotationSpeed>('Static');
+  const [rotationSpeed, setRotationSpeed] = useState<RotationSpeed>('Dynamic');
   const [updateKey, setUpdateKey] = useState(0);
   const [activeHotspot, setActiveHotspot] = useState<'lounge' | null>(null);
 
@@ -150,7 +150,23 @@ export default function TechRoomScene() {
 
   const handleEnter = () => {
     if (isEntered) return;
-    setIsEntered(true);
+
+    // For iOS 13+, we must request permission to access device orientation events.
+    if (
+      typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+    ) {
+      (DeviceOrientationEvent as any).requestPermission()
+        .then((permissionState: string) => {
+          // The listener in CameraController will be added automatically if permission is granted.
+        })
+        .catch(console.error)
+        .finally(() => {
+          setIsEntered(true);
+        });
+    } else {
+      setIsEntered(true);
+    }
   };
 
   useEffect(() => {
@@ -302,6 +318,30 @@ export default function TechRoomScene() {
                         {control.icon}
                       </motion.span>
                       <span className="hidden sm:inline">{control.label}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+          
+              {/* Divider */}
+              <div className="w-px h-8 bg-white/10"></div>
+
+              {/* Rotation Speed Controls */}
+              <div className="flex items-center gap-1 relative">
+                {rotationControls.map((control) => (
+                  <div key={control.speed} className="relative">
+                    {rotationSpeed === control.speed && (
+                      <motion.div
+                        layoutId="speed-pill"
+                        className="absolute inset-0 bg-white/10 rounded-full"
+                      />
+                    )}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setRotationSpeed(control.speed); }}
+                      className="relative p-1.5 sm:p-2 rounded-full text-xs font-medium text-white transition-colors duration-300 hover:bg-white/5 flex items-center gap-1.5"
+                      aria-label={`Set rotation speed to ${control.label}`}
+                    >{control.icon}
+                    
                     </button>
                   </div>
                 ))}

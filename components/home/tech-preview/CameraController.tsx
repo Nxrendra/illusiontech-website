@@ -1,6 +1,6 @@
 // /Users/macbookair/Documents/IllusionTech-Development/components/home/tech-preview/CameraController.tsx
 
-import { useRef, useEffect, useLayoutEffect } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { easing } from 'maath';
@@ -87,12 +87,35 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
   const introRef = useRef(true);
   const { size, camera } = useThree();
   const isMobile = size.width < 768;
+  
+  const [tilt, setTilt] = useState<{ beta: number | null, gamma: number | null }>({ beta: null, gamma: null });
+  const initialTilt = useRef<{ beta: number, gamma: number } | null>(null);
 
   useEffect(() => {
     // Disable parallax for the first second to let the camera settle
     const timer = setTimeout(() => (introRef.current = false), 1000);
     return () => clearTimeout(timer);
   }, [view]);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    if (typeof window === 'undefined' || typeof DeviceOrientationEvent === 'undefined') return;
+    
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      const { beta, gamma } = event;
+      if (beta === null || gamma === null) return;
+
+      if (!initialTilt.current) {
+        initialTilt.current = { beta, gamma };
+      }
+      setTilt({ beta, gamma });
+    };
+
+    window.addEventListener('deviceorientation', handleOrientation);
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+    };
+  }, [isMobile]);
   
   useLayoutEffect(() => {
     if (camera instanceof THREE.PerspectiveCamera) {
@@ -104,11 +127,30 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
   useFrame((state, delta) => {
     const currentViews = isMobile ? mobileViews : desktopViews;
     const currentView = currentViews[view];
-    const multiplier = { x: 0, y: 0 };
+    let multiplier = rotationMultipliers[rotationSpeed] || rotationMultipliers.Static;
+
+    // Limit rotation for side views
+    if (view === 'left' || view === 'right') {
+      multiplier = { x: multiplier.x * 0.3, y: multiplier.y * 0.3 };
+    }
 
     const parallaxOffset = introRef.current ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(state.mouse.x * multiplier.x, state.mouse.y * multiplier.y, 0);
 
-    const targetPosition = new THREE.Vector3(...currentView.position).add(parallaxOffset);
+    const tiltOffset = new THREE.Vector3(0, 0, 0);
+    if (isMobile && initialTilt.current && tilt.beta !== null && tilt.gamma !== null && rotationSpeed !== 'Static') {
+      const deltaGamma = tilt.gamma - initialTilt.current.gamma;
+      const deltaBeta = tilt.beta - initialTilt.current.beta;
+
+      const tiltSensitivity = 1.5;
+
+      // Apply tilt offset, similar to mouse parallax
+      tiltOffset.x = (deltaGamma / 45) * tiltSensitivity; // Normalize by ~45 degrees
+      tiltOffset.y = -(deltaBeta / 45) * tiltSensitivity; // Normalize and invert
+    }
+
+    const totalOffset = parallaxOffset.add(tiltOffset);
+
+    const targetPosition = new THREE.Vector3(...currentView.position).add(totalOffset);
     easing.damp3(state.camera.position, targetPosition, 0.4, delta);
     
     const lookAtTarget = new THREE.Vector3(...currentView.target);
