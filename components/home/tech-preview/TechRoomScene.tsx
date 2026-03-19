@@ -19,6 +19,92 @@ const hotspotData = {
   },
 };
 
+function DebugConsole() {
+  const [logs, setLogs] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const format = (args: any[]) => args.map(arg => {
+      try {
+        return typeof arg === 'object' ? JSON.stringify(arg) : String(arg);
+      } catch {
+        return String(arg);
+      }
+    }).join(' ');
+
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
+    const safeSetLogs = (newLog: string) => {
+        setLogs(prev => {
+            const next = [newLog, ...prev];
+            if (next.length > 50) return next.slice(0, 50);
+            return next;
+        });
+    };
+
+    console.log = (...args) => {
+      originalLog.apply(console, args);
+      safeSetLogs(`LOG: ${format(args)}`);
+    };
+
+    console.error = (...args) => {
+      originalError.apply(console, args);
+      safeSetLogs(`ERR: ${format(args)}`);
+    };
+
+    console.warn = (...args) => {
+      originalWarn.apply(console, args);
+      safeSetLogs(`WRN: ${format(args)}`);
+    };
+
+    const onError = (event: ErrorEvent) => {
+      safeSetLogs(`UNCAUGHT: ${event.message} at ${event.filename}:${event.lineno}`);
+    };
+    
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      safeSetLogs(`UNHANDLED: ${event.reason}`);
+    };
+
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onUnhandledRejection);
+
+    return () => {
+      console.log = originalLog;
+      console.error = originalError;
+      console.warn = originalWarn;
+      window.removeEventListener('error', onError);
+      window.removeEventListener('unhandledrejection', onUnhandledRejection);
+    };
+  }, []);
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-[10000] pointer-events-none flex flex-col items-end">
+      <button 
+        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+        className="m-2 bg-red-600 text-white px-3 py-1 text-xs rounded shadow-lg pointer-events-auto opacity-90 hover:opacity-100 font-bold"
+      >
+        {isOpen ? 'Close Debug' : `Debug (${logs.length})`}
+      </button>
+      
+      {isOpen && (
+        <div 
+            className="w-full bg-black/95 h-[60vh] overflow-y-auto p-4 text-[11px] font-mono text-green-400 pointer-events-auto border-t-2 border-red-500 shadow-2xl flex flex-col gap-2"
+            onClick={(e) => e.stopPropagation()}
+        >
+          <div className="text-center text-gray-500 border-b border-gray-700 pb-2 mb-2">--- Start of Logs ---</div>
+          {logs.map((log, i) => (
+            <div key={i} className={`pb-1 border-b border-white/10 break-all whitespace-pre-wrap ${log.startsWith('ERR') || log.startsWith('UN') ? 'text-red-400 font-bold bg-red-900/20 p-1' : ''}`}>
+              {log}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TechRoomScene() {
   const [isMobile, setIsMobile] = useState(false);
   const [view, setView] = useState<ViewState>('overview'); // Default to overview
@@ -99,6 +185,8 @@ export default function TechRoomScene() {
       }
       onClick={handleEnter}
     >
+      <DebugConsole />
+      
       <div className="absolute inset-0" style={{ pointerEvents: isEntered ? 'auto' : 'none' }}>
         <Canvas key={isEntered ? 'entered' : 'initial'} shadows camera={{ fov: 45 }}>
           <Suspense fallback={null}>
