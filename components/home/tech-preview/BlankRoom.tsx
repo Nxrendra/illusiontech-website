@@ -25,7 +25,9 @@ function Streak({ position, speed, length, geometry, material }: { position: THR
 }
 
 function FallingStreaks() {
-  const count = 300; // Fewer particles, but they are more prominent
+  const { size } = useThree();
+  const isMobile = size.width < 768;
+  const count = isMobile ? 50 : 300; // Drastically reduce particles on mobile to save GPU
 
   const particles = useMemo(() => {
     return Array.from({ length: count }, () => ({
@@ -37,7 +39,7 @@ function FallingStreaks() {
       speed: THREE.MathUtils.randFloat(4, 10),
       length: THREE.MathUtils.randFloat(0.5, 1.5),
     }));
-  }, []);
+  }, [count]);
 
   // Shared geometry and material for performance
   const geometry = useMemo(() => new THREE.PlaneGeometry(0.03, 1), []);
@@ -409,9 +411,12 @@ function FuturisticPlant({ position, scale = 1 }: { position: [number, number, n
 }
 
 function WallPanel({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) {    
+    const { size } = useThree();
+    const isMobile = size.width < 768;
+
     const panelWidth = 30;
     const panelHeight = 12;
-    const segmentSize = 2; // Increased size to reduce object count
+    const segmentSize = isMobile ? 6 : 2; // Much larger segments on mobile to reduce draw calls
     const numX = Math.floor(panelWidth / segmentSize);
     const numY = Math.floor(panelHeight / segmentSize);
 
@@ -427,7 +432,7 @@ function WallPanel({ position, rotation }: { position: [number, number, number],
             }
         }
         return temp;
-    }, [numX, numY]);
+    }, [numX, numY, segmentSize]);
 
     // Create geometry and material once to prevent memory leaks and overhead
     const panelGeometry = useMemo(() => new THREE.BoxGeometry(segmentSize * 0.9, segmentSize * 0.9, 0.1), [segmentSize]);

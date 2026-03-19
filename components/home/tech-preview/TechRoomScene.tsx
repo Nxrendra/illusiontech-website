@@ -204,7 +204,12 @@ export default function TechRoomScene() {
       <DebugConsole />
       
       <div className="absolute inset-0" style={{ pointerEvents: isEntered ? 'auto' : 'none' }}>
-        <Canvas key={isEntered ? 'entered' : 'initial'} shadows camera={{ fov: 45 }}>
+        <Canvas 
+          key={isEntered ? 'entered' : 'initial'} 
+          shadows 
+          camera={{ fov: 45 }}
+          dpr={isMobile ? [1, 1.25] : [1, 2]} // Cap mobile resolution to prevent Context Lost
+        >
           <Suspense fallback={null}>
             <color attach="background" args={['#020205']} />
             <fog attach="fog" args={['#020205', 15, 40]} />
@@ -217,7 +222,7 @@ export default function TechRoomScene() {
               penumbra={1} 
               intensity={3} 
               castShadow 
-              shadow-mapSize={[2048, 2048]}
+              shadow-mapSize={isMobile ? [512, 512] : [2048, 2048]}
               color="#aaddff"
             />
             <pointLight position={[10, 5, -10]} intensity={4} color="#bd00ff" distance={25} />
@@ -228,7 +233,7 @@ export default function TechRoomScene() {
               penumbra={0.8}
               intensity={1.5}
               castShadow
-              shadow-mapSize={[1024, 1024]}
+              shadow-mapSize={isMobile ? [256, 256] : [1024, 1024]}
               color="#ffffff"
               distance={20}
             />
@@ -238,7 +243,7 @@ export default function TechRoomScene() {
               penumbra={0.8}
               intensity={1.5}
               castShadow
-              shadow-mapSize={[1024, 1024]}
+              shadow-mapSize={isMobile ? [256, 256] : [1024, 1024]}
               color="#ffffff"
               distance={20}
             />
