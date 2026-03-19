@@ -21,9 +21,9 @@ export function DeleteAgentDialog({ isOpen, setIsOpen, agent, onAgentDelete }: D
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const result = await deleteAgent(agent._id);
+      const result = await deleteAgent(agent._id.toString());
       if (result.success) {
-        onAgentDelete(agent._id);
+        onAgentDelete(agent._id.toString());
         toast.success('Agent deleted successfully!');
         setIsOpen(false);
       } else { throw new Error(result.error); }
@@ -43,4 +43,3 @@ export function DeleteAgentDialog({ isOpen, setIsOpen, agent, onAgentDelete }: D
     </AlertDialog>
   );
 }
-

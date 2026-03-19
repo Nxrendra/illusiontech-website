@@ -59,7 +59,7 @@ export function AgentForm({ isOpen, setIsOpen, agent, onAgentAdd, onAgentUpdate 
     setIsSaving(true);
     try {
       const dataToSave = { ...formData, commissionRate: Number(formData.commissionRate) || 0 };
-      const result = agent ? await updateAgent(agent._id, dataToSave) : await createAgent(dataToSave);
+      const result = agent ? await updateAgent(agent._id.toString(), dataToSave) : await createAgent(dataToSave);
 
       if (result.success && result.data) {
         toast.success(`Agent ${agent ? 'updated' : 'created'} successfully!`);
@@ -108,4 +108,3 @@ export function AgentForm({ isOpen, setIsOpen, agent, onAgentAdd, onAgentUpdate 
     </Dialog>
   );
 }
-

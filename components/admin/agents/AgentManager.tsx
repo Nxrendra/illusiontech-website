@@ -14,7 +14,7 @@ export default function AgentManager({ initialAgents }: AgentManagerProps) {
   const [agents, setAgents] = useState<IAgent[]>(initialAgents);
 
   const handleAgentUpdate = (updatedAgent: IAgent) => {
-    setAgents(prev => prev.map(agent => agent._id === updatedAgent._id ? updatedAgent : agent));
+    setAgents(prev => prev.map(agent => agent._id.toString() === updatedAgent._id.toString() ? updatedAgent : agent));
   };
 
   const handleAgentAdd = (newAgent: IAgent) => {
@@ -22,7 +22,7 @@ export default function AgentManager({ initialAgents }: AgentManagerProps) {
   };
 
   const handleAgentDelete = (deletedAgentId: string) => {
-    setAgents(prev => prev.filter(agent => agent._id !== deletedAgentId));
+    setAgents(prev => prev.filter(agent => agent._id.toString() !== deletedAgentId));
   };
 
   return (
@@ -38,4 +38,3 @@ export default function AgentManager({ initialAgents }: AgentManagerProps) {
     </Tabs>
   );
 }
-

@@ -69,7 +69,7 @@ export function AgentList({ agents, onAgentAdd, onAgentUpdate, onAgentDelete }: 
             <TableBody>
               {agents.length > 0 ? (
                 agents.map((agent) => (
-                  <TableRow key={agent._id}>
+                  <TableRow key={agent._id.toString()}>
                     <TableCell className="font-medium">{agent.fullName}<div className="text-sm text-muted-foreground md:hidden">{agent.companyName}</div></TableCell>
                     <TableCell className="hidden md:table-cell">{agent.companyName}</TableCell>
                     <TableCell><Badge variant={agent.status === 'Active' ? 'default' : 'secondary'}>{agent.status}</Badge></TableCell>
@@ -97,4 +97,3 @@ export function AgentList({ agents, onAgentAdd, onAgentUpdate, onAgentDelete }: 
     </>
   );
 }
-
