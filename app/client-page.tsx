@@ -41,6 +41,16 @@ import { getIcon } from '@/lib/get-icon';
 import TechIcon from '@/components/home/TechIcon';
 
 import DOMPurify from 'isomorphic-dompurify';
+import dynamic from 'next/dynamic';
+
+const TechRoomScene = dynamic(() => import('@/components/home/tech-preview/TechRoomScene'), {
+  ssr: false,
+  loading: () => (
+    <div className="relative w-full h-[600px] bg-gray-950 rounded-xl border border-gray-800 shadow-inner my-8 flex items-center justify-center">
+      <p className="text-gray-400 font-semibold">Loading 3D Experience...</p>
+    </div>
+  ),
+});
 
 const milestones = [
   {
@@ -119,6 +129,18 @@ export default function HomeClientPage({ services, content }: HomeClientPageProp
       <HeroSection content={content} />
 
       <WhyChooseUsSection content={content} />
+
+      <section className="w-full py-12">
+        <div className="container mx-auto px-4 text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Technology Preview
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Experience our immersive 3D environments built with React Three Fiber.
+          </p>
+        </div>
+        <TechRoomScene />
+      </section>
 
       {/* Parallax Section 1 */}
       <ParallaxSection
