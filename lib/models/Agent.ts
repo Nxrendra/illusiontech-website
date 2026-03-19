@@ -1,4 +1,4 @@
-import { Schema, model, models, Document, Model } from 'mongoose';
+import { Schema, model, models, Document, Model, Types } from 'mongoose';
 
 export interface IAgentData {
   fullName: string;
@@ -11,7 +11,7 @@ export interface IAgentData {
   notes?: string;
   }
 export interface IAgent extends IAgentData, Document {
-  _id: string;
+  _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
