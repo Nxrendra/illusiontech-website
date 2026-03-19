@@ -54,7 +54,7 @@ export async function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-src https://www.google.com;
-    connect-src 'self' https://www.google.com https://raw.githack.com ${isProd ? 'wss:' : 'ws:'};
+    connect-src 'self' https://www.google.com https://raw.githack.com https://raw.githubusercontent.com ${isProd ? 'wss:' : 'ws:'};
     ${isProd ? 'upgrade-insecure-requests;' : ''}
   `.replace(/\s{2,}/g, ' ').trim()
 

@@ -226,6 +226,7 @@ export default function TechRoomScene() {
           shadows 
           camera={{ fov: 45 }}
           dpr={isMobile ? [1, 1.25] : [1, 2]} // Cap mobile resolution to prevent Context Lost
+          gl={{ preserveDrawingBuffer: true, powerPreference: 'high-performance' }}
         >
           <Suspense fallback={null}>
             <color attach="background" args={['#020205']} />
