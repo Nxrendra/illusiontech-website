@@ -99,7 +99,7 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
   
   useEffect(() => {
     if (!isMobile) return;
-
+    if (typeof window === 'undefined' || typeof DeviceOrientationEvent === 'undefined') return;
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const { beta, gamma } = event;
       if (beta === null || gamma === null) return;

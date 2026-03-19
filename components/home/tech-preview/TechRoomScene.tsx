@@ -66,7 +66,10 @@ export default function TechRoomScene() {
     if (isEntered) return;
 
     // For iOS 13+, we must request permission to access device orientation events.
-    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+    if (
+      typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+    ) {
       (DeviceOrientationEvent as any).requestPermission()
         .then((permissionState: string) => {
           // The listener in CameraController will be added automatically if permission is granted.
