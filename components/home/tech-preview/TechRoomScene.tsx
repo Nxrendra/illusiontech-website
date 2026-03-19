@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -18,6 +18,23 @@ const hotspotData = {
     tags: ["Remote First", "Creative", "Async"]
   },
 };
+
+class ErrorBoundary extends React.Component<{ children: React.ReactNode, fallback: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, info: any) {
+    console.error("ErrorBoundary caught error:", error, info);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
 
 function DebugConsole() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -254,7 +271,9 @@ export default function TechRoomScene() {
               activeHotspot={activeHotspot}
               updateKey={updateKey}
             />
-            <Environment preset="city" />
+            <ErrorBoundary fallback={null}>
+              <Environment preset="city" />
+            </ErrorBoundary>
 
             {/* Controls */}
             <CameraController view={view} rotationSpeed={rotationSpeed} />

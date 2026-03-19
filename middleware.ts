@@ -46,6 +46,7 @@ export async function middleware(request: NextRequest) {
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com;
     style-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src-attr 'unsafe-inline';
     img-src 'self' blob: data: https://www.google.com;
     font-src 'self' https://fonts.gstatic.com;
     worker-src 'self' blob:;
@@ -53,7 +54,7 @@ export async function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-src https://www.google.com;
-    connect-src 'self' https://www.google.com ${isProd ? 'wss:' : 'ws:'};
+    connect-src 'self' https://www.google.com https://raw.githack.com ${isProd ? 'wss:' : 'ws:'};
     ${isProd ? 'upgrade-insecure-requests;' : ''}
   `.replace(/\s{2,}/g, ' ').trim()
 
