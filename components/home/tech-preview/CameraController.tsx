@@ -104,12 +104,7 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
   useFrame((state, delta) => {
     const currentViews = isMobile ? mobileViews : desktopViews;
     const currentView = currentViews[view];
-    let multiplier = rotationMultipliers[rotationSpeed] || rotationMultipliers.Static;
-
-    // Limit rotation for side views to prevent clipping artifacts
-    if (view === 'left' || view === 'right') {
-      multiplier = { x: multiplier.x * 0.3, y: multiplier.y * 0.3 };
-    }
+    const multiplier = { x: 0, y: 0 };
 
     const parallaxOffset = introRef.current ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(state.mouse.x * multiplier.x, state.mouse.y * multiplier.y, 0);
 
