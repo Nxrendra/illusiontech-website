@@ -204,7 +204,7 @@ export default function TechRoomScene() {
     const checkIsMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      setView('overview'); // Always start in overview.
+      setView(mobile ? 'closeup' : 'overview'); // Start in closeup on mobile, overview on desktop
     };
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
