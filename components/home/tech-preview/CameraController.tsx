@@ -134,7 +134,7 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
       multiplier = { x: multiplier.x * 0.3, y: multiplier.y * 0.3 };
     }
 
-    const parallaxOffset = introRef.current ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(state.mouse.x * multiplier.x, state.mouse.y * multiplier.y, 0);
+    const parallaxOffset = introRef.current ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(state.mouse.x * multiplier.x, 0, 0);
 
     const tiltOffset = new THREE.Vector3(0, 0, 0);
     if (isMobile && initialTilt.current && tilt.beta !== null && tilt.gamma !== null && rotationSpeed !== 'Static') {
@@ -145,7 +145,7 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
 
       // Apply tilt offset, similar to mouse parallax
       tiltOffset.x = (deltaGamma / 45) * tiltSensitivity; // Normalize by ~45 degrees
-      tiltOffset.y = -(deltaBeta / 45) * tiltSensitivity; // Normalize and invert
+      tiltOffset.y = 0; // Disable vertical tilt
     }
 
     const totalOffset = parallaxOffset.add(tiltOffset);

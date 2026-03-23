@@ -6,7 +6,7 @@ import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Maximize, X, ArrowLeft, ArrowRight, Cpu, Users, Monitor, RotateCw, Play, Pause } from 'lucide-react';
+import { Maximize, X, ArrowLeft, ArrowRight, Cpu, Users, Monitor, RotateCw, Play, Pause, Hand, MousePointer2, Smartphone, Eye } from 'lucide-react';
 import BlankRoom from './BlankRoom';
 import CameraController, { ViewState, RotationSpeed } from './CameraController';
 
@@ -36,10 +36,86 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode, fallbac
   }
 }
 
+function InstructionsOverlay({ isMobile }: { isMobile: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="absolute inset-0 z-40 pointer-events-none"
+    >
+      {/* Central Visuals */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex items-center gap-12 sm:gap-24">
+          {isMobile ? (
+            <>
+              <div className="flex flex-col items-center gap-3 text-center">
+                <motion.div 
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Smartphone size={32} className="text-[#bd00ff] drop-shadow-[0_0_15px_rgba(189,0,255,0.6)]" />
+                </motion.div>
+                <span className="text-xs font-semibold text-white tracking-wider">TILT TO EXPLORE</span>
+              </div>
+
+              <div className="w-px h-12 bg-white/10" />
+
+              <div className="flex flex-col items-center gap-3 text-center">
+                <motion.div
+                  animate={{ x: [-8, 8, -8] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Hand size={32} className="text-[#00f0ff] drop-shadow-[0_0_15px_rgba(0,240,255,0.6)]" />
+                </motion.div>
+                <span className="text-xs font-semibold text-white tracking-wider">SWIPE TO LOOK</span>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-3 text-center">
+              <motion.div
+                animate={{ x: [-12, 12, -12] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <MousePointer2 size={32} className="text-[#00f0ff] drop-shadow-[0_0_15px_rgba(0,240,255,0.6)]" />
+              </motion.div>
+              <span className="text-xs font-semibold text-white tracking-wider">DRAG TO ROTATE</span>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Controls Guide - Positioned directly above controls */}
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:bottom-28 sm:right-64 flex items-center gap-6 bg-black/40 backdrop-blur-sm px-6 py-2 rounded-full border border-white/5 shadow-xl w-max">
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-1">
+            <Eye size={14} className="text-[#00f0ff]" />
+            <span className="text-[10px] text-white font-bold tracking-widest">ANGLES</span>
+          </div>
+          <div className="w-8 h-0.5 bg-[#00f0ff]/50 rounded-full" />
+        </div>
+        
+        <div className="w-px h-8 bg-white/10" />
+        
+        <div className="flex flex-col items-center">
+          <div className="flex items-center gap-2 mb-1">
+            <RotateCw size={14} className="text-[#bd00ff]" />
+            <span className="text-[10px] text-white font-bold tracking-widest">SPEED</span>
+          </div>
+          <div className="w-8 h-0.5 bg-[#bd00ff]/50 rounded-full" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+
 export default function TechRoomScene() {
   const [isMobile, setIsMobile] = useState(false);
   const [view, setView] = useState<ViewState>('overview'); // Default to overview
   const [isEntered, setIsEntered] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const [rotationSpeed, setRotationSpeed] = useState<RotationSpeed>('Dynamic');
   const [updateKey, setUpdateKey] = useState(0);
   const [activeHotspot, setActiveHotspot] = useState<'lounge' | null>(null);
@@ -82,6 +158,11 @@ export default function TechRoomScene() {
   const handleEnter = () => {
     if (isEntered) return;
 
+    const startExperience = () => {
+      setIsEntered(true);
+      setShowInstructions(true);
+    };
+
     // For iOS 13+, we must request permission to access device orientation events.
     if (
       typeof DeviceOrientationEvent !== 'undefined' &&
@@ -92,11 +173,9 @@ export default function TechRoomScene() {
           // The listener in CameraController will be added automatically if permission is granted.
         })
         .catch(console.error)
-        .finally(() => {
-          setIsEntered(true);
-        });
+        .finally(startExperience);
     } else {
-      setIsEntered(true);
+      startExperience();
     }
   };
 
@@ -123,6 +202,14 @@ export default function TechRoomScene() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-hide instructions after 7 seconds
+  useEffect(() => {
+    if (showInstructions) {
+      const timer = setTimeout(() => setShowInstructions(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showInstructions]);
+
   return (
     <div 
       className={
@@ -132,7 +219,7 @@ export default function TechRoomScene() {
       }
       onClick={handleEnter}
     >
-      <div className="absolute inset-0" style={{ pointerEvents: isEntered ? 'auto' : 'none' }}>
+      <div className="absolute inset-0 z-0" style={{ pointerEvents: isEntered ? 'auto' : 'none' }}>
         <Canvas 
           key={isEntered ? 'entered' : 'initial'} 
           shadows 
@@ -217,13 +304,21 @@ export default function TechRoomScene() {
             onClick={(e) => { 
               e.stopPropagation(); 
               setIsEntered(false); 
+              setShowInstructions(false);
               setActiveHotspot(null);
             }}
-            className="absolute top-5 right-5 z-20 p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+            className="absolute top-5 right-5 z-50 p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
             aria-label="Exit 3D Experience"
           >
             <X size={24} />
           </button>
+
+          {/* Instructions Overlay */}
+          <AnimatePresence>
+            {showInstructions && (
+               <InstructionsOverlay isMobile={isMobile} />
+            )}
+          </AnimatePresence>
 
           {/* View Controls */}
           {!activeHotspot && (
@@ -231,7 +326,7 @@ export default function TechRoomScene() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute bottom-4 sm:bottom-6 left-4 sm:left-1/2 sm:transform sm:-translate-x-1/2 flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
+              className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
             >
               {/* View Controls */}
               <div className="flex items-center gap-1 relative">
