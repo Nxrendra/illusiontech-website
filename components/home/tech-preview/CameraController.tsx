@@ -57,7 +57,7 @@ const mobileViews: Record<ViewState, { position: [number, number, number]; targe
     target: [0, 2, -5],
   },
   closeup: {
-    position: [0, 4, 12],
+    position: [0, 3.5, 9],
     target: [0, 1, -5],
   },
   left: {
