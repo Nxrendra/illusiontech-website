@@ -4,6 +4,7 @@ import { Float, MeshReflectorMaterial, Html, Mask, useMask } from '@react-three/
 import * as THREE from 'three';
 import { useFrame, useThree, extend } from '@react-three/fiber';
 import { useRef, useMemo, useState, useEffect } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 extend({ PlaneGeometry: THREE.PlaneGeometry });
 
@@ -1252,9 +1253,9 @@ function MobilePanoramaScreen({ position, rotation, scale = 1 }: { position: [nu
 }
 
 interface BlankRoomProps {
-    onHotspotSelect?: (type: 'lounge' | null) => void;
+    onHotspotSelect?: (type: 'lounge' | 'info' | null) => void;
    updateKey: number;
-   activeHotspot?: 'lounge' | null;
+   activeHotspot?: 'lounge' | 'info' | null;
 }
 
 export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomProps) {
@@ -1471,7 +1472,7 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
         position={[0, 0, -8]}
       >
         {/* Main Desk Structure */}
-        <group position={[0, 0, 0]}>
+        <group position={[0, 0, 0]} onClick={(e) => { e.stopPropagation(); onHotspotSelect?.('info'); }} onPointerOver={() => setHover('desk')} onPointerOut={() => setHover(null)}>
             {/* Desktop */}
             <mesh position={[0, 0.8, 0]} castShadow receiveShadow>
               <boxGeometry args={[5, 0.05, 2]} />
@@ -1550,7 +1551,7 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
         </group>
 
         {/* Desktop Items */}
-        <group position={[0, 0.85, 0]}>
+        <group position={[0, 0.85, 0]} onClick={(e) => { e.stopPropagation(); onHotspotSelect?.('info'); }} onPointerOver={() => setHover('computer')} onPointerOut={() => setHover(null)}>
              {/* Advanced Keyboard */}
             <group position={[0, 0, 0.6]}>
                  <mesh castShadow>
@@ -1587,6 +1588,30 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
              <group position={[1.5, 0.5, 0]} rotation={[0, -0.3, 0]}>
                 <StaticDataScreen />
              </group>
+
+             {/* "Learn More" Floating Label */}
+             {activeHotspot !== 'info' && (
+                 <Html position={[0, 1.2, 0]} center transform sprite zIndexRange={[100, 0]}>
+                     <div 
+                        className="flex flex-col items-center pointer-events-none"
+                     >
+                        <div style={{
+                            background: 'rgba(5, 10, 25, 0.9)',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(0, 240, 255, 0.6)',
+                            boxShadow: '0 0 20px rgba(0, 240, 255, 0.3)',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            marginBottom: '10px'
+                        }}>
+                             <span style={{ color: '#00f0ff', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px', whiteSpace: 'nowrap' }}>LEARN MORE</span>
+                        </div>
+                        <div className="animate-bounce">
+                            <ChevronDown size={24} className="text-[#00f0ff] drop-shadow-[0_0_5px_#00f0ff]" />
+                        </div>
+                     </div>
+                 </Html>
+             )}
         </group>
       </group>
 

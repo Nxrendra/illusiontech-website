@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { easing } from 'maath';
 
-export type ViewState = 'overview' | 'closeup' | 'left' | 'right' | 'lounge' | 'desktop' | 'monitor';
+export type ViewState = 'overview' | 'closeup' | 'left' | 'right' | 'lounge' | 'desktop' | 'monitor' | 'info';
 export type RotationSpeed = 'Static' | 'Subtle' | 'Standard' | 'Dynamic';
 
 interface CameraControllerProps {
@@ -48,6 +48,10 @@ const desktopViews: Record<ViewState, { position: [number, number, number]; targ
   monitor: {
     position: [0, 1.5, -4],
     target: [0, 1.2, -9],
+  },
+  info: {
+    position: [0, 2.5, 3],
+    target: [0, 1, 0],
   }
 };
 
@@ -79,6 +83,10 @@ const mobileViews: Record<ViewState, { position: [number, number, number]; targe
   monitor: {
     position: [0, 1.5, -4],
     target: [0, 1.2, -9],
+  },
+  info: {
+    position: [0, 2, 3],
+    target: [0, 1, 0],
   }
 };
 

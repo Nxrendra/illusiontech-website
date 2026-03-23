@@ -6,7 +6,7 @@ import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment } from '@react-three/drei';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Maximize, X, ArrowLeft, ArrowRight, Cpu, Users, Monitor, RotateCw, Play, Pause, Hand, MousePointer2, Smartphone, Eye } from 'lucide-react';
+import { Maximize, X, ArrowLeft, ArrowRight, Cpu, Users, Monitor, RotateCw, Play, Pause, Hand, MousePointer2, Smartphone, Eye, Info, Sparkles } from 'lucide-react';
 import BlankRoom from './BlankRoom';
 import CameraController, { ViewState, RotationSpeed } from './CameraController';
 
@@ -16,6 +16,12 @@ const hotspotData = {
     icon: <Users size={24} className="text-[#bd00ff]" />,
     description: "A remote-first collective of creative technologists. We prioritize deep work, creative freedom, and asynchronous collaboration to build the future of the web.",
     tags: ["Remote First", "Creative", "Async"]
+  },
+  info: {
+    title: "The Future of Digital Presence",
+    icon: <Sparkles size={24} className="text-[#00f0ff]" />,
+    description: "Welcome to the next evolution of the web. This immersive 3D environment represents our premium tier of digital architecture—designed not just to display information, but to create a memorable sense of place. Powered by advanced WebGL, we build interactive worlds that captivate visitors and distinguish your brand in a crowded digital landscape. Ready to build your own world?",
+    tags: ["Immersive Web", "3D Architecture", "Premium Tier"]
   },
 };
 
@@ -133,7 +139,7 @@ export default function TechRoomScene() {
   const [showInstructions, setShowInstructions] = useState(false);
   const [rotationSpeed, setRotationSpeed] = useState<RotationSpeed>('Dynamic');
   const [updateKey, setUpdateKey] = useState(0);
-  const [activeHotspot, setActiveHotspot] = useState<'lounge' | null>(null);
+  const [activeHotspot, setActiveHotspot] = useState<'lounge' | 'info' | null>(null);
 
  const viewControls: { label: string, view: ViewState, icon: React.ReactNode }[] = [
     { label: 'Overview', view: 'overview', icon: <Maximize size={16} /> },
@@ -155,7 +161,7 @@ export default function TechRoomScene() {
     { label: 'Dynamic', speed: 'Dynamic', icon: <RotateCw size={16} className="motion-safe:animate-spin"  style={{ animationDuration: '1s', animationPlayState: 'running' }} /> },
   ];
 
-  const handleHotspotClick = (type: 'lounge' | null) => {
+  const handleHotspotClick = (type: 'lounge' | 'info' | null) => {
     if (type === null) {
         setActiveHotspot(null);
         return;
@@ -341,7 +347,7 @@ export default function TechRoomScene() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute bottom-4 sm:bottom-6 left-0 right-0 mx-auto w-fit flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
+              className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:bottom-6 sm:left-auto sm:right-24 sm:translate-x-0 w-fit flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
             >
               {/* View Controls */}
               <div className="flex items-center gap-1 relative">
@@ -400,11 +406,22 @@ export default function TechRoomScene() {
           <AnimatePresence>
             {activeHotspot && hotspotData[activeHotspot] && (
               <motion.div 
-                initial={{ opacity: 0, y: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, y: 100 }}
-                className="absolute bottom-0 left-0 right-0 sm:top-1/2 sm:bottom-auto sm:left-auto sm:right-10 sm:transform sm:-translate-y-1/2 w-full sm:w-80 bg-black/90 sm:bg-black/80 backdrop-blur-md border-t sm:border border-gray-800 p-6 rounded-t-xl sm:rounded-xl text-white shadow-2xl z-10"
+                initial={activeHotspot === 'info' ? { opacity: 0, x: "-50%", y: "-40%" } : (isMobile ? { opacity: 0, y: 100, x: 0 } : { opacity: 0, x: 50, y: "-50%" })}
+                animate={activeHotspot === 'info' ? { opacity: 1, x: "-50%", y: "-50%" } : (isMobile ? { opacity: 1, y: 0, x: 0 } : { opacity: 1, x: 0, y: "-50%" })}
+                exit={activeHotspot === 'info' ? { opacity: 0, x: "-50%", y: "-40%", transition: { duration: 0.2 } } : (isMobile ? { opacity: 0, y: 100, x: 0 } : { opacity: 0, x: 50, y: "-50%" })}
+                className={
+                  activeHotspot === 'info' 
+                    ? "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-black/95 backdrop-blur-2xl border border-[#00f0ff]/40 p-10 rounded-2xl text-white shadow-[0_0_100px_rgba(0,240,255,0.3)] z-50 flex flex-col items-center text-center"
+                    : "absolute bottom-0 left-0 right-0 sm:top-1/2 sm:bottom-auto sm:left-auto sm:right-10 sm:transform sm:-translate-y-1/2 w-full sm:w-80 bg-black/90 sm:bg-black/80 backdrop-blur-md border-t sm:border border-gray-800 p-6 rounded-t-xl sm:rounded-xl text-white shadow-2xl z-10"
+                }
               >
+                <button 
+                  onClick={clearHotspot}
+                  className="absolute top-4 right-4 p-2 text-white/50 hover:text-white transition-colors"
+                >
+                  <X size={20} />
+                </button>
+
                 <div className="flex items-center gap-3 mb-4 border-b border-gray-700 pb-3">
                   {hotspotData[activeHotspot].icon}
                   <h3 className="text-xl font-bold">{hotspotData[activeHotspot].title}</h3>
