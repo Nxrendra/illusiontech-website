@@ -1033,6 +1033,8 @@ function TechPlatform({ x, z, width, depth, height = 0.5, color = "#00f0ff", rot
 }
 
 function GlassFloorPolygon({ vertices }: { vertices: [number, number][] }) {
+    const { size } = useThree();
+    const isMobile = size.width < 768;
     const shape = useMemo(() => {
         const s = new THREE.Shape();
         if (vertices.length > 0) {
@@ -1057,15 +1059,19 @@ function GlassFloorPolygon({ vertices }: { vertices: [number, number][] }) {
                     opacity={0.4}
                 />
             </mesh>
-            <mesh position={[0, 0, 0.01]}>
+            {!isMobile && (
+              <mesh position={[0, 0, 0.01]}>
                  <shapeGeometry args={[shape]} />
                  <meshBasicMaterial color="#00f0ff" transparent opacity={0.15} wireframe />
-            </mesh>
+              </mesh>
+            )}
         </group>
     );
 }
 
 function TechWalkway({ start, end, width = 1.5, color = "#00f0ff", yOffset = 0 }: { start: [number, number, number], end: [number, number, number], width?: number, color?: string, yOffset?: number }) {
+    const { size } = useThree();
+    const isMobile = size.width < 768;
     const length = Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[2] - start[2], 2));
     const angle = Math.atan2(end[0] - start[0], end[2] - start[2]);
     const midX = (start[0] + end[0]) / 2;
@@ -1100,10 +1106,12 @@ function TechWalkway({ start, end, width = 1.5, color = "#00f0ff", yOffset = 0 }
                     opacity={0.3}
                 />
             </mesh>
-             <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            {!isMobile && (
+              <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                  <planeGeometry args={[width - 0.45, length]} />
                  <meshBasicMaterial color={color} transparent opacity={0.3} wireframe />
-            </mesh>
+              </mesh>
+            )}
 
             {/* Central Glass Section */}
             <mesh position={[0, 0.055, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -1116,10 +1124,12 @@ function TechWalkway({ start, end, width = 1.5, color = "#00f0ff", yOffset = 0 }
                     opacity={0.3}
                 />
             </mesh>
-             <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            {!isMobile && (
+              <mesh position={[0, 0.056, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                  <planeGeometry args={[width - 0.45, length]} />
                  <meshBasicMaterial color={color} transparent opacity={0.3} wireframe />
-            </mesh>
+              </mesh>
+            )}
 
             {/* Central Matte Tread */}
              <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>

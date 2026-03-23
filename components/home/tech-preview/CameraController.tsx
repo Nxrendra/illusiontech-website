@@ -134,6 +134,11 @@ export default function CameraController({ view, rotationSpeed }: CameraControll
       multiplier = { x: multiplier.x * 0.3, y: multiplier.y * 0.3 };
     }
 
+    // Boost sensitivity on mobile devices to ensure rotation feels fast and responsive
+    if (isMobile) {
+      multiplier = { x: multiplier.x * 2.5, y: multiplier.y * 2.5 };
+    }
+
     const parallaxOffset = introRef.current ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(state.mouse.x * multiplier.x, 0, 0);
 
     const tiltOffset = new THREE.Vector3(0, 0, 0);
