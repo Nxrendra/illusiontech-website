@@ -344,7 +344,7 @@ function SystemMetricsScreen({
             {/* Screen Content */}
             <Html
                 transform
-                position={[0, 0, screenDepth / 2 + 0.01]}
+                position={[0, 0, screenDepth / 2 + 0.03]}
                 style={{
                     width: '288px',
                     height: '173px',
@@ -948,7 +948,7 @@ function DataFeedScreen({
             {/* Screen Content */}
             <Html
                 transform
-                position={[0, 0, screenDepth / 2 + 0.03]}
+                position={[0, 0, screenDepth / 2 + 0.05]}
                 style={{
                     width: '256px',
                     height: '192px',
@@ -1210,8 +1210,7 @@ function MobilePanoramaScreen({ position, rotation, scale = 1 }: { position: [nu
                  <ScreenParticles screenWidth={screenWidth - 0.2} screenHeight={screenHeight - 0.2} />
                  <Html
                     transform
-                    occlude
-                    position={[0, 0, 0.01]}
+                    position={[0, 0, 0.05]}
                     style={{
                         width: `${(screenWidth - 0.2) * 100}px`,
                         height: `${(screenHeight - 0.2) * 100}px`,
@@ -1232,17 +1231,17 @@ function MobilePanoramaScreen({ position, rotation, scale = 1 }: { position: [nu
                         border: '1px solid rgba(0, 240, 255, 0.3)',
                         boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)'
                     }}>
-                        <h1 style={{ fontSize: '16px', fontWeight: '900', letterSpacing: '0.15em', color: '#fff', textShadow: '0 0 15px #bd00ff', margin: '0 0 5px 0' }}>
+                        <h1 style={{ fontSize: '32px', fontWeight: '900', letterSpacing: '0.15em', color: '#fff', textShadow: '0 0 15px #bd00ff', margin: '0 0 10px 0' }}>
                             ILLUSIONTECH
                         </h1>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                            <span style={{ fontSize: '6px', color: '#00f0ff', fontWeight: '600', letterSpacing: '0.1em' }}>INNOVATION</span>
-                            <span style={{ fontSize: '6px', color: '#555' }}>•</span>
-                            <span style={{ fontSize: '6px', color: '#bd00ff', fontWeight: '600', letterSpacing: '0.1em' }}>IMMERSIVE</span>
-                            <span style={{ fontSize: '6px', color: '#555' }}>•</span>
-                            <span style={{ fontSize: '6px', color: '#00f0ff', fontWeight: '600', letterSpacing: '0.1em' }}>EXPERIENCE</span>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+                            <span style={{ fontSize: '12px', color: '#00f0ff', fontWeight: '600', letterSpacing: '0.1em' }}>INNOVATION</span>
+                            <span style={{ fontSize: '12px', color: '#555' }}>•</span>
+                            <span style={{ fontSize: '12px', color: '#bd00ff', fontWeight: '600', letterSpacing: '0.1em' }}>IMMERSIVE</span>
+                            <span style={{ fontSize: '12px', color: '#555' }}>•</span>
+                            <span style={{ fontSize: '12px', color: '#00f0ff', fontWeight: '600', letterSpacing: '0.1em' }}>EXPERIENCE</span>
                         </div>
-                        <p style={{ fontSize: '5px', color: '#aaa', margin: 0, fontStyle: 'italic' }}>
+                        <p style={{ fontSize: '11px', color: '#aaa', margin: 0, fontStyle: 'italic' }}>
                             "Designs that dazzle. Spaces that connect."
                         </p>
                     </div>
