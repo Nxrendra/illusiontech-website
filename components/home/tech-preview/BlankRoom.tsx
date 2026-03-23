@@ -1470,9 +1470,12 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
       {/* Central Command Center (Grounded) */}
       <group 
         position={[0, 0, -8]}
+        onClick={(e) => { e.stopPropagation(); onHotspotSelect?.('info'); }}
+        onPointerOver={() => setHover('desk')}
+        onPointerOut={() => setHover(null)}
       >
         {/* Main Desk Structure */}
-        <group position={[0, 0, 0]} onClick={(e) => { e.stopPropagation(); onHotspotSelect?.('info'); }} onPointerOver={() => setHover('desk')} onPointerOut={() => setHover(null)}>
+        <group position={[0, 0, 0]}>
             {/* Desktop */}
             <mesh position={[0, 0.8, 0]} castShadow receiveShadow>
               <boxGeometry args={[5, 0.05, 2]} />
@@ -1551,7 +1554,7 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
         </group>
 
         {/* Desktop Items */}
-        <group position={[0, 0.85, 0]} onClick={(e) => { e.stopPropagation(); onHotspotSelect?.('info'); }} onPointerOver={() => setHover('computer')} onPointerOut={() => setHover(null)}>
+        <group position={[0, 0.85, 0]}>
              {/* Advanced Keyboard */}
             <group position={[0, 0, 0.6]}>
                  <mesh castShadow>
@@ -1594,20 +1597,21 @@ export default function BlankRoom({ onHotspotSelect, activeHotspot }: BlankRoomP
                  <Html position={[0, 1.2, 0]} center transform sprite zIndexRange={[100, 0]}>
                      <div 
                         className="flex flex-col items-center pointer-events-none"
+                        style={{ transform: isMobile ? 'scale(0.7)' : 'scale(1)' }}
                      >
                         <div style={{
                             background: 'rgba(5, 10, 25, 0.9)',
                             backdropFilter: 'blur(10px)',
                             border: '1px solid rgba(0, 240, 255, 0.6)',
                             boxShadow: '0 0 20px rgba(0, 240, 255, 0.3)',
-                            padding: '6px 12px',
+                            padding: isMobile ? '4px 8px' : '6px 12px',
                             borderRadius: '4px',
-                            marginBottom: '10px'
+                            marginBottom: isMobile ? '6px' : '10px'
                         }}>
                              <span style={{ color: '#00f0ff', fontSize: '10px', fontWeight: 'bold', letterSpacing: '1px', whiteSpace: 'nowrap' }}>LEARN MORE</span>
                         </div>
                         <div className="animate-bounce">
-                            <ChevronDown size={24} className="text-[#00f0ff] drop-shadow-[0_0_5px_#00f0ff]" />
+                            <ChevronDown size={isMobile ? 18 : 24} className="text-[#00f0ff] drop-shadow-[0_0_5px_#00f0ff]" />
                         </div>
                      </div>
                  </Html>
