@@ -326,7 +326,7 @@ export default function TechRoomScene() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
+              className="absolute bottom-4 sm:bottom-6 left-0 right-0 mx-auto w-fit flex items-center gap-1 sm:gap-4 bg-black/50 backdrop-blur-lg p-1.5 sm:p-3 rounded-full border border-white/10 shadow-2xl z-10 max-w-[calc(100vw-2rem)] sm:max-w-[95vw] overflow-x-auto"
             >
               {/* View Controls */}
               <div className="flex items-center gap-1 relative">
