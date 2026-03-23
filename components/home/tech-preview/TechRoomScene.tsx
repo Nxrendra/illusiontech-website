@@ -47,7 +47,8 @@ function InstructionsOverlay({ isMobile }: { isMobile: boolean }) {
     >
       {/* Central Visuals */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex items-center gap-12 sm:gap-24">
+        <div className="flex flex-col items-center gap-8">
+          <div className="flex items-center gap-12 sm:gap-24">
           {isMobile ? (
             <>
               <div className="flex flex-col items-center gap-3 text-center">
@@ -82,6 +83,20 @@ function InstructionsOverlay({ isMobile }: { isMobile: boolean }) {
               </motion.div>
               <span className="text-xs font-semibold text-white tracking-wider">DRAG TO ROTATE</span>
             </div>
+          )}
+          </div>
+
+          {isMobile && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+            >
+              <p className="text-[10px] text-white/70 tracking-wide font-light">
+                <span className="text-[#00f0ff] font-medium">Tip:</span> Swipe lightly for smoother rotation
+              </p>
+            </motion.div>
           )}
         </div>
       </div>
