@@ -1,4 +1,4 @@
-import { handleUpload, type HandleUploadBody } from '@vercel/blob';
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
 import { isAdminSession } from '@/lib/auth';
 
@@ -8,6 +8,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   // Vercel Blob's client helper requires a NextRequest-like object.
   // We can pass the original request directly.
   if (!(await isAdminSession(request as any))) {
+    console.error('Unauthorized access attempt to upload-blob');
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
@@ -18,6 +19,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       onBeforeGenerateToken: async (pathname: string) => {
         // This is where we can add additional security checks.
         // For example, only allow uploads to a specific user's folder.
+        console.log('Generating token for upload:', pathname);
         return {
           allowedContentTypes: ['video/mp4', 'video/webm'],
           tokenPayload: JSON.stringify({
