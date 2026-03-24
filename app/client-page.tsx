@@ -134,10 +134,10 @@ export default function HomeClientPage({ services, content }: HomeClientPageProp
       <section className="w-full py-12">
         <div className="container mx-auto px-4 text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Technology Preview
+            {content.homeTechPreviewHeading ?? 'Technology Preview'}
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Experience our immersive 3D environments built with React Three Fiber.
+            {content.homeTechPreviewSubheading ?? 'Experience our immersive 3D environments built with React Three Fiber.'}
           </p>
         </div>
         <TechRoomScene />

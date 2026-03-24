@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { toast } from 'sonner';
-import { Loader2, PlusCircle, Save, Trash2 } from 'lucide-react';
+import { Loader2, PlusCircle, Save, Trash2, X } from 'lucide-react';
 import { IPageContentData } from '@/lib/models/PageContent';
 import OptionListManagement from './OptionListManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
@@ -193,6 +193,14 @@ export default function PageContentManager({ initialContent }: PageContentManage
                 </AccordionContent>
               </AccordionItem>
 
+              <AccordionItem value="tech-preview">
+                <AccordionTrigger>Technology Preview Section</AccordionTrigger>
+                <AccordionContent className="space-y-4 pt-4">
+                  <div className="space-y-2"><Label htmlFor="homeTechPreviewHeading">Heading</Label><Input id="homeTechPreviewHeading" name="homeTechPreviewHeading" value={formData.homeTechPreviewHeading || ''} onChange={handleInputChange} /></div>
+                  <div className="space-y-2"><Label htmlFor="homeTechPreviewSubheading">Subheading</Label><Textarea id="homeTechPreviewSubheading" name="homeTechPreviewSubheading" value={formData.homeTechPreviewSubheading || ''} onChange={handleInputChange} /></div>
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="parallax-1">
                 <AccordionTrigger>Parallax Section 1</AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
@@ -324,7 +332,16 @@ export default function PageContentManager({ initialContent }: PageContentManage
                           />
                           {uploadingIndex === index && <Loader2 className="h-4 w-4 animate-spin" />}
                         </div>
-                        {formData.featuredProjects?.[index]?.videoUrl && (<div className="text-xs text-muted-foreground mt-1">Current video: <code className="bg-muted px-1 py-0.5 rounded">{formData.featuredProjects[index].videoUrl}</code></div>)}
+                        {formData.featuredProjects?.[index]?.videoUrl && (
+                          <div className="flex items-center justify-between mt-2 p-2 bg-muted/50 rounded-md border border-border">
+                            <span className="text-xs text-muted-foreground truncate max-w-[250px]">
+                              Current: <span className="font-mono text-foreground">{formData.featuredProjects[index].videoUrl}</span>
+                            </span>
+                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleObjectArrayChange('featuredProjects', index, 'videoUrl', '')}>
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
                         <p className="text-xs text-muted-foreground">Upload a short video loop. This will override the Image URL if provided.</p>
                       </div>
                       <div className="space-y-2"><Label>Link</Label><Input value={project.link} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'link', e.target.value)} placeholder="https://..." /></div>

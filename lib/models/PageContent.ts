@@ -59,6 +59,8 @@ export interface IPageContentData {
   homeWhyChooseUsSubheading?: string;
   homeWhyChooseUsPoints?: { icon: string; title: string; description: string }[];
   homeWhyChooseUsCtaButtonText?: string;
+  homeTechPreviewHeading?: string;
+  homeTechPreviewSubheading?: string;
   homeParallax1Heading?: string;
   homeParallax1Subheading?: string;
   homeParallax1CtaButtonText?: string;
@@ -193,6 +195,8 @@ const PageContentSchema: Schema = new Schema({
     ]
   },
   homeWhyChooseUsCtaButtonText: { type: String, default: 'Learn More About Us' },
+  homeTechPreviewHeading: { type: String, default: 'Technology Preview' },
+  homeTechPreviewSubheading: { type: String, default: 'Experience our immersive 3D environments built with React Three Fiber.' },
   homeParallax1Heading: { type: String, default: 'The Future is Digital. Let’s Build It Together.' },
   homeParallax1Subheading: { type: String, default: "We combine innovative design with powerful technology to create web experiences that drive results. Let's discuss how we can elevate your digital presence." },
   homeParallax1CtaButtonText: { type: String, default: 'Start Your Project' },
