@@ -95,6 +95,7 @@ export interface IPageContentData {
     tier: string;
     imageUrl: string;
     videoUrl?: string;
+    videoWebmUrl?: string;
     link: string;
     tags: string[];
   }[];
@@ -264,6 +265,7 @@ const PageContentSchema: Schema = new Schema({
       tier: String,
       imageUrl: String,
       videoUrl: String,
+      videoWebmUrl: String,
       link: String,
       tags: [String]
     }],

@@ -11,6 +11,7 @@ interface Project {
   tier: string;
   imageUrl: string;
   videoUrl?: string;
+  videoWebmUrl?: string;
   link: string;
   tags: string[];
 }
@@ -79,16 +80,18 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
 
                   {/* Project Image/Content Area */}
                   <div className="relative aspect-[16/10] bg-black overflow-hidden group">
-                    {project.videoUrl ? (
+                    {project.videoUrl || project.videoWebmUrl ? (
                       <video
-                        src={project.videoUrl}
                         poster={project.imageUrl}
                         autoPlay
                         muted
                         loop
                         playsInline
                         className="w-full h-full object-cover"
-                      />
+                      >
+                        {project.videoWebmUrl && <source src={project.videoWebmUrl} type="video/webm" />}
+                        {project.videoUrl && <source src={project.videoUrl} type="video/mp4" />}
+                      </video>
                     ) : project.imageUrl ? (
                       <img 
                         src={project.imageUrl} 

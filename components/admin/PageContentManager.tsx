@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { upload } from '@vercel/blob/client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Textarea } from '@/components/ui/Textarea';
 import { toast } from 'sonner';
-import { Loader2, PlusCircle, Save, Trash2, X } from 'lucide-react';
+import { Loader2, PlusCircle, Save, Trash2, X, UploadCloud } from 'lucide-react';
 import { IPageContentData } from '@/lib/models/PageContent';
 import OptionListManagement from './OptionListManagement';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
@@ -24,6 +25,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
   const [formData, setFormData] = useState<IPageContentData>(initialContent);
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -67,7 +69,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
         newItem = { step: '01', title: '', description: '', icon: 'Search' };
         break;
       case 'featuredProjects':
-        newItem = { title: 'New Project', description: '', tier: 'Standard', imageUrl: '', videoUrl: '', link: '', tags: [] };
+        newItem = { title: 'New Project', description: '', tier: 'Standard', imageUrl: '', videoUrl: '', videoWebmUrl: '', link: '', tags: [] };
         break;
       default:
         // This should not happen with TypeScript, but as a fallback:
@@ -83,27 +85,29 @@ export default function PageContentManager({ initialContent }: PageContentManage
     setFormData(prev => ({ ...prev, [arrayName]: (prev[arrayName] || []).filter((_, i) => i !== index) }));
   };
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>, projectIndex: number) => {
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>, projectIndex: number, format: 'mp4' | 'webm') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploadingIndex(projectIndex);
-    const toastId = toast.loading(`Uploading video: ${file.name}...`);
+    const toastId = toast.loading(`Starting upload: ${file.name}...`);
 
-    const body = new FormData();
-    body.append('file', file);
+    if (file.size > 50 * 1024 * 1024) {
+      toast.warning("File is large (>50MB). This may take some time.", { id: toastId });
+    }
 
     try {
-      const response = await fetch('/api/admin/upload', {
-        method: 'POST',
-        credentials: 'include',
-        body,
+      const newBlob = await upload(file.name, file, {
+        access: 'public',
+        handleUploadUrl: '/api/admin/upload-blob',
+        onUploadProgress: (progressEvent) => {
+          setUploadProgress(progressEvent.percentage);
+          toast.loading(`Uploading: ${progressEvent.percentage}%`, { id: toastId });
+        },
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Upload failed.');
-
-      handleObjectArrayChange('featuredProjects', projectIndex, 'videoUrl', result.url);
+      const fieldName = format === 'mp4' ? 'videoUrl' : 'videoWebmUrl';
+      handleObjectArrayChange('featuredProjects', projectIndex, fieldName, newBlob.url);
       toast.success('Video uploaded successfully!', { id: toastId });
 
     } catch (error) {
@@ -111,6 +115,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
       toast.error(errorMessage, { id: toastId });
     } finally {
       setUploadingIndex(null);
+      setUploadProgress(0);
       // Reset file input to allow re-uploading the same file
       if (e.target) e.target.value = '';
     }
@@ -319,31 +324,39 @@ export default function PageContentManager({ initialContent }: PageContentManage
                       <div className="space-y-2"><Label>Description</Label><Textarea value={project.description} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'description', e.target.value)} /></div>
                       <div className="space-y-2"><Label>Tier</Label><Select value={project.tier} onValueChange={(val) => handleObjectArrayChange('featuredProjects', index, 'tier', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Premium">Premium</SelectItem></SelectContent></Select></div>
                       <div className="space-y-2"><Label>Image URL</Label><Input value={project.imageUrl} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'imageUrl', e.target.value)} placeholder="/images/project.jpg" /></div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`video-upload-${index}`}>Video File (Optional)</Label>
-                        <div className="flex items-center gap-2">
-                          <Input
-                            id={`video-upload-${index}`}
-                            type="file"
-                            accept="video/mp4,video/webm"
-                            onChange={(e) => handleVideoUpload(e, index)}
-                            disabled={uploadingIndex === index}
-                            className="flex-grow"
-                          />
-                          {uploadingIndex === index && <Loader2 className="h-4 w-4 animate-spin" />}
-                        </div>
-                        {formData.featuredProjects?.[index]?.videoUrl && (
-                          <div className="flex items-center justify-between mt-2 p-2 bg-muted/50 rounded-md border border-border">
-                            <span className="text-xs text-muted-foreground truncate max-w-[250px]">
-                              Current: <span className="font-mono text-foreground">{formData.featuredProjects[index].videoUrl}</span>
-                            </span>
-                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleObjectArrayChange('featuredProjects', index, 'videoUrl', '')}>
-                              <X className="h-3 w-3" />
-                            </Button>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor={`video-upload-mp4-${index}`}>Video File (MP4)</Label>
+                          <div className="flex items-center gap-2">
+                            <Input id={`video-upload-mp4-${index}`} type="file" accept="video/mp4" onChange={(e) => handleVideoUpload(e, index, 'mp4')} disabled={uploadingIndex === index} className="flex-grow" />
+                            {uploadingIndex === index && <span className="text-xs font-mono w-10 text-right">{uploadProgress}%</span>}
                           </div>
-                        )}
-                        <p className="text-xs text-muted-foreground">Upload a short video loop. This will override the Image URL if provided.</p>
+                          {formData.featuredProjects?.[index]?.videoUrl && (
+                            <div className="flex items-center justify-between mt-2 p-2 bg-muted/50 rounded-md border border-border">
+                              <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                                Current: <span className="font-mono text-foreground">{formData.featuredProjects[index].videoUrl}</span>
+                              </span>
+                              <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleObjectArrayChange('featuredProjects', index, 'videoUrl', '')}><X className="h-3 w-3" /></Button>
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`video-upload-webm-${index}`}>Video File (WebM)</Label>
+                          <div className="flex items-center gap-2">
+                            <Input id={`video-upload-webm-${index}`} type="file" accept="video/webm" onChange={(e) => handleVideoUpload(e, index, 'webm')} disabled={uploadingIndex === index} className="flex-grow" />
+                            {uploadingIndex === index && <span className="text-xs font-mono w-10 text-right">{uploadProgress}%</span>}
+                          </div>
+                          {formData.featuredProjects?.[index]?.videoWebmUrl && (
+                            <div className="flex items-center justify-between mt-2 p-2 bg-muted/50 rounded-md border border-border">
+                              <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                                Current: <span className="font-mono text-foreground">{formData.featuredProjects[index].videoWebmUrl}</span>
+                              </span>
+                              <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleObjectArrayChange('featuredProjects', index, 'videoWebmUrl', '')}><X className="h-3 w-3" /></Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
+                      <p className="text-xs text-muted-foreground">Upload a short, compressed video loop. Provide both MP4 and WebM for best browser support. This will play instead of the static image.</p>
                       <div className="space-y-2"><Label>Link</Label><Input value={project.link} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'link', e.target.value)} placeholder="https://..." /></div>
                       <div className="space-y-2"><Label>Tags (comma separated)</Label><Input value={(project.tags || []).join(', ')} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'tags', e.target.value.split(',').map(t => t.trim()))} placeholder="Next.js, TypeScript, 3D" /></div>
                     </div>
