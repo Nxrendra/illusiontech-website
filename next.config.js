@@ -6,7 +6,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   output: 'standalone',
   // Security headers are now handled in middleware.ts
-  transpilePackages: ['@react-three/postprocessing', 'postprocessing', '@vercel/blob', 'undici'],
+  transpilePackages: ['@react-three/postprocessing', 'postprocessing'],
+  experimental: {
+    serverComponentsExternalPackages: ['@vercel/blob', 'undici'],
+  },
   webpack: (config, { isServer, webpack }) => {
     // Fixes npm packages that depend on the `buffer` module.
     if (!isServer) {
