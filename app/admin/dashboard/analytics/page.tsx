@@ -3,6 +3,7 @@ import { StatCard } from '@/components/admin/StatCard';
 import { DashboardCharts } from '@/components/admin/DashboardCharts';
 import { RecentActivity } from '@/components/admin/RecentActivity';
 import { MessageSquare, Users, CheckCircle, BarChart2, FileText, Newspaper } from 'lucide-react';
+import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 
 export default async function AnalyticsPage() {
   const data = await getAnalyticsData();
@@ -35,6 +36,11 @@ export default async function AnalyticsPage() {
 
       {/* Charts */}
       <DashboardCharts submissionsData={data.submissionsOverTime} clientsData={data.clientsByPlan} />
+
+      {/* Visitor Intelligence (Real-time) */}
+      <div className="pt-4 border-t border-border">
+        <AnalyticsDashboard />
+      </div>
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1">

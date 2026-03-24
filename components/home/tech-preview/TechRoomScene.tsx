@@ -236,7 +236,7 @@ export default function TechRoomScene() {
       className={
         isEntered 
           ? "fixed inset-0 z-50 bg-gray-900" 
-          : "relative w-full h-[320px] md:h-[600px] bg-gray-950 rounded-xl overflow-hidden border border-gray-800 shadow-inner my-8 cursor-pointer"
+          : "relative w-full h-[320px] md:h-[600px] bg-[#020205] rounded-xl overflow-hidden border border-white/10 shadow-2xl my-8 cursor-pointer"
       }
       onClick={handleEnter}
     >
@@ -301,6 +301,11 @@ export default function TechRoomScene() {
           </Suspense>
         </Canvas>
       </div>
+
+      {/* Bottom Gradient Fade for seamless blending */}
+      {!isEntered && (
+        <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-[#020205] to-transparent z-10 pointer-events-none" />
+      )}
 
       <AnimatePresence>
         {!isEntered && (
@@ -412,7 +417,7 @@ export default function TechRoomScene() {
                 className={
                   activeHotspot === 'info' 
                     ? "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-black/95 backdrop-blur-2xl border border-[#00f0ff]/40 p-10 rounded-2xl text-white shadow-[0_0_100px_rgba(0,240,255,0.3)] z-50 flex flex-col items-center text-center"
-                    : "absolute bottom-0 left-0 right-0 sm:top-1/2 sm:bottom-auto sm:left-auto sm:right-10 sm:transform sm:-translate-y-1/2 w-full sm:w-80 bg-black/90 sm:bg-black/80 backdrop-blur-md border-t sm:border border-gray-800 p-6 rounded-t-xl sm:rounded-xl text-white shadow-2xl z-10"
+                    : "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-80 sm:left-auto sm:right-10 sm:translate-x-0 sm:-translate-y-1/2 bg-black/90 sm:bg-black/80 backdrop-blur-md border border-gray-800 p-6 rounded-xl text-white shadow-2xl z-10"
                 }
               >
                 <button 

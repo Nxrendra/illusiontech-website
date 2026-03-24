@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { poppins, playfair } from "@/lib/fonts";
 import "./../styles/globals.css";
 import ClientProviders from "@/components/ClientProviders";
+import TrackingPixel from "@/components/TrackingPixel";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.illusiontechdevelopment.com';
 
@@ -73,6 +74,7 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col">
+        <TrackingPixel />
         <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
