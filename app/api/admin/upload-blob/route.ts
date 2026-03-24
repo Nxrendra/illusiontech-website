@@ -32,6 +32,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error('Error uploading blob:', error);
     return new NextResponse('Failed to upload file.', { status: 500 });
   }
 }
