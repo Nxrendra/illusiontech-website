@@ -85,6 +85,17 @@ export interface IPageContentData {
   homeParallax2Heading?: string;
   homeParallax2Subheading?: string;
   homeParallax2CtaButtonText?: string;
+  homeFeaturedWorkHeading?: string;
+  homeFeaturedWorkSubheading?: string;
+  featuredProjects?: {
+    title: string;
+    description: string;
+    tier: string;
+    imageUrl: string;
+    videoUrl?: string;
+    link: string;
+    tags: string[];
+  }[];
 
   // Legal Pages
   termsOfServiceContent?: string;
@@ -238,6 +249,39 @@ const PageContentSchema: Schema = new Schema({
   homeParallax2Heading: { type: String, default: 'Ready to Build Something Incredible?' },
   homeParallax2Subheading: { type: String, default: "Have an idea for a project? We're here to turn your vision into a digital reality. Let's collaborate and create something that stands out from the crowd." },
   homeParallax2CtaButtonText: { type: String, default: 'Request a Quote' },
+
+  // Featured Work Section
+  homeFeaturedWorkHeading: { type: String, default: 'Featured Work' },
+  homeFeaturedWorkSubheading: { type: String, default: 'A selection of our recent digital deployments.' },
+  featuredProjects: {
+    type: [{
+      title: String,
+      description: String,
+      tier: String,
+      imageUrl: String,
+      videoUrl: String,
+      link: String,
+      tags: [String]
+    }],
+    default: [
+      {
+        title: 'Project Alpha',
+        description: 'A high-performance standard deployment focusing on speed and SEO.',
+        tier: 'Standard',
+        imageUrl: '/images/placeholder-project-1.jpg',
+        link: '#',
+        tags: ['Next.js', 'Performance']
+      },
+      {
+        title: 'Project Beta',
+        description: 'An immersive interactive experience with 3D elements.',
+        tier: 'Premium',
+        imageUrl: '/images/placeholder-project-2.jpg',
+        link: '#',
+        tags: ['WebGL', 'Interactive']
+      }
+    ]
+  },
 
   // Legal Pages
   termsOfServiceContent: { type: String, default: '<p>Placeholder for Terms of Service. Edit in admin panel.</p>' },

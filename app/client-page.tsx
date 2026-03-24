@@ -29,6 +29,7 @@ import { WhyChooseUsSection } from '@/components/home/WhyChooseUsSection'; // Ad
 import { SectionHeader } from '@/components/home/SectionHeader';
 import { ServicesPreviewSection } from '@/components/home/ServicesPreviewSection';
 import { PrinciplesSection } from '@/components/home/PrinciplesSection';
+import FeaturedWork from '@/components/home/FeaturedWork';
 import { TechStackSection } from '@/components/home/TechStackSection';
 import { ProcessSection } from '@/components/home/ProcessSection';
 import { DigitalKnowledgeSection } from '@/components/home/DigitalKnowledgeSection';
@@ -167,6 +168,12 @@ export default function HomeClientPage({ services, content }: HomeClientPageProp
       </ParallaxSection>
 
       <ServicesPreviewSection services={services} content={content} />
+
+      <FeaturedWork 
+        heading={content.homeFeaturedWorkHeading} 
+        subheading={content.homeFeaturedWorkSubheading}
+        projects={content.featuredProjects || []} 
+      />
 
       {/* Animated Stats Section */}
       <ParallaxSection

@@ -18,11 +18,12 @@ interface PageContentManagerProps {
   initialContent: IPageContentData;
 }
 
-type ObjectArrayKey = 'coreBeliefs' | 'futureGoals' | 'homeWhyChooseUsPoints' | 'milestones' | 'principles' | 'processSteps' | 'digitalKnowledgeBase';
+type ObjectArrayKey = 'coreBeliefs' | 'futureGoals' | 'homeWhyChooseUsPoints' | 'milestones' | 'principles' | 'processSteps' | 'digitalKnowledgeBase' | 'featuredProjects';
 
 export default function PageContentManager({ initialContent }: PageContentManagerProps) {
   const [formData, setFormData] = useState<IPageContentData>(initialContent);
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -43,7 +44,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
     setFormData(prev => ({ ...prev, [listName]: (prev[listName] as any[] || []).filter((_, i) => i !== index) }));
   };
 
-  const handleObjectArrayChange = (arrayName: ObjectArrayKey, index: number, field: string, value: string | number) => {
+  const handleObjectArrayChange = (arrayName: ObjectArrayKey, index: number, field: string, value: string | number | string[]) => {
     const newArray = [...(formData[arrayName] as any[] || [])];
     newArray[index] = { ...newArray[index], [field]: value };
     setFormData(prev => ({ ...prev, [arrayName]: newArray }));
@@ -65,6 +66,9 @@ export default function PageContentManager({ initialContent }: PageContentManage
       case 'processSteps':
         newItem = { step: '01', title: '', description: '', icon: 'Search' };
         break;
+      case 'featuredProjects':
+        newItem = { title: 'New Project', description: '', tier: 'Standard', imageUrl: '', videoUrl: '', link: '', tags: [] };
+        break;
       default:
         // This should not happen with TypeScript, but as a fallback:
         newItem = {};
@@ -77,6 +81,39 @@ export default function PageContentManager({ initialContent }: PageContentManage
 
   const removeArrayItem = (arrayName: ObjectArrayKey, index: number) => {
     setFormData(prev => ({ ...prev, [arrayName]: (prev[arrayName] || []).filter((_, i) => i !== index) }));
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>, projectIndex: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingIndex(projectIndex);
+    const toastId = toast.loading(`Uploading video: ${file.name}...`);
+
+    const body = new FormData();
+    body.append('file', file);
+
+    try {
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        credentials: 'include',
+        body,
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Upload failed.');
+
+      handleObjectArrayChange('featuredProjects', projectIndex, 'videoUrl', result.url);
+      toast.success('Video uploaded successfully!', { id: toastId });
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+      toast.error(errorMessage, { id: toastId });
+    } finally {
+      setUploadingIndex(null);
+      // Reset file input to allow re-uploading the same file
+      if (e.target) e.target.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -258,6 +295,43 @@ export default function PageContentManager({ initialContent }: PageContentManage
                     </div>
                   ))}
                   <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('digitalKnowledgeBase')}><PlusCircle className="mr-2 h-4 w-4" /> Add Point</Button>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="featured-work">
+                <AccordionTrigger>Featured Work Section</AccordionTrigger>
+                <AccordionContent className="space-y-6 pt-4">
+                  <div className="space-y-2"><Label htmlFor="homeFeaturedWorkHeading">Heading</Label><Input id="homeFeaturedWorkHeading" name="homeFeaturedWorkHeading" value={formData.homeFeaturedWorkHeading || ''} onChange={handleInputChange} /></div>
+                  <div className="space-y-2"><Label htmlFor="homeFeaturedWorkSubheading">Subheading</Label><Textarea id="homeFeaturedWorkSubheading" name="homeFeaturedWorkSubheading" value={formData.homeFeaturedWorkSubheading || ''} onChange={handleInputChange} /></div>
+                  <h4 className="font-semibold pt-4 border-t">Projects</h4>
+                  {(formData.featuredProjects || []).map((project, index) => (
+                    <div key={index} className="p-4 border rounded-md space-y-3 relative">
+                      <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('featuredProjects', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                      <div className="space-y-2"><Label>Title</Label><Input value={project.title} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'title', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>Description</Label><Textarea value={project.description} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'description', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>Tier</Label><Select value={project.tier} onValueChange={(val) => handleObjectArrayChange('featuredProjects', index, 'tier', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Premium">Premium</SelectItem></SelectContent></Select></div>
+                      <div className="space-y-2"><Label>Image URL</Label><Input value={project.imageUrl} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'imageUrl', e.target.value)} placeholder="/images/project.jpg" /></div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`video-upload-${index}`}>Video File (Optional)</Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id={`video-upload-${index}`}
+                            type="file"
+                            accept="video/mp4,video/webm"
+                            onChange={(e) => handleVideoUpload(e, index)}
+                            disabled={uploadingIndex === index}
+                            className="flex-grow"
+                          />
+                          {uploadingIndex === index && <Loader2 className="h-4 w-4 animate-spin" />}
+                        </div>
+                        {formData.featuredProjects?.[index]?.videoUrl && (<div className="text-xs text-muted-foreground mt-1">Current video: <code className="bg-muted px-1 py-0.5 rounded">{formData.featuredProjects[index].videoUrl}</code></div>)}
+                        <p className="text-xs text-muted-foreground">Upload a short video loop. This will override the Image URL if provided.</p>
+                      </div>
+                      <div className="space-y-2"><Label>Link</Label><Input value={project.link} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'link', e.target.value)} placeholder="https://..." /></div>
+                      <div className="space-y-2"><Label>Tags (comma separated)</Label><Input value={(project.tags || []).join(', ')} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'tags', e.target.value.split(',').map(t => t.trim()))} placeholder="Next.js, TypeScript, 3D" /></div>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('featuredProjects')}><PlusCircle className="mr-2 h-4 w-4" /> Add Project</Button>
                 </AccordionContent>
               </AccordionItem>
 
