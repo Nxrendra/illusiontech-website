@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com;
-    style-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     style-src-attr 'unsafe-inline';
     img-src 'self' blob: data: https://www.google.com;
     media-src 'self' blob: https://*.public.blob.vercel-storage.com;

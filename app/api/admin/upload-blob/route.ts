@@ -11,6 +11,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     return new NextResponse('Invalid request body', { status: 400 });
   }
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error('Missing BLOB_READ_WRITE_TOKEN environment variable');
+    return new NextResponse('Server configuration error.', { status: 500 });
+  }
+
   // Vercel Blob's client helper requires a NextRequest-like object.
   // We can pass the original request directly.
   if (!(await isAdminSession(request as any))) {
@@ -27,6 +32,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         // For example, only allow uploads to a specific user's folder.
         console.log('Generating token for upload:', pathname);
         return {
+          maximumSizeInBytes: 50 * 1024 * 1024, // Limit to 50MB
           allowedContentTypes: ['video/mp4', 'video/webm'],
           tokenPayload: JSON.stringify({
             // Optional payload to be passed to onUploadCompleted
@@ -40,7 +46,11 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
-    console.error('Error uploading blob:', error);
-    return new NextResponse('Failed to upload file.', { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Detailed Blob Upload Error:', {
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    return new NextResponse(`Failed to upload file: ${errorMessage}`, { status: 500 });
   }
 }
