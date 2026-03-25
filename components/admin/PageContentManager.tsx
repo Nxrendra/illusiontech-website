@@ -35,12 +35,18 @@ export default function PageContentManager({ initialContent }: PageContentManage
         const response = await fetch('/api/admin/services');
         if (response.ok) {
           const data = await response.json();
-          // Robust check: handle both [s1, s2] and { services: [s1, s2] }
-          const servicesList = Array.isArray(data) ? data : (data.services || []);
-          console.log('Admin Services Debug:', { raw: data, processed: servicesList });
+          
+          // Improved check: handles [], { services: [] }, or { data: [] }
+          const servicesList = Array.isArray(data) 
+            ? data 
+            : (data.services || data.data || []);
+            
+          console.log('🔍 DEBUG: Services loaded in Admin:', servicesList);
           setServices(servicesList);
         } else {
-          toast.error('Could not load services for selection. Please refresh.');
+          const errorData = await response.json().catch(() => ({}));
+          console.error('❌ API Error:', response.status, errorData);
+          toast.error(`Failed to load services (${response.status})`);
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
