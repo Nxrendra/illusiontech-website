@@ -48,13 +48,14 @@ export async function middleware(request: NextRequest) {
     style-src 'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com;
     style-src-attr 'unsafe-inline';
     img-src 'self' blob: data: https://www.google.com;
+    media-src 'self' blob: https://*.public.blob.vercel-storage.com;
     font-src 'self' https://fonts.gstatic.com;
     worker-src 'self' blob:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
     frame-src https://www.google.com;
-    connect-src 'self' https://www.google.com https://raw.githack.com https://raw.githubusercontent.com ${isProd ? 'wss:' : 'ws:'};
+    connect-src 'self' https://*.public.blob.vercel-storage.com https://www.google.com https://raw.githack.com https://raw.githubusercontent.com ${isProd ? 'wss:' : 'ws:'};
     ${isProd ? 'upgrade-insecure-requests;' : ''}
   `.replace(/\s{2,}/g, ' ').trim()
 

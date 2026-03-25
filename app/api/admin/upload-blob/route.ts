@@ -3,7 +3,13 @@ import { NextResponse } from 'next/server';
 import { isAdminSession } from '@/lib/auth';
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+  let body: HandleUploadBody;
+  try {
+    body = (await request.json()) as HandleUploadBody;
+  } catch (e) {
+    console.error('Failed to parse request body');
+    return new NextResponse('Invalid request body', { status: 400 });
+  }
 
   // Vercel Blob's client helper requires a NextRequest-like object.
   // We can pass the original request directly.
