@@ -33,14 +33,14 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-[#00f0ff]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#bd00ff]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="container max-w-5xl mx-auto px-4 relative z-10">
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 font-serif tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 tracking-tight"
           >
             {heading || "Featured Work"}
           </motion.h2>
@@ -125,7 +125,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
 
                   {/* Details */}
                   <div className="p-6 sm:p-8">
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-[#00f0ff] transition-colors font-serif">{project.title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-[#00f0ff] transition-colors">{project.title}</h3>
                     <PremiumDescription text={project.description} clampLines={3} className="mb-6" />
                     
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -27,7 +27,7 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
       <div className={cn("group flex flex-col", className)}>
         <div className="relative overflow-hidden">
           <p
-            className="whitespace-pre-wrap leading-relaxed text-slate-600 dark:text-muted-foreground transition-all duration-500 text-sm sm:text-base"
+            className="whitespace-pre-wrap leading-relaxed text-slate-500 dark:text-muted-foreground/80 transition-all duration-500 text-xs sm:text-sm"
             style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: clampLines }}
           >
             {text}
@@ -95,13 +95,13 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
                   transition={{ delay: 0.2 }}
                 >
                   {firstLine && (
-                    <p className="text-lg sm:text-xl leading-relaxed text-slate-900 dark:text-gray-200 whitespace-pre-wrap font-serif italic mb-6">
+                    <p className="text-lg sm:text-xl leading-relaxed text-slate-900 dark:text-gray-200 whitespace-pre-wrap font-bold italic mb-6">
                       "{firstLine}"
                     </p>
                   )}
                   
                   {remainingText && (
-                    <p className="text-base sm:text-lg leading-loose text-slate-600 dark:text-gray-400 whitespace-pre-wrap tracking-tight">
+                    <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-gray-400 whitespace-pre-wrap tracking-tight">
                       {remainingText}
                     </p>
                   )}
