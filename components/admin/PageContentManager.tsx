@@ -100,7 +100,9 @@ export default function PageContentManager({ initialContent }: PageContentManage
       const newBlob = await upload(file.name, file, {
         access: 'public',
         handleUploadUrl: '/api/admin/upload-blob',
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: any) => {
+          // Ensure progressEvent exists before accessing percentage
+          if (!progressEvent) return;
           setUploadProgress(progressEvent.percentage);
           toast.loading(`Uploading: ${progressEvent.percentage}%`, { id: toastId });
         },

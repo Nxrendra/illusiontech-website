@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { upload } from '@vercel/blob/client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/Switch';
 import { Label } from '@/components/ui/Label';
 import { toast } from 'sonner';
-import { Loader2, PlusCircle, XCircle } from 'lucide-react';
+import { Loader2, PlusCircle, XCircle, X, UploadCloud } from 'lucide-react';
 import { IService, IServiceData } from '@/lib/models/Service';
 import { iconNames } from '@/lib/get-icon';
 import { themeOptions, themeMap } from '@/lib/theme-options';
@@ -55,6 +56,8 @@ const initialFormData: Omit<IServiceData, 'slug' | 'link'> = {
   position: 99,
   homepagePosition: 99,
   themeName: defaultTheme.name,
+  videoUrl: '',
+  videoWebmUrl: '',
   theme: {
     gradient: defaultTheme.gradient,
     accentClass: defaultTheme.accentClass,
@@ -65,6 +68,8 @@ const initialFormData: Omit<IServiceData, 'slug' | 'link'> = {
 export default function ServiceForm({ isOpen, onClose, onSave, service }: ServiceFormProps) {
   const [formData, setFormData] = useState(initialFormData);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
@@ -86,6 +91,8 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           position: service.position ?? 99,
           homepagePosition: service.homepagePosition ?? 99,
           themeName: service.themeName || 'Default',
+          videoUrl: service.videoUrl || '',
+          videoWebmUrl: service.videoWebmUrl || '',
           theme: service.theme || { gradient: '', accentClass: '', buttonClass: '' },
         });
       } else {
@@ -98,6 +105,36 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
     const { name, value } = e.target;
     if (name) {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>, format: 'mp4' | 'webm') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const toastId = toast.loading(`Uploading ${format.toUpperCase()} video...`);
+
+    try {
+      const newBlob = await upload(file.name, file, {
+        access: 'public',
+        handleUploadUrl: '/api/admin/upload-blob',
+        onUploadProgress: (progressEvent) => {
+          setUploadProgress(progressEvent.percentage);
+          toast.loading(`Uploading: ${progressEvent.percentage}%`, { id: toastId });
+        },
+      });
+
+      const fieldName = format === 'mp4' ? 'videoUrl' : 'videoWebmUrl';
+      setFormData(prev => ({ ...prev, [fieldName]: newBlob.url }));
+      toast.success('Video uploaded successfully!', { id: toastId });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+      toast.error(errorMessage, { id: toastId });
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -214,6 +251,33 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
           <FeatureManagement features={formData.features || []} onFeatureChange={handleFeatureChange} onAddFeature={addFeature} onRemoveFeature={removeFeature} />
 
           <KeyFeatureManagement keyFeatures={formData.keyFeatures || []} onKeyFeatureChange={handleKeyFeatureChange} onAddKeyFeature={addKeyFeature} onRemoveKeyFeature={removeKeyFeature} />
+
+          <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
+            <Label className="text-base font-semibold">Service Videos (Optional)</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>MP4 Video</Label>
+                <Input type="file" accept="video/mp4" onChange={(e) => handleVideoUpload(e, 'mp4')} disabled={isUploading} />
+                {formData.videoUrl && (
+                  <div className="flex items-center justify-between mt-2 p-2 bg-background rounded-md border text-xs">
+                    <span className="truncate flex-1">{formData.videoUrl}</span>
+                    <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => setFormData(prev => ({ ...prev, videoUrl: '' }))}><X className="h-3 w-3" /></Button>
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>WebM Video</Label>
+                <Input type="file" accept="video/webm" onChange={(e) => handleVideoUpload(e, 'webm')} disabled={isUploading} />
+                {formData.videoWebmUrl && (
+                  <div className="flex items-center justify-between mt-2 p-2 bg-background rounded-md border text-xs">
+                    <span className="truncate flex-1">{formData.videoWebmUrl}</span>
+                    <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => setFormData(prev => ({ ...prev, videoWebmUrl: '' }))}><X className="h-3 w-3" /></Button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">Short, looping videos will replace the static icon on the service cards.</p>
+          </div>
         </form>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
