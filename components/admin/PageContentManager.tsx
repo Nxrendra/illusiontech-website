@@ -35,16 +35,21 @@ export default function PageContentManager({ initialContent }: PageContentManage
         const response = await fetch('/api/admin/services');
         if (response.ok) {
           const data = await response.json();
-          setServices(data);
+          // Robust check: handle both [s1, s2] and { services: [s1, s2] }
+          const servicesList = Array.isArray(data) ? data : (data.services || []);
+          console.log('Admin Services Debug:', { raw: data, processed: servicesList });
+          setServices(servicesList);
         } else {
           toast.error('Could not load services for selection. Please refresh.');
         }
       } catch (error) {
-        console.error('Failed to fetch services:', error);
+        const msg = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Failed to fetch services:', msg);
+        toast.error(`Network error: ${msg}`);
       }
     };
     fetchServices();
-  }, []);
+  }, [toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -351,12 +356,13 @@ export default function PageContentManager({ initialContent }: PageContentManage
                         >
                           <SelectTrigger><SelectValue placeholder="Select a service" /></SelectTrigger>
                           <SelectContent>
-                            {services.length === 0 && (
-                              <SelectItem value="none" disabled>No services found in database</SelectItem>
+                            {services.length === 0 ? (
+                              <SelectItem value="none" disabled className="text-muted-foreground italic">No services found in database</SelectItem>
+                            ) : (
+                              services.map((service) => (
+                                <SelectItem key={service._id} value={service._id}>{service.name}</SelectItem>
+                              ))
                             )}
-                            {services.map((service) => (
-                              <SelectItem key={service._id} value={service._id}>{service.name}</SelectItem>
-                            ))}
                           </SelectContent>
                         </Select>
                       </div>
