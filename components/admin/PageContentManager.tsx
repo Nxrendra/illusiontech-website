@@ -36,6 +36,8 @@ export default function PageContentManager({ initialContent }: PageContentManage
         if (response.ok) {
           const data = await response.json();
           setServices(data);
+        } else {
+          toast.error('Could not load services for selection. Please refresh.');
         }
       } catch (error) {
         console.error('Failed to fetch services:', error);
@@ -344,12 +346,15 @@ export default function PageContentManager({ initialContent }: PageContentManage
                       <div className="space-y-2">
                         <Label>Related Service</Label>
                         <Select 
-                          value={project.serviceId} 
+                          value={project.serviceId || ""} 
                           onValueChange={(val) => handleObjectArrayChange('featuredProjects', index, 'serviceId', val)}
                         >
                           <SelectTrigger><SelectValue placeholder="Select a service" /></SelectTrigger>
                           <SelectContent>
-                            {services.map(service => (
+                            {services.length === 0 && (
+                              <SelectItem value="none" disabled>No services found in database</SelectItem>
+                            )}
+                            {services.map((service) => (
                               <SelectItem key={service._id} value={service._id}>{service.name}</SelectItem>
                             ))}
                           </SelectContent>
