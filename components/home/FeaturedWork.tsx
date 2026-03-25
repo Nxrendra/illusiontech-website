@@ -33,14 +33,14 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-[#00f0ff]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#bd00ff]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container max-w-5xl mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 font-serif tracking-tight"
           >
             {heading || "Featured Work"}
           </motion.h2>
@@ -49,7 +49,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-gray-400 text-lg sm:text-xl leading-relaxed"
+            className="text-slate-600 dark:text-gray-400 text-lg sm:text-xl leading-relaxed"
           >
             {subheading || "A glimpse into the digital experiences we create."}
           </motion.p>
@@ -75,10 +75,10 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                 className="group relative perspective-1000"
               >
                 {/* Browser Mockup Frame */}
-                <div className="relative rounded-xl overflow-hidden border border-white/10 bg-gray-950/40 backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-white/30 group-hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
+                <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-gray-950/40 backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-primary/30 dark:group-hover:border-white/30 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
                   
                   {/* Animated Edge Glow */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br from-[#00f0ff]/10 via-transparent to-[#bd00ff]/10" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br from-[#00f0ff]/5 via-transparent to-[#bd00ff]/5 dark:from-[#00f0ff]/10 dark:to-[#bd00ff]/10" />
 
                   {/* Browser Header */}
                   <div className="h-8 bg-gray-800/50 border-b border-white/5 flex items-center px-4 gap-2">
@@ -89,7 +89,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                   </div>
 
                   {/* Project Image/Content Area */}
-                  <div className="relative aspect-[16/10] bg-black overflow-hidden group">
+                  <div className="relative aspect-video bg-slate-100 dark:bg-black overflow-hidden group border-b border-slate-200 dark:border-white/5">
                     {project.videoUrl || project.videoWebmUrl ? (
                       <video
                         poster={project.imageUrl}
@@ -125,16 +125,16 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
 
                   {/* Details */}
                   <div className="p-6 sm:p-8">
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#00f0ff] transition-colors">{project.title}</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-[#00f0ff] transition-colors font-serif">{project.title}</h3>
                     <PremiumDescription text={project.description} clampLines={3} className="mb-6" />
                     
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="flex flex-wrap gap-2">
                         {project.tags?.map((tag, i) => (
-                          <span key={i} className="text-xs px-2 py-1 bg-white/5 rounded text-gray-400 border border-white/5">{tag}</span>
+                          <span key={i} className="text-[10px] uppercase tracking-wider px-2 py-1 bg-slate-100 dark:bg-white/5 rounded text-slate-500 dark:text-gray-400 border border-slate-200 dark:border-white/5">{tag}</span>
                         ))}
                       </div>
-                      <Link href={project.link || '#'} className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#00f0ff] transition-all hover:translate-x-1">
+                      <Link href={project.link || '#'} className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white hover:text-[#00f0ff] transition-all hover:translate-x-1">
                         View Live <ArrowRight size={16} />
                       </Link>
                     </div>

@@ -14,19 +14,20 @@ interface PremiumDescriptionProps {
 export function PremiumDescription({ text, clampLines = 3, className }: PremiumDescriptionProps) {
   const [showOverlay, setShowOverlay] = useState(false);
 
-  const lines = text.split('\n').filter(line => line.trim() !== '');
-  const isLongText = lines.length > clampLines || text.length > 160;
+  // Split into lines and filter empty ones to manage spacing better
+  const allLines = text.split('\n').filter(line => line.trim() !== '');
+  const isLongText = allLines.length > clampLines || text.length > 160;
   
-  const firstLine = lines[0] || '';
-  // Ensures that paragraphs have consistent double-spacing even if entered as single lines
-  const remainingText = lines.slice(1).join('\n\n');
+  const firstLine = allLines[0] || '';
+  // Use double newlines for the expanded view to give it a "Premium" breathable layout
+  const remainingText = allLines.slice(1).join('\n\n');
 
   return (
     <>
-      <div className={cn("group relative flex flex-col", className)}>
+      <div className={cn("group flex flex-col", className)}>
         <div className="relative overflow-hidden">
           <p
-            className="whitespace-pre-wrap leading-relaxed text-muted-foreground transition-all duration-500 line-clamp-3"
+            className="whitespace-pre-wrap leading-relaxed text-slate-600 dark:text-muted-foreground transition-all duration-500 text-sm sm:text-base"
             style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: clampLines }}
           >
             {text}
@@ -34,7 +35,7 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
           
           {/* Premium Fade Effect */}
           {isLongText && (
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white dark:from-background via-white/50 dark:via-background/50 to-transparent pointer-events-none" />
           )}
         </div>
 
@@ -52,22 +53,22 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
       {/* The Premium Glass Overlay */}
       <AnimatePresence>
         {showOverlay && (
-          /* Using inset-0 with absolute ensures it fills the card without growing it */
-          <div className="absolute inset-0 z-[60] flex flex-col overflow-hidden rounded-xl pointer-events-auto">
+          /* This absolute container now fills the nearest 'relative' parent (the project card) */
+          <div className="absolute inset-0 z-[60] flex flex-col overflow-hidden rounded-xl pointer-events-auto shadow-2xl">
             {/* Backdrop Blur */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowOverlay(false)}
-              className="absolute inset-0 bg-gray-950/80 backdrop-blur-2xl"
+              className="absolute inset-0 bg-white/95 dark:bg-gray-950/90 backdrop-blur-2xl"
             />
 
             {/* Glass Pane Content */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
+              exit={{ opacity: 0, y: 20 }}
               className="relative h-full w-full flex flex-col"
             >
               {/* Header */}
@@ -76,11 +77,11 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
                   <div className="p-2 rounded-lg bg-primary/10">
                     <Info className="w-5 h-5 text-primary" />
                   </div>
-                  <h4 className="text-sm font-bold uppercase tracking-widest text-white/90">Project Details</h4>
+                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-900 dark:text-white/90">Full Overview</h4>
                 </div>
                 <button 
                   onClick={() => setShowOverlay(false)}
-                  className="p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-all"
+                  className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 text-slate-400 dark:text-white/50 hover:text-slate-900 dark:hover:text-white transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -94,14 +95,16 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
                   transition={{ delay: 0.2 }}
                 >
                   {firstLine && (
-                    <p className="text-base sm:text-lg leading-relaxed text-gray-200 whitespace-pre-wrap font-medium italic mb-4">
+                    <p className="text-lg sm:text-xl leading-relaxed text-slate-900 dark:text-gray-200 whitespace-pre-wrap font-serif italic mb-6">
                       "{firstLine}"
                     </p>
                   )}
-                  <div className="h-px w-12 bg-primary/50 mb-6" />
-                  <p className="text-sm sm:text-base leading-relaxed text-gray-400 whitespace-pre-wrap">
-                    {remainingText || text}
-                  </p>
+                  
+                  {remainingText && (
+                    <p className="text-base sm:text-lg leading-loose text-slate-600 dark:text-gray-400 whitespace-pre-wrap tracking-tight">
+                      {remainingText}
+                    </p>
+                  )}
                   
                   {/* Read Less / Close Button at bottom of text */}
                   <button
