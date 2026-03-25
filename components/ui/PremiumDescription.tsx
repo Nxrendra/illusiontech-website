@@ -13,14 +13,19 @@ interface PremiumDescriptionProps {
 
 export function PremiumDescription({ text, clampLines = 3, className }: PremiumDescriptionProps) {
   const [showOverlay, setShowOverlay] = useState(false);
-  const isLongText = text.split('\n').length > clampLines || text.length > 160;
+
+  const lines = text.split('\n').filter(line => line.trim() !== '');
+  const isLongText = lines.length > clampLines || text.length > 160;
+  
+  const firstLine = lines[0] || '';
+  const remainingText = lines.slice(1).join('\n\n');
 
   return (
     <>
       <div className={cn("group relative flex flex-col", className)}>
         <div className="relative overflow-hidden">
           <p
-            className="whitespace-pre-line leading-relaxed text-muted-foreground transition-all duration-500 line-clamp-3"
+            className="whitespace-pre-wrap leading-relaxed text-muted-foreground transition-all duration-500 line-clamp-3"
             style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: clampLines }}
           >
             {text}
@@ -46,8 +51,8 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
       {/* The Premium Glass Overlay */}
       <AnimatePresence>
         {showOverlay && (
-          /* Changed from fixed to absolute to stay inside the card container */
-          <div className="absolute inset-0 z-[60] flex flex-col overflow-hidden rounded-xl">
+          /* Using inset-0 with absolute ensures it fills the card without growing it */
+          <div className="absolute inset-0 z-[60] flex flex-col overflow-hidden rounded-xl pointer-events-auto">
             {/* Backdrop Blur */}
             <motion.div 
               initial={{ opacity: 0 }}
@@ -87,12 +92,14 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <p className="text-base sm:text-lg leading-relaxed text-gray-200 whitespace-pre-line font-medium italic mb-4">
-                    "{text.split('\n')[0]}"
-                  </p>
+                  {firstLine && (
+                    <p className="text-base sm:text-lg leading-relaxed text-gray-200 whitespace-pre-wrap font-medium italic mb-4">
+                      "{firstLine}"
+                    </p>
+                  )}
                   <div className="h-px w-12 bg-primary/50 mb-6" />
-                  <p className="text-sm sm:text-base leading-relaxed text-gray-400 whitespace-pre-line">
-                    {text}
+                  <p className="text-sm sm:text-base leading-relaxed text-gray-400 whitespace-pre-wrap">
+                    {remainingText || text}
                   </p>
                   
                   {/* Read Less / Close Button at bottom of text */}
