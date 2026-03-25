@@ -4,6 +4,24 @@ import { verifyAdminSession } from '@/lib/auth-utils';
 import ServiceModel from '@/lib/models/Service';
 import { generateSlug } from '@/lib/slug-utils';
 
+export async function GET() {
+  try {
+    await verifyAdminSession();
+    await connectToDB();
+
+    // Fetch all services sorted by name for the admin dropdown
+    const services = await ServiceModel.find({}).sort({ name: 1 });
+    return NextResponse.json(services);
+  } catch (error: unknown) {
+    console.error('[API_SERVICES_GET]', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    if (errorMessage.includes('Authentication') || errorMessage.includes('session')) {
+      return NextResponse.json({ error: errorMessage }, { status: 401 });
+    }
+    return NextResponse.json({ error: 'Failed to fetch services.' }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   try {
     await verifyAdminSession();

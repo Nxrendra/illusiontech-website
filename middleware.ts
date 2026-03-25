@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
   // 'unsafe-eval' is required by some libraries like framer-motion for dynamic style calculations.
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.google.com https://www.gstatic.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     style-src-attr 'unsafe-inline';
     img-src 'self' blob: data: https://www.google.com;
