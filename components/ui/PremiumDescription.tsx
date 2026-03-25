@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, X, Info } from 'lucide-react';
+import { ChevronDown, X, Info, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PremiumDescriptionProps {
@@ -14,16 +14,6 @@ interface PremiumDescriptionProps {
 export function PremiumDescription({ text, clampLines = 3, className }: PremiumDescriptionProps) {
   const [showOverlay, setShowOverlay] = useState(false);
   const isLongText = text.split('\n').length > clampLines || text.length > 160;
-
-  // Prevent body scroll when the premium overlay is open
-  useEffect(() => {
-    if (showOverlay) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [showOverlay]);
 
   return (
     <>
@@ -56,25 +46,26 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
       {/* The Premium Glass Overlay */}
       <AnimatePresence>
         {showOverlay && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-            {/* Animated Backdrop */}
+          /* Changed from fixed to absolute to stay inside the card container */
+          <div className="absolute inset-0 z-[60] flex flex-col overflow-hidden rounded-xl">
+            {/* Backdrop Blur */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowOverlay(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-xl"
+              className="absolute inset-0 bg-gray-950/80 backdrop-blur-2xl"
             />
 
-            {/* Floating Glass Pane */}
+            {/* Glass Pane Content */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl max-h-[80vh] overflow-hidden bg-gray-950/40 border border-white/10 rounded-3xl backdrop-blur-2xl shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] flex flex-col"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              className="relative h-full w-full flex flex-col"
             >
               {/* Header */}
-              <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/5">
+              <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/5">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-primary/10">
                     <Info className="w-5 h-5 text-primary" />
@@ -90,19 +81,28 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
               </div>
 
               {/* Content Area */}
-              <div className="p-8 sm:p-10 overflow-y-auto custom-scrollbar">
+              <div className="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-1">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <p className="text-lg sm:text-xl leading-relaxed text-gray-200 whitespace-pre-line font-medium italic mb-4">
+                  <p className="text-base sm:text-lg leading-relaxed text-gray-200 whitespace-pre-line font-medium italic mb-4">
                     "{text.split('\n')[0]}"
                   </p>
                   <div className="h-px w-12 bg-primary/50 mb-6" />
-                  <p className="text-base sm:text-lg leading-relaxed text-gray-400 whitespace-pre-line">
+                  <p className="text-sm sm:text-base leading-relaxed text-gray-400 whitespace-pre-line">
                     {text}
                   </p>
+                  
+                  {/* Read Less / Close Button at bottom of text */}
+                  <button
+                    onClick={() => setShowOverlay(false)}
+                    className="mt-8 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-primary hover:text-white transition-all py-2 px-4 rounded-full border border-primary/20 hover:border-primary/50 bg-primary/5"
+                  >
+                    <ArrowUp className="w-3 h-3" />
+                    Close Overview
+                  </button>
                 </motion.div>
               </div>
             </motion.div>
