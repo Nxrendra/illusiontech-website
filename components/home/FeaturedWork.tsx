@@ -4,11 +4,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Layers, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { PremiumDescription } from '@/components/ui/PremiumDescription';
 
 interface Project {
   title: string;
   description: string;
-  tier: string;
+  tier: string; // This now holds the Service Name (mapped in client-page.tsx)
+  serviceId?: string;
   imageUrl: string;
   videoUrl?: string;
   videoWebmUrl?: string;
@@ -56,7 +58,11 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
         {/* Projects Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8">
           {projects.map((project, index) => {
-            const isPremium = project.tier?.toLowerCase() === 'premium';
+            // Determine color theme based on service name or position
+            const isPremium = project.tier?.toLowerCase().includes('pro') || 
+                             project.tier?.toLowerCase().includes('premium') || 
+                             project.tier?.toLowerCase().includes('automation') ||
+                             index % 2 !== 0;
             
             return (
               <motion.div
@@ -108,7 +114,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                     <div className="absolute top-4 left-4">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border backdrop-blur-md ${isPremium ? 'bg-[#bd00ff]/20 border-[#bd00ff]/50 text-[#bd00ff]' : 'bg-[#00f0ff]/20 border-[#00f0ff]/50 text-[#00f0ff]'}`}>
                         {isPremium ? <Sparkles size={12} /> : <Layers size={12} />}
-                        {project.tier} Tier
+                        {project.tier}
                       </span>
                     </div>
                   </div>
@@ -116,7 +122,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                   {/* Details */}
                   <div className="p-6 sm:p-8">
                     <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-[#00f0ff] transition-colors">{project.title}</h3>
-                    <p className="text-gray-400 mb-6 leading-relaxed">{project.description}</p>
+                    <PremiumDescription text={project.description} clampLines={3} className="mb-6" />
                     
                     <div className="flex items-center justify-between">
                       <div className="flex flex-wrap gap-2">

@@ -234,8 +234,8 @@ export default function ServiceForm({ isOpen, onClose, onSave, service }: Servic
             <div className="space-y-2"><Label htmlFor="price">Price (TTD)</Label><Input id="price" name="price" value={formData.price} onChange={handleInputChange} placeholder="$500 - $700 TTD or $250/month" /></div>
             <div className="space-y-2"><Label htmlFor="timeline">Timeline</Label><Input id="timeline" name="timeline" value={formData.timeline} onChange={handleInputChange} placeholder="e.g., 1-2 Weeks" /></div>
           </div>
-          <div className="space-y-2"><Label htmlFor="description">Short Description</Label><Textarea id="description" name="description" value={formData.description} onChange={handleInputChange} placeholder="A brief summary for service cards." /></div>
-          <div className="space-y-2"><Label htmlFor="longDescription">Detailed Description</Label><Textarea id="longDescription" name="longDescription" value={formData.longDescription} onChange={handleInputChange} placeholder="A detailed description for the service page." rows={4} /></div>
+          <div className="space-y-2"><Label htmlFor="description">Short Description (Cards)</Label><Textarea id="description" name="description" value={formData.description} onChange={handleInputChange} placeholder="A brief summary. Use line breaks for spacing." className="min-h-[100px]" /></div>
+          <div className="space-y-2"><Label htmlFor="longDescription">Detailed Description (Service Page)</Label><Textarea id="longDescription" name="longDescription" value={formData.longDescription} onChange={handleInputChange} placeholder="Deep dive into the service. This supports paragraphs and line spacing." rows={8} /></div>
           <div className="space-y-2"><Label htmlFor="audience">Target Audience</Label><Input id="audience" name="audience" value={formData.audience || ''} onChange={handleInputChange} placeholder="e.g., Small Businesses, Startups" /></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border bg-muted/50 p-4">
             <div className="space-y-2">

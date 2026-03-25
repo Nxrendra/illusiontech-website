@@ -223,7 +223,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('homeWhyChooseUsPoints', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       <div className="space-y-2"><Label>Icon</Label><Select value={point.icon} onValueChange={(val) => handleObjectArrayChange('homeWhyChooseUsPoints', index, 'icon', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{iconNames.map(name => <SelectItem key={name} value={name}>{name}</SelectItem>)}</SelectContent></Select></div>
                       <div className="space-y-2"><Label>Title</Label><Input value={point.title} onChange={(e) => handleObjectArrayChange('homeWhyChooseUsPoints', index, 'title', e.target.value)} /></div>
-                      <div className="space-y-2"><Label>Description</Label><Textarea value={point.description} onChange={(e) => handleObjectArrayChange('homeWhyChooseUsPoints', index, 'description', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>Description</Label><Textarea value={point.description} onChange={(e) => handleObjectArrayChange('homeWhyChooseUsPoints', index, 'description', e.target.value)} placeholder="Supports line spacing..." className="min-h-[80px]" /></div>
                     </div>
                   ))}
                   <Button type="button" variant="outline" size="sm" onClick={() => addArrayItem('homeWhyChooseUsPoints')}><PlusCircle className="mr-2 h-4 w-4" /> Add Point</Button>
@@ -353,7 +353,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
                     <div key={index} className="p-4 border rounded-md space-y-3 relative">
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('featuredProjects', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       <div className="space-y-2"><Label>Title</Label><Input value={project.title} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'title', e.target.value)} /></div>
-                      <div className="space-y-2"><Label>Description</Label><Textarea value={project.description} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'description', e.target.value)} /></div>
+                      <div className="space-y-2"><Label>Description</Label><Textarea value={project.description} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'description', e.target.value)} placeholder="Line spacing supported. Keep it uniform for a premium look." className="min-h-[100px]" /></div>
                       <div className="space-y-2">
                         <Label>Related Service</Label>
                         <Select 
