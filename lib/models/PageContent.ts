@@ -92,7 +92,7 @@ export interface IPageContentData {
   featuredProjects?: {
     title: string;
     description: string;
-    tier: string;
+    serviceId?: string;
     imageUrl: string;
     videoUrl?: string;
     videoWebmUrl?: string;
@@ -262,7 +262,7 @@ const PageContentSchema: Schema = new Schema({
     type: [{
       title: String,
       description: String,
-      tier: String,
+      serviceId: { type: Schema.Types.ObjectId, ref: 'Service' },
       imageUrl: String,
       videoUrl: String,
       videoWebmUrl: String,
@@ -273,7 +273,6 @@ const PageContentSchema: Schema = new Schema({
       {
         title: 'Project Alpha',
         description: 'A high-performance standard deployment focusing on speed and SEO.',
-        tier: 'Standard',
         imageUrl: '/images/placeholder-project-1.jpg',
         link: '#',
         tags: ['Next.js', 'Performance']
@@ -281,7 +280,6 @@ const PageContentSchema: Schema = new Schema({
       {
         title: 'Project Beta',
         description: 'An immersive interactive experience with 3D elements.',
-        tier: 'Premium',
         imageUrl: '/images/placeholder-project-2.jpg',
         link: '#',
         tags: ['WebGL', 'Interactive']

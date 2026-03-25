@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { upload } from '@vercel/blob/client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -26,6 +26,23 @@ export default function PageContentManager({ initialContent }: PageContentManage
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [services, setServices] = useState<{ _id: string; name: string }[]>([]);
+
+  // Fetch services so we can link them to projects
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/admin/services');
+        if (response.ok) {
+          const data = await response.json();
+          setServices(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch services:', error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -69,7 +86,7 @@ export default function PageContentManager({ initialContent }: PageContentManage
         newItem = { step: '01', title: '', description: '', icon: 'Search' };
         break;
       case 'featuredProjects':
-        newItem = { title: 'New Project', description: '', tier: 'Standard', imageUrl: '', videoUrl: '', videoWebmUrl: '', link: '', tags: [] };
+        newItem = { title: 'New Project', description: '', serviceId: '', imageUrl: '', videoUrl: '', videoWebmUrl: '', link: '', tags: [] };
         break;
       default:
         // This should not happen with TypeScript, but as a fallback:
@@ -324,7 +341,20 @@ export default function PageContentManager({ initialContent }: PageContentManage
                       <Button type="button" variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => removeArrayItem('featuredProjects', index)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       <div className="space-y-2"><Label>Title</Label><Input value={project.title} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'title', e.target.value)} /></div>
                       <div className="space-y-2"><Label>Description</Label><Textarea value={project.description} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'description', e.target.value)} /></div>
-                      <div className="space-y-2"><Label>Tier</Label><Select value={project.tier} onValueChange={(val) => handleObjectArrayChange('featuredProjects', index, 'tier', val)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Standard">Standard</SelectItem><SelectItem value="Premium">Premium</SelectItem></SelectContent></Select></div>
+                      <div className="space-y-2">
+                        <Label>Related Service</Label>
+                        <Select 
+                          value={project.serviceId} 
+                          onValueChange={(val) => handleObjectArrayChange('featuredProjects', index, 'serviceId', val)}
+                        >
+                          <SelectTrigger><SelectValue placeholder="Select a service" /></SelectTrigger>
+                          <SelectContent>
+                            {services.map(service => (
+                              <SelectItem key={service._id} value={service._id}>{service.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <div className="space-y-2"><Label>Image URL</Label><Input value={project.imageUrl} onChange={(e) => handleObjectArrayChange('featuredProjects', index, 'imageUrl', e.target.value)} placeholder="/images/project.jpg" /></div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
