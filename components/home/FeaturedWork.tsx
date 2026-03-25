@@ -35,7 +35,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <div className="max-w-3xl mb-16 sm:mb-24">
+        <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-24">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -70,12 +70,16 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
+                whileHover={{ y: -10, rotateX: 2, rotateY: -2 }}
                 transition={{ delay: index * 0.2 }}
-                className="group relative"
+                className="group relative perspective-1000"
               >
                 {/* Browser Mockup Frame */}
-                <div className="relative rounded-xl overflow-hidden border border-white/10 bg-gray-900/50 backdrop-blur-sm shadow-2xl transition-all duration-500 group-hover:border-white/20 group-hover:shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                <div className="relative rounded-xl overflow-hidden border border-white/10 bg-gray-950/40 backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-white/30 group-hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
                   
+                  {/* Animated Edge Glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br from-[#00f0ff]/10 via-transparent to-[#bd00ff]/10" />
+
                   {/* Browser Header */}
                   <div className="h-8 bg-gray-800/50 border-b border-white/5 flex items-center px-4 gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
@@ -130,7 +134,7 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                           <span key={i} className="text-xs px-2 py-1 bg-white/5 rounded text-gray-400 border border-white/5">{tag}</span>
                         ))}
                       </div>
-                      <Link href={project.link || '#'} className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#00f0ff] transition-colors">
+                      <Link href={project.link || '#'} className="inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#00f0ff] transition-all hover:translate-x-1">
                         View Live <ArrowRight size={16} />
                       </Link>
                     </div>

@@ -18,6 +18,7 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
   const isLongText = lines.length > clampLines || text.length > 160;
   
   const firstLine = lines[0] || '';
+  // Ensures that paragraphs have consistent double-spacing even if entered as single lines
   const remainingText = lines.slice(1).join('\n\n');
 
   return (
