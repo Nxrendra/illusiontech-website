@@ -75,10 +75,10 @@ export default function FeaturedWork({ heading, subheading, projects }: Featured
                 className="group relative perspective-1000"
               >
                 {/* Browser Mockup Frame */}
-                <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-gray-950/40 backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-primary/30 dark:group-hover:border-white/30 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:group-hover:shadow-[0_0_40px_rgba(0,240,255,0.15)]">
+                <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-[#0a0a0a]/60 backdrop-blur-md shadow-2xl transition-all duration-500 group-hover:border-primary/30 dark:group-hover:border-[#00f0ff]/30 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_0_30px_rgba(0,0,0,0.4)]">
                   
-                  {/* Animated Edge Glow */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br from-[#00f0ff]/5 via-transparent to-[#bd00ff]/5 dark:from-[#00f0ff]/10 dark:to-[#bd00ff]/10" />
+                  {/* Static subtle glow for dark mode, becomes more vibrant on hover */}
+                  <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.08] group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br from-[#00f0ff]/20 via-transparent to-[#bd00ff]/20" />
 
                   {/* Browser Header */}
                   <div className="h-8 bg-gray-800/50 border-b border-white/5 flex items-center px-4 gap-2">

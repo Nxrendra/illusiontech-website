@@ -11,12 +11,12 @@ interface PremiumDescriptionProps {
   className?: string;
 }
 
-export function PremiumDescription({ text, clampLines = 3, className }: PremiumDescriptionProps) {
+export function PremiumDescription({ text = '', clampLines = 3, className }: PremiumDescriptionProps) {
   const [showOverlay, setShowOverlay] = useState(false);
 
   // Split into lines and filter empty ones to manage spacing better
   const allLines = text.split('\n').filter(line => line.trim() !== '');
-  const isLongText = allLines.length > clampLines || text.length > 160;
+  const isLongText = allLines.length > clampLines || (text?.length || 0) > 160;
   
   const firstLine = allLines[0] || '';
   // Use double newlines for the expanded view to give it a "Premium" breathable layout
@@ -95,13 +95,13 @@ export function PremiumDescription({ text, clampLines = 3, className }: PremiumD
                   transition={{ delay: 0.2 }}
                 >
                   {firstLine && (
-                    <p className="text-lg sm:text-xl leading-relaxed text-slate-900 dark:text-gray-200 whitespace-pre-wrap font-bold italic mb-6">
+                    <p className={cn("text-lg sm:text-xl leading-relaxed text-slate-900 dark:text-gray-200 whitespace-pre-wrap font-bold italic", allLines.length > 1 ? "mb-6" : "mb-2")}>
                       "{firstLine}"
                     </p>
                   )}
                   
-                  {remainingText && (
-                    <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-gray-400 whitespace-pre-wrap tracking-tight">
+                  {allLines.length > 1 && (
+                    <p className="text-sm sm:text-base leading-relaxed text-slate-500 dark:text-gray-400 whitespace-pre-wrap tracking-tight">
                       {remainingText}
                     </p>
                   )}

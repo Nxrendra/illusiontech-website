@@ -172,12 +172,15 @@ export default function HomeClientPage({ services, content }: HomeClientPageProp
       <FeaturedWork 
         heading={content.homeFeaturedWorkHeading} 
         subheading={content.homeFeaturedWorkSubheading}
-        projects={(content.featuredProjects || []).map(project => ({
-          ...project,
-          // We map the serviceId to the service name to satisfy the 'tier' requirement
-          // in FeaturedWork. This makes the label update automatically if you rename a service!
-          tier: services.find(s => s._id === project.serviceId)?.name || 'Standard'
-        }))} 
+        projects={(content.featuredProjects || []).map(project => {
+          const linkedService = services.find(s => s._id === project.serviceId);
+          return {
+            ...project,
+            // Fallback to service description if project description is empty
+            description: project.description || linkedService?.description || '',
+            tier: linkedService?.name || 'Standard'
+          };
+        })} 
       />
 
       {/* Animated Stats Section */}
