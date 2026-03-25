@@ -172,7 +172,12 @@ export default function HomeClientPage({ services, content }: HomeClientPageProp
       <FeaturedWork 
         heading={content.homeFeaturedWorkHeading} 
         subheading={content.homeFeaturedWorkSubheading}
-        projects={content.featuredProjects || []} 
+        projects={(content.featuredProjects || []).map(project => ({
+          ...project,
+          // We map the serviceId to the service name to satisfy the 'tier' requirement
+          // in FeaturedWork. This makes the label update automatically if you rename a service!
+          tier: services.find(s => s._id === project.serviceId)?.name || 'Standard'
+        }))} 
       />
 
       {/* Animated Stats Section */}
